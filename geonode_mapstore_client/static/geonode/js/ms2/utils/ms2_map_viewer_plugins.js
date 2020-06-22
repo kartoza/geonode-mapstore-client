@@ -63,6 +63,7 @@ var MS2_MAP_PLUGINS = {
 		"AddLayer",
 		"FilterLayer",
 		"ScaleBox",
+		"Tutorial",
 		// Setting, Toolbar, MapLoading, DrawerMenu, Cookie, OmniBar, Expander,
 		// Undo, Redo, BurgerMenu, MapFooter, Measure, Print
 		// ZoomAll, ZoomIn, ZoomOut from base

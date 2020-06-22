@@ -34,9 +34,9 @@ var MS2_BASE_PLUGINS = {
 				}
 			}
 		},
-
 		{
 			"name": "Identify",
+			"hideFrom": ["Settings"],
 			"cfg": {
 				"showFullscreen": false,
 				"dock": true,
@@ -92,6 +92,9 @@ var MS2_BASE_PLUGINS = {
 		"BurgerMenu",
 		"MapFooter",
 		"Measure",
+		"Annotations",
+		"Share",
+		"Tutorial",
 		{
 			"name": "Print",
 			"cfg": {
