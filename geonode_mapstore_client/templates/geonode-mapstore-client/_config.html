@@ -4,7 +4,7 @@
     proxy: "{{ PROXY_URL|default:"/proxy/?url=" }}",
     printingEnabled: true,
     localConfig: {
-      mapLayout: {left: {sm: 300, md: 500, lg: 600}, right: {md: "41%"}, bottom: {sm: 0}},
+      mapLayout: {left: {sm: 300, md: 500, lg: 600}, bottom: {sm: 0}},
       geonode_url: "{{ SITEURL }}",
       genode_rest_api: "{{ SITEURL }}mapstore/rest/",
       printUrl: "{{ GEOSERVER_PUBLIC_LOCATION }}pdf/info.json",
