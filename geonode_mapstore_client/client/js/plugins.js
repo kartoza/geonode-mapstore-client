@@ -48,6 +48,7 @@ module.exports = {
         SaveAsPlugin: require('../MapStore2/web/client/plugins/SaveAs').default,
         MetadataExplorerPlugin: require('../MapStore2/web/client/plugins/MetadataExplorer'),
         GridContainerPlugin: require('../MapStore2/web/client/plugins/GridContainer'),
+        GroupManagerPlugin: require('../MapStore2/web/client/plugins/manager/GroupManager'),
         StyleEditorPlugin: require('../MapStore2/web/client/plugins/StyleEditor'),
         TimelinePlugin: require('../MapStore2/web/client/plugins/Timeline'),
         PlaybackPlugin: require('../MapStore2/web/client/plugins/Playback'),

@@ -36,7 +36,6 @@ var MS2_BASE_PLUGINS = {
 		},
 		{
 			"name": "Identify",
-			"hideFrom": ["Settings"],
 			"cfg": {
 				"showFullscreen": false,
 				"dock": true,
@@ -59,7 +58,8 @@ var MS2_BASE_PLUGINS = {
 			"cfg": {
 				"activateMapTitle": false,
 				"activateMetedataTool": false,
-				"activateRemoveLayer": false
+				"activateRemoveLayer": false,
+				"activateAddGroupButton": true
 			}
 
 		},
@@ -94,6 +94,7 @@ var MS2_BASE_PLUGINS = {
 		"Measure",
 		"Annotations",
 		"Share",
+		"AddGroup",
 		"Tutorial",
 		{
 			"name": "Print",
@@ -136,5 +137,6 @@ var MS2_BASE_PLUGINS = {
 				"compact": true
 			}
 		}, "Playback"
-	]
+	],
+	"manager": ["Header", "Redirect", "Manager", "Home", "UserManager", "GroupManager", "Footer"],
 }
