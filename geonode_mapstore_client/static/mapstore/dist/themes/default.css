@@ -17740,6 +17740,8 @@ Ported to CodeMirror by Peter Kroon
   width: calc(95%);
 }
 .msgapi .joyride-overlay {
+  top: -70px !important;
+  height: 90% !important;
   z-index: 4000 !important;
 }
 .msgapi .joyride-tooltip__button--primary {
