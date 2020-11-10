@@ -6,6 +6,14 @@ var MS2_MAP_PLUGINS = {
 		{
 			"name": "Identify",
 			"cfg": {
+				"showFullscreen": false,
+				"dock": true,
+				"position": "right",
+				"size": 0.3,
+				"fluid": true,
+				"resizable": true,
+				"isEditingAllowed": false,
+				"enabledCoordEditorButton": false,
 				"viewerOptions": {
 					"container": "{context.ReactSwipe}"
 				}
