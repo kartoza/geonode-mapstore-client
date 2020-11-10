@@ -75,9 +75,8 @@ const createMapStore2Api = function(plugins) {
     }
     });
 };
-// Can be used to define more compact plugins bundle
-window.initMapstore2Api = function(config, resolve) {
 
+const _initMapstore2Api = function(config, resolve) {
     // force supported locales to the selected one
     const setLocale = (localeKey) => {
         const supportedLocales = LocaleUtils.getSupportedLocales();
@@ -86,7 +85,6 @@ window.initMapstore2Api = function(config, resolve) {
             : { en: supportedLocales.en };
         LocaleUtils.setSupportedLocales(locale);
     };
-
     require(`./components/${maptype}/ArcGisMapServer`);// eslint-disable-line
     if (config === 'preview') {
         require.ensure('./previewPlugins', function() {
@@ -96,6 +94,20 @@ window.initMapstore2Api = function(config, resolve) {
         require.ensure('./plugins', function() {
             resolve(createMapStore2Api(require('./plugins')), { setLocale });
         });
+    }
+};
+
+// Can be used to define more compact plugins bundle
+window.initMapstore2Api = function(config, resolve) {
+    const uuidUrl = '/groundwater/user/uuid/';
+    const currentUrl = window.location.href;
+    if (currentUrl.includes('groundwater-well')) {
+        axios.get(uuidUrl, {}).then((response) => {
+            ConfigUtils.setConfigProp('viewparams', `uuid:${response.data}`);
+            _initMapstore2Api(config, resolve);
+        });
+    } else {
+        _initMapstore2Api(config, resolve);
     }
 };
 const createConfigObj = (cfg = []) => keyBy(cfg, (o) => o.name || o);
