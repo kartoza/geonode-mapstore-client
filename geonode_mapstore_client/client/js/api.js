@@ -101,10 +101,26 @@ const _initMapstore2Api = function(config, resolve) {
 window.initMapstore2Api = function(config, resolve) {
     const uuidUrl = '/groundwater/user/uuid/';
     const currentUrl = window.location.href;
+    let layerAttributes = {};
+    let layerAttributeFetched = 0;
+
     if (currentUrl.includes('groundwater-well')) {
         axios.get(uuidUrl, {}).then((response) => {
-            ConfigUtils.setConfigProp('viewparams', `uuid:${response.data}`);
-            _initMapstore2Api(config, resolve);
+            ConfigUtils.setConfigProp('viewparams', `uuid:${response.data['uuid']}`);
+            const layers = ms2_config.map.layers || [];
+            layers.forEach((_layer, index) => {
+                let attributesUrl = `/api/layer/${_layer.name}/attributes`;
+                axios.get(attributesUrl, {}).then((_response) => {
+                    layerAttributes[_layer.name] = _response.data;
+                }).catch((error) => {
+                }).finally(() => {
+                    layerAttributeFetched += 1;
+                    if (layerAttributeFetched === layers.length) {
+                        ConfigUtils.setConfigProp('layerattributes', layerAttributes);
+                        _initMapstore2Api(config, resolve);
+                    }
+                });
+            });
         });
     } else {
         _initMapstore2Api(config, resolve);
