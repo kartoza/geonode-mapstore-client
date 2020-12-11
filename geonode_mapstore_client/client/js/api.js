@@ -69,22 +69,24 @@ const createMapStore2Api = function(plugins) {
     // window.MapStore2 = MapStore2;
     setTimeout(function() {
         let extent = ConfigUtils.getConfigProp('groundwater_extent');
-        MapStore2.triggerAction({
-            type: 'ZOOM_TO_EXTENT',
-            extent: {
-                minx: extent[0],
-                miny: extent[1],
-                maxx: extent[2],
-                maxy: extent[3]
-            },
-            crs: 'EPSG:4326',
-            padding: {
-                top: 0,
-                bottom: 400,
-                right: 0,
-                left: 0
-            }
-        });
+        if (extent) {
+            MapStore2.triggerAction({
+                type: 'ZOOM_TO_EXTENT',
+                extent: {
+                    minx: extent[0],
+                    miny: extent[1],
+                    maxx: extent[2],
+                    maxy: extent[3]
+                },
+                crs: 'EPSG:4326',
+                padding: {
+                    top: 0,
+                    bottom: 400,
+                    right: 0,
+                    left: 0
+                }
+            });
+        }
     }, 3000);
     return assign({}, MapStore2, { create: function(container, opts) {
         if (opts && opts.localConfig) {
@@ -123,11 +125,13 @@ window.initMapstore2Api = function(config, resolve) {
     let layerAttributes = {};
     let layerAttributeFetched = 0;
 
-    if (currentUrl.includes('groundwater-well')) {
+    if (currentUrl.includes('groundwater-well') || currentUrl.includes('well-and-monitoring-data')) {
         axios.get(uuidUrl, {}).then((response) => {
             ConfigUtils.setConfigProp('viewparams', `uuid:${response.data['uuid']}`);
-            ConfigUtils.setConfigProp('groundwater_extent', response.data['extent']);
-            ms2_config.map.maxExtent = ol.proj.transformExtent(response.data.extent,  'EPSG:4326', 'EPSG:3857');
+            if (response.data['extent']) {
+                ConfigUtils.setConfigProp('groundwater_extent', response.data['extent']);
+                ms2_config.map.maxExtent = ol.proj.transformExtent(response.data.extent,  'EPSG:4326', 'EPSG:3857');
+            }
             const layers = ms2_config.map.layers || [];
             layers.forEach((_layer, index) => {
                 let attributesUrl = `/api/layer/${_layer.name}/attributes`;
