@@ -9,7 +9,7 @@
 import assign from "object-assign";
 import keyBy from 'lodash/keyBy';
 import values from 'lodash/values';
-import { setConfigProp } from '@mapstore/framework/utils/ConfigUtils';
+import { setConfigProp, getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
 import { getSupportedLocales, setSupportedLocales } from '@mapstore/framework/utils/LocaleUtils';
 import { setRegGeoserverRule } from '@mapstore/framework/utils/LayersUtils';
 import { addApi, setApi } from "@mapstore/framework/api/persistence";
@@ -46,6 +46,38 @@ const createMapStore2Api = function(plugins, type) {
         translations: translationsPath
     });
     // window.MapStore2 = MapStore2;
+    setTimeout(function() {
+        let extent = getConfigProp('groundwater_extent');
+        if (extent) {
+            MapStore2.triggerAction({
+                type: 'ZOOM_TO_EXTENT',
+                extent: {
+                    minx: extent[0],
+                    miny: extent[1],
+                    maxx: extent[2],
+                    maxy: extent[3]
+                },
+                crs: 'EPSG:4326',
+                padding: {
+                    top: 0,
+                    bottom: 400,
+                    right: 0,
+                    left: 0
+                }
+            });
+            console.log('HERE!', ms2_config.map.layers);
+            // Find groundwater layer
+            for (let i = 0; i < ms2_config.map.layers.length; i++) {
+                if (ms2_config.map.layers[i].id.toLowerCase().includes('groundwater_well')) {
+                    const layer = ms2_config.map.layers[i];
+                    MapStore2.triggerAction({ type: 'QUERY:TOGGLE_SYNC_WMS' });
+                    MapStore2.triggerAction({ type: 'LAYERS:CHANGE_LAYER_PARAMS', layer: layer.id, params: { 'VIEWPARAMS': getConfigProp('viewparams') }});
+                    MapStore2.triggerAction({ type: 'LAYERS:SELECT_NODE', id: layer.id, nodeType: 'layer', ctrlKey: false});
+                    MapStore2.triggerAction({ type: 'LAYERS:BROWSE_DATA', layer});
+                }
+            }
+        }
+    }, 3000);
     return assign({}, MapStore2, { create: function(container, opts) {
         if (opts && opts.localConfig) {
             Object.keys(opts.localConfig).map(function(c) {setConfigProp(c, opts.localConfig[c]); });
@@ -56,9 +88,8 @@ const createMapStore2Api = function(plugins, type) {
     }
     });
 };
-// Can be used to define more compact plugins bundle
-window.initMapstore2Api = function(config, resolve) {
 
+const _initMapstore2Api = function(config, resolve) {
     // force supported locales to the selected one
     const setLocale = (localeKey) => {
         const supportedLocales = getSupportedLocales();
@@ -84,6 +115,40 @@ window.initMapstore2Api = function(config, resolve) {
                     });
             }
         });
+};
+
+// Can be used to define more compact plugins bundle
+window.initMapstore2Api = function(config, resolve) {
+    const uuidUrl = '/groundwater/user/uuid/';
+    const currentUrl = window.location.href;
+    let layerAttributes = {};
+    let layerAttributeFetched = 0;
+
+    if (currentUrl.includes('groundwater-well') || currentUrl.includes('well-and-monitoring-data')) {
+        axios.get(uuidUrl, {}).then((response) => {
+            setConfigProp('viewparams', `uuid:${response.data['uuid']}`);
+            if (response.data['extent']) {
+                setConfigProp('groundwater_extent', response.data['extent']);
+                ms2_config.map.maxExtent = ol.proj.transformExtent(response.data.extent,  'EPSG:4326', 'EPSG:3857');
+            }
+            const layers = ms2_config.map.layers || [];
+            layers.forEach((_layer, index) => {
+                let attributesUrl = `/api/layer/${_layer.name}/attributes`;
+                axios.get(attributesUrl, {}).then((_response) => {
+                    layerAttributes[_layer.name] = _response.data;
+                }).catch((error) => {
+                }).finally(() => {
+                    layerAttributeFetched += 1;
+                    if (layerAttributeFetched === layers.length) {
+                        setConfigProp('layerattributes', layerAttributes);
+                        _initMapstore2Api(config, resolve);
+                    }
+                });
+            });
+        });
+    } else {
+        _initMapstore2Api(config, resolve);
+    }
 };
 const createConfigObj = (cfg = []) => keyBy(cfg, (o) => o.name || o);
 

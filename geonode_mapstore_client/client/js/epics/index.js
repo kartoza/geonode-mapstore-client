@@ -21,11 +21,13 @@ import { updateMapLayout } from '@mapstore/framework/actions/maplayout';
 import { TOGGLE_CONTROL, SET_CONTROL_PROPERTY, SET_CONTROL_PROPERTIES } from '@mapstore/framework/actions/controls';
 import { MAP_CONFIG_LOADED } from '@mapstore/framework/actions/config';
 import { SIZE_CHANGE, CLOSE_FEATURE_GRID, OPEN_FEATURE_GRID, setPermission } from '@mapstore/framework/actions/featuregrid';
+import { toggleSyncWms } from '@mapstore/framework/actions/wfsquery';
 import { CLOSE_IDENTIFY, ERROR_FEATURE_INFO, TOGGLE_MAPINFO_STATE, LOAD_FEATURE_INFO, EXCEPTIONS_FEATURE_INFO, PURGE_MAPINFO_RESULTS } from '@mapstore/framework/actions/mapInfo';
 import { SHOW_SETTINGS, HIDE_SETTINGS, SELECT_NODE } from '@mapstore/framework/actions/layers';
 import { isMapInfoOpen } from '@mapstore/framework/selectors/mapInfo';
 
 import { isFeatureGridOpen, getDockSize } from '@mapstore/framework/selectors/featuregrid';
+import { isSyncWmsActive } from '@mapstore/framework/selectors/query';
 import head from 'lodash/head';
 import get from 'lodash/get';
 
@@ -34,6 +36,16 @@ import get from 'lodash/get';
  */
 import { mapSaveMapResourceEpic } from "@mapstore/framework/epics/maps";
 import { showCoordinateEditorSelector } from '@mapstore/framework/selectors/controls';
+
+/**
+ * Activate map sync when featuregrid closes if it was active
+ */
+export const _activateSyncWmsFilterOnFeatureGridClose = (action$, { getState } = {}) =>
+    action$.ofType(CLOSE_FEATURE_GRID)
+        .filter(() => !isSyncWmsActive(getState() || {}))
+        .switchMap(() => {
+            return Rx.Observable.of(toggleSyncWms());
+        });
 
 /**
  * When a user selects a layer, the app checks for layer editing permission.
@@ -145,7 +157,7 @@ export const updateMapLayoutEpic = (action$, store) =>
                 }));
             }
 
-            const mapLayout = getConfigProp("mapLayout") || { left: { sm: 300, md: 500, lg: 600 }, right: { md: 658 }, bottom: { sm: 30 } };
+            const mapLayout = getConfigProp("mapLayout") || { left: { sm: 300, md: 500, lg: 600 }, right: { md: '30%' }, bottom: { sm: 30 } };
 
             if (get(state, "mode") === 'embedded') {
                 const height = { height: 'calc(100% - ' + mapLayout.bottom.sm + 'px)' };
@@ -202,5 +214,6 @@ export default {
     _setFeatureEditPermission,
     _setThumbnail,
     _setStyleEditorPermission,
+    _activateSyncWmsFilterOnFeatureGridClose,
     updateMapLayoutEpic
 };

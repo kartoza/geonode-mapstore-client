@@ -39,7 +39,6 @@ var MS2_BASE_PLUGINS = {
 				}
 			}
 		},
-
 		{
 			"name": "Identify",
 			"cfg": {
@@ -64,7 +63,8 @@ var MS2_BASE_PLUGINS = {
 			"cfg": {
 				"activateMapTitle": false,
 				"activateMetedataTool": false,
-				"activateRemoveLayer": false
+				"activateRemoveLayer": false,
+				"activateAddGroupButton": true
 			}
 
 		},
@@ -97,6 +97,44 @@ var MS2_BASE_PLUGINS = {
 		"BurgerMenu",
 		"MapFooter",
 		"Measure",
+		"Annotations",
+		"Share",
+		"AddGroup",
+		{
+			"name": "Tutorial",
+			"cfg": {
+				"presetList": {
+					"default_tutorial": [
+						{
+							"selector": "#map-search-bar",
+							"title": "Search Bar",
+							"text": "Write the address of a place to find. e.g. '1st avenue, new york'. " +
+								"You can even insert coordinates in this format: 43.87,10.20",
+						},
+						{
+							"selector": "#zoomin-btn",
+							"title": "Zoom In",
+							"text": "Click to enlarge the map",
+						},
+						{
+							"selector": "#zoomout-btn",
+							"title": "Zoom Out",
+							"text": "Click to reduce the map",
+						},
+						{
+							"selector": ".glyphicon-add-layer",
+							"title": "Add Layer",
+							"text": "Browse services (WMS/WMTS/CSW) to add layers to the map",
+						},
+						{
+							"selector": ".glyphicon-add-folder",
+							"title": "Add Layer Group",
+							"text": "Allows users to create new layer groups in the TOC",
+						}
+					]
+				}
+			}
+		},
 		{
 			"name": "Print",
 			"cfg": {
@@ -139,5 +177,6 @@ var MS2_BASE_PLUGINS = {
 				"compact": true
 			}
 		}, "Playback"
-	]
+	],
+	"manager": ["Header", "Redirect", "Manager", "Home", "UserManager", "GroupManager", "Footer"],
 }

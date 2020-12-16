@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([["map-library-sink-js"],{"./MapStore2/web/client/components/map/plugins/sink.js":function(n,e,o){"use strict";o.r(e);var s=o("./node_modules/recompose/es/Recompose.js").createSink;e.default=function(){return{Map:s((function(){})),Layer:s((function(){})),Feature:s((function(){}))}}}}]);

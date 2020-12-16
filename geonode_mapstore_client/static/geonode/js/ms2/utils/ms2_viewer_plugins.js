@@ -17,9 +17,14 @@ var MS2_PLUGINS = {
 					}
 				}
 			}
-		}, {
-			"name": "DrawerMenu"
-		}, {
+		},
+		{
+			"name": "DrawerMenu",
+			"cfg": {
+				"show": true
+			}
+		},
+		{
 			"name": "BackgroundSelector",
 			"cfg": {
 				"style": {

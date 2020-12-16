@@ -7,6 +7,7 @@
   "license": "BSD-2-Clause",
   "devDependencies": {},
   "dependencies": {
-    "mapstore": "git+https://github.com/geosolutions-it/MapStore2.git#ea33f7f3d419725be39dc0b07c7ae3cf01691db0"
+    "mapstore": "git+https://github.com/geosolutions-it/MapStore2.git#ea33f7f3d419725be39dc0b07c7ae3cf01691db0",
+    "yargs": "^16.2.0"
   }
 }
