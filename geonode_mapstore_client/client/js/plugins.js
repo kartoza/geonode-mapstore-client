@@ -52,6 +52,7 @@ import AnnotationsPlugin from '@mapstore/framework/plugins/Annotations';
 import SavePlugin from '@js/plugins/Save';
 import SaveAsPlugin from '@js/plugins/SaveAs';
 import SharePlugin from '@js/plugins/Share';
+import GeonodeMetadataPlugin from '@js/plugins/GeonodeMetadata';
 
 import security from '@mapstore/framework/reducers/security';
 import maps from '@mapstore/framework/reducers/maps';
@@ -103,6 +104,7 @@ const pluginsDefinition = {
         SearchServicesConfigPlugin,
         SwipePlugin,
         LocatePlugin,
+        GeonodeMetadataPlugin,
         SharePlugin,
         AnnotationsPlugin,
         AddReducersAndEpics: {

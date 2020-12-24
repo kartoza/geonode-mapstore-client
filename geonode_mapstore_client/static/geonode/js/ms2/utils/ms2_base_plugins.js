@@ -100,6 +100,7 @@ var MS2_BASE_PLUGINS = {
 		"Annotations",
 		"Share",
 		"AddGroup",
+		"GeonodeMetadata",
 		{
 			"name": "Tutorial",
 			"cfg": {
