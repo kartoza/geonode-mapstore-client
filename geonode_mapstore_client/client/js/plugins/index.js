@@ -65,6 +65,10 @@ const plugins = {
     SharePlugin: () => toLazyPlugin(
         'Share',
         import(/* webpackChunkName: 'plugins/share-plugin' */ '@js/plugins/Share')
+    ),
+    GeonodeMetadataPlugin: () => toLazyPlugin(
+        'GeonodeMetadata',
+        import(/* webpackChunkName: 'plugins/metadata-plugin' */ '@js/plugins/GeonodeMetadata')
     )
 };
 

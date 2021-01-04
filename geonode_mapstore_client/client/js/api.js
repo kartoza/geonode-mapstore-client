@@ -65,15 +65,17 @@ const createMapStore2Api = function(plugins, type) {
                     left: 0
                 }
             });
-            console.log('HERE!', ms2_config.map.layers);
             // Find groundwater layer
             for (let i = 0; i < ms2_config.map.layers.length; i++) {
-                if (ms2_config.map.layers[i].id.toLowerCase().includes('groundwater_well')) {
-                    const layer = ms2_config.map.layers[i];
-                    MapStore2.triggerAction({ type: 'QUERY:TOGGLE_SYNC_WMS' });
-                    MapStore2.triggerAction({ type: 'LAYERS:CHANGE_LAYER_PARAMS', layer: layer.id, params: { 'VIEWPARAMS': getConfigProp('viewparams') }});
-                    MapStore2.triggerAction({ type: 'LAYERS:SELECT_NODE', id: layer.id, nodeType: 'layer', ctrlKey: false});
-                    MapStore2.triggerAction({ type: 'LAYERS:BROWSE_DATA', layer});
+                try {
+                    if (ms2_config.map.layers[i].id.toLowerCase().includes('groundwater_well')) {
+                        const layer = ms2_config.map.layers[i];
+                        MapStore2.triggerAction({ type: 'QUERY:TOGGLE_SYNC_WMS' });
+                        MapStore2.triggerAction({ type: 'LAYERS:CHANGE_LAYER_PARAMS', layer: layer.id, params: { 'VIEWPARAMS': getConfigProp('viewparams') }});
+                        MapStore2.triggerAction({ type: 'LAYERS:SELECT_NODE', id: layer.id, nodeType: 'layer', ctrlKey: false});
+                        MapStore2.triggerAction({ type: 'LAYERS:BROWSE_DATA', layer});
+                    }
+                } catch (e) {
                 }
             }
         }
