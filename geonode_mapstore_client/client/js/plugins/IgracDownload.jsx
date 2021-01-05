@@ -75,7 +75,7 @@ export const startDownloadingIGRACData = (action$, { getState } = {}) =>
                     (taskId) => Rx.Observable.of(finishDownloadingIGRACData(taskId))
                 );
             }
-            return Rx.Observable.of(errorDownloadingIGRACData());
+            return Rx.Observable.of(finishDownloadingIGRACData(), errorDownloadingIGRACData());
         });
 
 // Reducers
@@ -95,13 +95,13 @@ export function igracDownloadReducers(state = {}, action) {
     }
     case 'CLOSE_DOWNLOAD_MODAL': {
         return assign({}, state, {
+            isIGRACDownloading: false,
             data: '',
             enabled: false
         });
     }
     case 'IGRAC_DOWNLOAD_ERROR': {
         return assign({}, state, {
-            isIGRACDownloading: false,
             data: downloadErrorHtml,
             enabled: true
         });
@@ -157,7 +157,6 @@ function IgracDownload({
                     height: 200,
                     paddingLeft: 20,
                     paddingRight: 20}} dangerouslySetInnerHTML={{ __html: data }}/>}
-                {downloading && <Loader size={80} />}
             </div>
         </ResizableModal>
     );
@@ -188,7 +187,7 @@ const IgracDownloadPlugin = connect(
         state => state?.igracDownloadReducers?.enabled,
         mapInfoSelector,
         state => state?.igracDownloadReducers?.data,
-        state => state?.featuregrid?.isIGRACDownloading,
+        state => state?.igracDownloadReducers?.isIGRACDownloading,
         state => state?.igracDownloadReducers?.error
     ], (enabled, mapInfo, data, downloading, error) => ({
         enabled,
