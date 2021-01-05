@@ -101,6 +101,7 @@ var MS2_BASE_PLUGINS = {
 		"Share",
 		"AddGroup",
 		"GeonodeMetadata",
+		"IgracDownload",
 		{
 			"name": "Tutorial",
 			"cfg": {

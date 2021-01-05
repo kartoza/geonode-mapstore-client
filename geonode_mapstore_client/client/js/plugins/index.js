@@ -69,6 +69,10 @@ const plugins = {
     GeonodeMetadataPlugin: () => toLazyPlugin(
         'GeonodeMetadata',
         import(/* webpackChunkName: 'plugins/metadata-plugin' */ '@js/plugins/GeonodeMetadata')
+    ),
+    IgracDownloadPlugin: () => toLazyPlugin(
+        'IgracDownload',
+        import(/* webpackChunkName: 'plugins/metadata-plugin' */ '@js/plugins/IgracDownload')
     )
 };
 

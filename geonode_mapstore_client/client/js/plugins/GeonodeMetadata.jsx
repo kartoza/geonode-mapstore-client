@@ -15,7 +15,11 @@ import Loader from "../../MapStore2/web/client/components/misc/Loader";
 
 // Api
 export const getMetadataBySlugName = () => {
-    const url = `${window.location.href.replace('#', '')}/metadata_detail/article`;
+    let currentUrl = window.location.href;
+    if (currentUrl.includes('/maps/')) {
+        currentUrl = currentUrl.replace('/view', '').replace('/edit', '');
+    }
+    const url = `${currentUrl.replace('#', '')}/metadata_detail/article`;
     return axios.get(url)
         // add pk as alias to id
         // used in save and save as for map
@@ -120,8 +124,8 @@ function GeonodeMetadata({
                 style={{
                     top: 0,
                     left: 0,
-                    minHeight: 600,
-                    maxHeight: 600,
+                    minHeight: 550,
+                    maxHeight: 550,
                     width: '100%',
                     height: '100%',
                     backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -136,7 +140,8 @@ function GeonodeMetadata({
                 </Alert>}
                 {data && <div style={{
                     overflowY: 'scroll',
-                    height: 600,
+                    height: 550,
+                    width: '100%',
                     paddingLeft: 20,
                     paddingRight: 20}} dangerouslySetInnerHTML={{ __html: data }}/>}
                 {loading && <Loader size={80} />}
@@ -200,7 +205,7 @@ export default createPlugin('GeonodeMetadata', {
                 isLoggedIn,
                 mapInfoSelector,
                 (loggedIn, {canEdit, id} = {}) => ({
-                    style: window.location.href.includes('/view/') && id ? {} : { display: 'none'} // the resource is new (no resource) or if present, is editable
+                    style: window.location.href.includes('/view/') || window.location.href.includes('/maps/') && id ? {} : { display: 'none'} // the resource is new (no resource) or if present, is editable
                 })
             )
         }
