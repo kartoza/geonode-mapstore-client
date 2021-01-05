@@ -53,6 +53,7 @@ import SavePlugin from '@js/plugins/Save';
 import SaveAsPlugin from '@js/plugins/SaveAs';
 import SharePlugin from '@js/plugins/Share';
 import GeonodeMetadataPlugin from '@js/plugins/GeonodeMetadata';
+import IgracDownloadPlugin from '@js/plugins/IgracDownload';
 
 import security from '@mapstore/framework/reducers/security';
 import maps from '@mapstore/framework/reducers/maps';
@@ -107,6 +108,7 @@ const pluginsDefinition = {
         GeonodeMetadataPlugin,
         SharePlugin,
         AnnotationsPlugin,
+        IgracDownloadPlugin,
         AddReducersAndEpics: {
             reducers: {
                 security,
