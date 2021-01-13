@@ -21,12 +21,12 @@
     "start": "mapstore-project start geonode",
     "test": "mapstore-project test geonode",
     "test:watch": "mapstore-project test:watch geonode",
-    "update-project": "mapstore-project update geonode"
+    "update-project": "mapstore-project update geonode",
+    "lint": "eslint js --ext .jsx,.js"
   },
   "author": "GeoSolutions",
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "@mapstore/project": "git+https://github.com/geosolutions-it/mapstore-project.git#30ac4deb06bfd71d5078a3171463eaab3990bd91",
     "html-loader": "0.5.1",
     "progress-bar-webpack-plugin": "1.12.1",
     "karma-webpack": "4.0.2",
@@ -36,10 +36,21 @@
     "webpack": "4.41.5",
     "webpack-bundle-size-analyzer": "2.0.2",
     "webpack-cli": "3.3.6",
-    "webpack-dev-server": "3.7.2"
+    "webpack-dev-server": "3.7.2",
+    "@mapstore/project": "1.0.1"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "5.15.1",
+    "bootstrap-v4": "npm:bootstrap@4.5.0",
+    "js-cookie": "2.2.1",
     "mapstore": "file:MapStore2",
+    "react-bootstrap-v1": "npm:react-bootstrap@1.3.0",
     "yargs": "^16.2.0"
+  },
+  "geonode": {
+    "devServer": {
+      "host": "staging.igrac.kartoza.com",
+      "protocol": "https"
+    }
   }
 }

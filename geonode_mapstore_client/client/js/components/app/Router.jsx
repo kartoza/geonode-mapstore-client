@@ -8,7 +8,6 @@
 
 import React, { forwardRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import Debug from '@mapstore/framework/components/development/Debug';
 import { Route } from 'react-router';
 import { ConnectedRouter } from 'connected-react-router';
@@ -16,7 +15,8 @@ import Localized from '@mapstore/framework/components/I18N/Localized';
 import Theme from '@mapstore/framework/components/theme/Theme';
 import { ErrorBoundary } from 'react-error-boundary';
 import history from '@mapstore/framework/stores/History';
-import ErrorFallback from './ErrorFallback';
+import ErrorFallback from '@js/components/app/ErrorFallback';
+import RootStyle from '@js/components/theme/RootStyle';
 
 export const withRoutes = (routes) => (Component) => {
     const WithRoutes = forwardRef((props, ref) => {
@@ -25,6 +25,29 @@ export const withRoutes = (routes) => (Component) => {
     return WithRoutes;
 };
 
+function ThemeLoader({
+    themeCfg,
+    loaderComponent,
+    children
+}) {
+    const [loading, setLoading] = useState(true);
+    const Loader = loaderComponent;
+    // explict remove load theme
+    if (themeCfg === null) {
+        return children;
+    }
+    return (
+        <Theme
+            {...themeCfg}
+            onLoad={() => setLoading(false)}
+        >
+            {loading
+                ? <Loader />
+                : children}
+        </Theme>
+    );
+}
+
 const Router = forwardRef(({
     plugins,
     locale,
@@ -32,18 +55,19 @@ const Router = forwardRef(({
     className,
     pluginsConfig,
     themeCfg,
-    loaderComponent
+    loaderComponent,
+    geoNodeConfiguration
 }, ref) => {
-    const [loading, setLoading] = useState(true);
-    const Loader = loaderComponent;
     return (
-        <Theme
-            { ...themeCfg }
-            onLoad={() => setLoading(false)}
-        >
-            {loading
-                ? <Loader />
-                : <div
+        <>
+            <RootStyle
+                theme={geoNodeConfiguration.theme}
+            />
+            <ThemeLoader
+                themeCfg={themeCfg}
+                loaderComponent={loaderComponent}
+            >
+                <div
                     className={className}
                     ref={ref}
                 >
@@ -60,18 +84,27 @@ const Router = forwardRef(({
                                 }}>
                                 {routes.map((route, i) => {
                                     const routeConfig = route.pageConfig || {};
-                                    const Component = connect(() => ({
-                                        plugins,
-                                        pluginsConfig,
-                                        loaderComponent,
-                                        ...routeConfig
-                                    }))(route.component);
+                                    const Component = route.component;
                                     return (
                                         <Route
                                             key={(route.name || route.path) + i}
                                             exact
                                             path={route.path}
-                                            component={Component}
+                                            component={(props) =>
+                                                <Component
+                                                    {...props}
+                                                    plugins={plugins}
+                                                    pluginsConfig={pluginsConfig}
+                                                    loaderComponent={loaderComponent}
+
+                                                    theme={geoNodeConfiguration.theme}
+                                                    navbar={geoNodeConfiguration.navbar}
+                                                    menu={geoNodeConfiguration.menu}
+                                                    footer={geoNodeConfiguration.footer}
+                                                    filters={geoNodeConfiguration.filters}
+
+                                                    {...routeConfig}
+                                                />}
                                         />
                                     );
                                 })}
@@ -79,8 +112,9 @@ const Router = forwardRef(({
                         </ConnectedRouter>
                     </Localized>
                     <Debug />
-                </div>}
-        </Theme>
+                </div>
+            </ThemeLoader>
+        </>
     );
 });
 
@@ -91,7 +125,8 @@ Router.propTypes = {
     pluginsConfig: PropTypes.oneOfType([
         PropTypes.array,
         PropTypes.object
-    ])
+    ]),
+    geoNodeConfiguration: PropTypes.object
 };
 
 Router.defaultProps = {
@@ -100,7 +135,8 @@ Router.defaultProps = {
         messages: {},
         current: 'en-US'
     },
-    className: 'app-router'
+    className: 'app-router',
+    geoNodeConfiguration: {}
 };
 
 export default Router;

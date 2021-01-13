@@ -101,7 +101,7 @@ const _initMapstore2Api = function(config, resolve) {
         setSupportedLocales(locale);
     };
     // Note: maptype is provided by the page template
-    import(`./components/${maptype}/ArcGisMapServer`) // eslint-disable-line
+    import('./components/' + maptype + '/ArcGisMapServer') // eslint-disable-line
         .then(() => {
             if (config === 'preview') {
                 import('./previewPlugins')

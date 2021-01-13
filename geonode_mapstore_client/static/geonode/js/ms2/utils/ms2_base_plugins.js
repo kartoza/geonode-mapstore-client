@@ -178,7 +178,7 @@ var MS2_BASE_PLUGINS = {
 				},
 				"compact": true
 			}
-		}, "Playback"
-	],
-	"manager": ["Header", "Redirect", "Manager", "Home", "UserManager", "GroupManager", "Footer"],
+		}, "Playback",
+		{ "name": "LayerDownload" }
+	]
 }

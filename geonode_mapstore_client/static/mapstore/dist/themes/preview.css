@@ -20308,7 +20308,20 @@ Ported to CodeMirror by Peter Kroon
   width: 1080px;
   left: calc((100% - 1080px) / 2);
 }
+.msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fit-content {
+  max-height: 70%;
+  height: unset;
+}
+.msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fit-content.ms-xs {
+  max-height: 30%;
+  height: unset;
+}
+.msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fit-content.ms-sm {
+  max-height: 40%;
+  height: unset;
+}
 .msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fullscreen {
+  max-height: none;
   width: 98%;
   height: 98%;
   left: 1%;
@@ -20325,22 +20338,11 @@ Ported to CodeMirror by Peter Kroon
   left: 1%;
   transform: translate(0, 0) !important;
 }
-.msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fit-content {
-  max-height: 70%;
-  height: unset;
-}
-.msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fit-content.ms-xs {
-  max-height: 30%;
-  height: unset;
-}
-.msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content.ms-fit-content.ms-sm {
-  max-height: 40%;
-  height: unset;
-}
 .msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content > .modal-header {
   height: 52px;
   padding: 17.5px;
   border: none;
+  flex-shrink: 0;
 }
 .msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content > .modal-header .modal-title {
   display: flex;
@@ -20370,6 +20372,7 @@ Ported to CodeMirror by Peter Kroon
   display: flex;
   height: inherit;
   flex-direction: column;
+  min-height: 0;
 }
 .msgapi .fill:-webkit-full-screen .ms-resizable-modal > .modal-content > .modal-body > div {
   overflow-y: auto;
@@ -20538,7 +20541,7 @@ Ported to CodeMirror by Peter Kroon
 }
 .msgapi .fill:-webkit-full-screen .ms-details-draftjs-editor .ms-text-editor-main .rdw-image-center {
   display: flex;
-  justify-content: left;
+  justify-content: center;
   float: none;
 }
 .msgapi .fill:-webkit-full-screen .ms-details-draftjs-editor .ms-text-editor-main .rdw-image-alignment {
@@ -32932,7 +32935,20 @@ Ported to CodeMirror by Peter Kroon
   width: 1080px;
   left: calc((100% - 1080px) / 2);
 }
+.msgapi .fill .ms-resizable-modal > .modal-content.ms-fit-content {
+  max-height: 70%;
+  height: unset;
+}
+.msgapi .fill .ms-resizable-modal > .modal-content.ms-fit-content.ms-xs {
+  max-height: 30%;
+  height: unset;
+}
+.msgapi .fill .ms-resizable-modal > .modal-content.ms-fit-content.ms-sm {
+  max-height: 40%;
+  height: unset;
+}
 .msgapi .fill .ms-resizable-modal > .modal-content.ms-fullscreen {
+  max-height: none;
   width: 98%;
   height: 98%;
   left: 1%;
@@ -32949,22 +32965,11 @@ Ported to CodeMirror by Peter Kroon
   left: 1%;
   transform: translate(0, 0) !important;
 }
-.msgapi .fill .ms-resizable-modal > .modal-content.ms-fit-content {
-  max-height: 70%;
-  height: unset;
-}
-.msgapi .fill .ms-resizable-modal > .modal-content.ms-fit-content.ms-xs {
-  max-height: 30%;
-  height: unset;
-}
-.msgapi .fill .ms-resizable-modal > .modal-content.ms-fit-content.ms-sm {
-  max-height: 40%;
-  height: unset;
-}
 .msgapi .fill .ms-resizable-modal > .modal-content > .modal-header {
   height: 36px;
   padding: 9.5px;
   border: none;
+  flex-shrink: 0;
 }
 .msgapi .fill .ms-resizable-modal > .modal-content > .modal-header .modal-title {
   display: flex;
@@ -32994,6 +32999,7 @@ Ported to CodeMirror by Peter Kroon
   display: flex;
   height: inherit;
   flex-direction: column;
+  min-height: 0;
 }
 .msgapi .fill .ms-resizable-modal > .modal-content > .modal-body > div {
   overflow-y: auto;
@@ -33162,7 +33168,7 @@ Ported to CodeMirror by Peter Kroon
 }
 .msgapi .fill .ms-details-draftjs-editor .ms-text-editor-main .rdw-image-center {
   display: flex;
-  justify-content: left;
+  justify-content: center;
   float: none;
 }
 .msgapi .fill .ms-details-draftjs-editor .ms-text-editor-main .rdw-image-alignment {
