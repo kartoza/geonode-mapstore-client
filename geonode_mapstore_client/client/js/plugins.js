@@ -49,6 +49,7 @@ import SwipePlugin from '@mapstore/framework/plugins/Swipe';
 import LocatePlugin from '@mapstore/framework/plugins/Locate';
 import AnnotationsPlugin from '@mapstore/framework/plugins/Annotations';
 import LayerDownloadPlugin from '@mapstore/framework/plugins/LayerDownload';
+import CRSSelector from '@mapstore/framework/plugins/CRSSelector';
 
 import SavePlugin from '@js/plugins/Save';
 import SaveAsPlugin from '@js/plugins/SaveAs';
@@ -111,6 +112,7 @@ const pluginsDefinition = {
         AnnotationsPlugin,
         IgracDownloadPlugin,
         LayerDownloadPlugin,
+        CRSSelector,
         AddReducersAndEpics: {
             reducers: {
                 security,
