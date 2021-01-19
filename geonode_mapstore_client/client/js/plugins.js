@@ -48,6 +48,7 @@ import SearchServicesConfigPlugin from '@mapstore/framework/plugins/SearchServic
 import SwipePlugin from '@mapstore/framework/plugins/Swipe';
 import LocatePlugin from '@mapstore/framework/plugins/Locate';
 import AnnotationsPlugin from '@mapstore/framework/plugins/Annotations';
+import LayerDownloadPlugin from '@mapstore/framework/plugins/LayerDownload';
 
 import SavePlugin from '@js/plugins/Save';
 import SaveAsPlugin from '@js/plugins/SaveAs';
@@ -109,6 +110,7 @@ const pluginsDefinition = {
         SharePlugin,
         AnnotationsPlugin,
         IgracDownloadPlugin,
+        LayerDownloadPlugin,
         AddReducersAndEpics: {
             reducers: {
                 security,

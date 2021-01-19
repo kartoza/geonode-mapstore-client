@@ -103,6 +103,20 @@ var MS2_BASE_PLUGINS = {
 		"GeonodeMetadata",
 		"IgracDownload",
 		{
+			"name": "CRSSelector",
+			"cfg": {
+				"additionalCRS": {
+					"ESRI:54030": {
+						label: "GK4"
+					}
+				},
+				"filterAllowedCRS": [
+					"EPSG:4326",
+					"EPSG:3857"
+				],
+			}
+		},
+		{
 			"name": "Tutorial",
 			"cfg": {
 				"presetList": {
@@ -178,7 +192,7 @@ var MS2_BASE_PLUGINS = {
 				},
 				"compact": true
 			}
-		}, "Playback"
-	],
-	"manager": ["Header", "Redirect", "Manager", "Home", "UserManager", "GroupManager", "Footer"],
+		}, "Playback",
+		{ "name": "LayerDownload" }
+	]
 }

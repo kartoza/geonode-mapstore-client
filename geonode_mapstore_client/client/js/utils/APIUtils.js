@@ -23,7 +23,7 @@ let requestOptions = {};
 * @return {string} correct url for localhost
 */
 export const parseDevHostname = (requestUrl) => {
-    if (__DEVTOOLS__ && requestUrl.indexOf('localhost:8000') !== -1) {
+    if (__DEVTOOLS__ && requestUrl.indexOf('localhost') !== -1) {
         const parsedUrl = url.parse(requestUrl);
         return url.format({
             ...parsedUrl,

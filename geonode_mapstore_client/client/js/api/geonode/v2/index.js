@@ -12,26 +12,35 @@ import {
     setRequestOptions,
     getRequestOptions
 } from '@js/utils/APIUtils';
+import mergeWith from 'lodash/mergeWith';
 import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
 import castArray from 'lodash/castArray';
+import { getUserInfo } from '@js/api/geonode/v1';
+import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
+import { setFilterById } from '@js/utils/GNSearchUtils';
 
 let endpoints = {
     // default values
-    'base_resources': '/api/v2/base_resources',
+    'resources': '/api/v2/resources',
+    'documents': '/api/v2/documents',
+    'layers': '/api/v2/layers',
     'maps': '/api/v2/maps',
     'geoapps': '/api/v2/geoapps',
     'geostories': '/api/v2/geostories',
-    'documents': '/api/v2/documents'
+    'users': '/api/v2/users',
+    'resource_types': '/api/v2/resources/resource_types'
 };
 
-const RESOURCES = 'base_resources';
+const RESOURCES = 'resources';
+const DOCUMENTS = 'documents';
+const LAYERS = 'layers';
+const MAPS = 'maps';
 const GEOAPPS = 'geoapps';
 const GEOSTORIES = 'geostories';
+const USERS = 'users';
+const RESOURCE_TYPES = 'resource_types';
 // const GROUPS = 'groups';
-// const LAYERS = 'layers';
-const MAPS = 'maps';
-const DOCUMENTS = 'documents';
-// const USERS = 'users';
 
 const requestOptions = (name, requestFunc) => {
     const options = getRequestOptions(name);
@@ -48,48 +57,6 @@ const requestOptions = (name, requestFunc) => {
             });
     }
     return requestFunc(options);
-};
-
-export const setEndpoints = (data) => {
-    endpoints = data;
-};
-
-export const getEndpoints = () => {
-    return axios.get('/api/v2/')
-        .then(({ data }) => {
-            setEndpoints(data);
-            return data;
-        });
-};
-
-export const getResources = ({
-    q,
-    pageSize = 20,
-    page = 1,
-    sort,
-    ...params
-}) => {
-    return requestOptions(RESOURCES, () => axios.get(parseDevHostname(endpoints[RESOURCES]), {
-        params: {
-            ...params,
-            ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
-            ...(q && {
-                search: q,
-                search_fields: ['title', 'abstract']
-            }),
-            page,
-            page_size: pageSize
-        }
-    })
-        .then(({ data }) => {
-            return {
-                isNextPageAvailable: !!data.links.next,
-                resources: (data.resources || [])
-                    .map((resource) => {
-                        return resource;
-                    })
-            };
-        }));
 };
 
 // some fields such as search_fields does not support the array notation `key[]=value1&key[]=value2`
@@ -111,6 +78,78 @@ function addQueryString(requestUrl, params) {
         }, '');
     return `${requestUrl}${queryString}`;
 }
+
+export const setEndpoints = (data) => {
+    endpoints = { ...endpoints, ...data };
+};
+
+export const getEndpoints = () => {
+    return axios.get('/api/v2/')
+        .then(({ data }) => {
+            setEndpoints(data);
+            return data;
+        });
+};
+
+function mergeCustomQuery(params, customQuery) {
+    if (customQuery) {
+        return mergeWith(
+            { ...params },
+            { ...customQuery },
+            (objValue, srcValue) => {
+                if (isArray(objValue) && isArray(srcValue)) {
+                    return [...objValue, ...srcValue];
+                }
+                if (isString(objValue) && isArray(srcValue)) {
+                    return [objValue, ...srcValue];
+                }
+                if (isArray(objValue) && isString(srcValue)) {
+                    return [...objValue, srcValue];
+                }
+                if (isString(objValue) && isString(srcValue)) {
+                    return [ objValue, srcValue ];
+                }
+                return undefined; // eslint-disable-line consistent-return
+            }
+        );
+    }
+    return params;
+}
+
+export const getResources = ({
+    q,
+    pageSize = 20,
+    page = 1,
+    sort,
+    f,
+    ...params
+}) => {
+    const { query: customQuery } = (getConfigProp('menuFilters') || [])
+        .find(({ id }) => f === id) || {};
+
+    return requestOptions(RESOURCES, () => axios.get(parseDevHostname(
+        addQueryString(endpoints[RESOURCES], q && {
+            search: q,
+            search_fields: ['title', 'abstract']
+        })
+    ), {
+        params: {
+            ...mergeCustomQuery(params, customQuery),
+            ...(sort && { sort: isArray(sort) ? sort : [ sort ]}),
+            page,
+            page_size: pageSize
+        }
+    })
+        .then(({ data }) => {
+            return {
+                isNextPageAvailable: !!data.links.next,
+                resources: (data.resources || [])
+                    .map((resource) => {
+                        return resource;
+                    })
+            };
+        }));
+};
 
 export const getMaps = ({
     q,
@@ -216,6 +255,93 @@ export const updateGeoStory = (pk, body) => {
         .then(({ data }) => data.geostory);
 };
 
+export const getUserByPk = (pk) => {
+    return axios.get(parseDevHostname(`${endpoints[USERS]}/${pk}`))
+        .then(({ data }) => data.user);
+};
+
+export const getAccountInfo = () => {
+    return getUserInfo()
+        .then((info) => {
+            return getUserByPk(info.sub)
+                .then((user) => ({
+                    ...user,
+                    info,
+                    // TODO: remove when the href is provided by the server
+                    hrefProfile: `/people/profile/${user.username}/`
+                }))
+                .catch(() => ({ info }));
+        })
+        .catch(() => null);
+};
+
+export const getConfiguration = (configUrl) => {
+    return axios.get(configUrl)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+
+let availableResourceTypes;
+export const getResourceTypes = ({}, filterKey = 'resource-types') => {
+    if (availableResourceTypes) {
+        return new Promise(resolve => resolve(availableResourceTypes));
+    }
+    return axios.get(parseDevHostname(endpoints[RESOURCE_TYPES]))
+        .then(({ data }) => {
+            availableResourceTypes = (data?.resource_types || [])
+                .map((value) => {
+                    const selectOption = {
+                        value: value,
+                        label: value
+                    };
+                    const resourceType = {
+                        value,
+                        selectOption
+                    };
+                    setFilterById(filterKey + value, resourceType);
+                    return resourceType;
+                });
+            return [...availableResourceTypes];
+        });
+};
+
+export const getResourcesTotalCount = () => {
+    const params = {
+        page_size: 1
+    };
+    const types = [
+        DOCUMENTS,
+        LAYERS,
+        MAPS,
+        GEOSTORIES,
+        GEOAPPS
+    ];
+    return axios.all(
+        types.map((type) =>
+            axios.get(parseDevHostname(endpoints[type]), { params })
+                .then(({ data }) => data.total)
+                .catch(() => null)
+        )
+    )
+        .then(([
+            documentsTotalCount,
+            layersTotalCount,
+            mapsTotalCount,
+            geostoriesTotalCount,
+            geoappsTotalCount
+        ]) => {
+            return {
+                documentsTotalCount,
+                layersTotalCount,
+                mapsTotalCount,
+                geostoriesTotalCount,
+                geoappsTotalCount
+            };
+        });
+};
+
 export default {
     getEndpoints,
     getResources,
@@ -224,5 +350,10 @@ export default {
     createGeoStory,
     updateGeoStory,
     getMaps,
-    getDocumentsByDocType
+    getDocumentsByDocType,
+    getUserByPk,
+    getAccountInfo,
+    getConfiguration,
+    getResourceTypes,
+    getResourcesTotalCount
 };
