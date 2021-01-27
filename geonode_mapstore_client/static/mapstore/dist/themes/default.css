@@ -18045,7 +18045,8 @@ Ported to CodeMirror by Peter Kroon
   height: 104px;
 }
 .msgapi .mapstore-toc-head.toc-head-sections-3 {
-  height: 156px;
+  height: 100%;
+  margin-bottom: 10px;
 }
 .msgapi .mapstore-toc-head .toc-inline-loader {
   margin: 8px;
@@ -18083,7 +18084,7 @@ Ported to CodeMirror by Peter Kroon
   font-size: 16px;
 }
 .msgapi .mapstore-toc-head .col-xs-12 {
-  height: 52px;
+  height: 100%;
   border-top: 1px solid #dddddd;
 }
 .msgapi .mapstore-toc-head .col-xs-12 .btn-sm {

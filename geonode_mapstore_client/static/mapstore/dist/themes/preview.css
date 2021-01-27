@@ -18066,7 +18066,8 @@ Ported to CodeMirror by Peter Kroon
   height: 104px;
 }
 .msgapi .fill:-webkit-full-screen .mapstore-toc-head.toc-head-sections-3 {
-  height: 156px;
+  height: 100%;
+  margin-bottom: 10px;
 }
 .msgapi .fill:-webkit-full-screen .mapstore-toc-head .toc-inline-loader {
   margin: 8px;
@@ -18104,7 +18105,7 @@ Ported to CodeMirror by Peter Kroon
   font-size: 16px;
 }
 .msgapi .fill:-webkit-full-screen .mapstore-toc-head .col-xs-12 {
-  height: 52px;
+  height: 100%;
   border-top: 1px solid #dddddd;
 }
 .msgapi .fill:-webkit-full-screen .mapstore-toc-head .col-xs-12 .btn-sm {
@@ -30693,7 +30694,8 @@ Ported to CodeMirror by Peter Kroon
   height: 72px;
 }
 .msgapi .fill .mapstore-toc-head.toc-head-sections-3 {
-  height: 108px;
+  height: 100%;
+  margin-bottom: 10px;
 }
 .msgapi .fill .mapstore-toc-head .toc-inline-loader {
   margin: 8px;
@@ -30731,7 +30733,7 @@ Ported to CodeMirror by Peter Kroon
   font-size: 16px;
 }
 .msgapi .fill .mapstore-toc-head .col-xs-12 {
-  height: 36px;
+  height: 100%;
   border-top: 1px solid #dddddd;
 }
 .msgapi .fill .mapstore-toc-head .col-xs-12 .btn-sm {
