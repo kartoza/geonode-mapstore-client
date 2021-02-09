@@ -134,7 +134,7 @@ var MS2_MAP_PLUGINS = {
 				"showLabels": true,
 				"showToggle": true,
 				"filterAllowedCRS": ["EPSG:4326", "EPSG:3857"],
-				"additionalCRS": {"ESRI:54030": {"label":"GK4"}}
+				"additionalCRS": {"EPSG:8857": {"label":"WGS 84"}}
 			}
 		},
 		{

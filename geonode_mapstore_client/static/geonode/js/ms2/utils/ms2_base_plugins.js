@@ -106,8 +106,8 @@ var MS2_BASE_PLUGINS = {
 			"name": "CRSSelector",
 			"cfg": {
 				"additionalCRS": {
-					"ESRI:54030": {
-						label: "GK4"
+					"EPSG:8857": {
+						label: "WGS 84"
 					}
 				},
 				"filterAllowedCRS": [
