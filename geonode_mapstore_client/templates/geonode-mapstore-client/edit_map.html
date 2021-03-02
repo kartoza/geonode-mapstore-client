@@ -39,10 +39,11 @@
             const stylerCfg = {
                 "name": "StyleEditor",
                     "cfg": {
-                            "styleService": {
+                        "styleService": {
                             "baseUrl": "{{ SITEURL }}gs/",
                             "formats": ['css','sld'],
-                            "availableUrls": [geoserver, "{{ SITEURL }}gs/"]
+                            "availableUrls": [geoserver, "{{ SITEURL }}gs/"],
+                            "fonts": ["Arial", "Courier New", "Monospaced", "SansSerif", "Serif", "Times New Roman"]
                         },
                         "editingAllowedRoles": null
                     }
@@ -93,6 +94,15 @@
                     mapId: ms2_config.map && ms2_config.map.info && ms2_config.map.info.id
                 });
             }
+            {% block additional_ms_actions %}
+            MapStore2.triggerAction({
+                type: "GEONODE:SET_RESOURCE_PERMISSIONS",
+                permissions: {
+                    canEdit: canEdit,
+                    canView: canView
+                }
+            });
+            {% endblock %}
         });
     });
 </script>

@@ -72,4 +72,39 @@
     }
 }
 
+// hide di edit, remove and add buttons
+// because these functionalities are not supported on the geonode catalog
+.background-preview-button > .btn-group,
+.background-tool-buttons {
+    display: none;
+}
 
+// share input links
+.input-link {
+    padding: 8px;
+    .input-link-head {
+        display: flex;
+        align-items: center;
+        h4 {
+            flex: 1;
+        }
+    }
+}
+
+.gn-share-modal .modal-footer {
+    display: none;
+}
+
+// the style of geonode add a margin on label
+// so the form of charts widgets is misaligned
+// we remove the margin to keep label and input inline
+.ms-wizard {
+    label {
+        margin: 0;
+    }
+}
+
+// temporary remove the 'Open advanced map editor' in the inline editor of geostory
+.ms-geostory-map-editor-toolbar .square-button-md:last-child {
+    display: none;
+}

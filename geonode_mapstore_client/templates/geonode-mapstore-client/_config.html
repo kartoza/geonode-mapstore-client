@@ -1,16 +1,34 @@
+{% load client_lib_tags %}
 <script>
   const defaultConfig = {
     // proxy: "{{ SITEURL|slice:":-1" }}{{ PROXY_URL }}",
-    proxy: "{{ PROXY_URL|default:"/proxy/?url=" }}",
+    proxy: {
+      "url": "{{ PROXY_URL|default:"/proxy/?url=" }}",
+      "useCORS": [
+        // "http://localhost:8080/geoserver/rest/sldservice"
+      ]
+    },
     printingEnabled: true,
     localConfig: {
-      mapLayout: {left: {sm: 300, md: 500, lg: 600}, right: {md: "41%"}, bottom: {sm: 0}},
+      mapLayout: {
+        preview: {left: {sm: 300, md: 500, lg: 600}, right: {md: "41%"}, bottom: {sm: 0}},
+        viewer: {left: {sm: 300, md: 500, lg: 600}, right: {md: 658}, bottom: {sm: 30}}
+      },
       geonode_url: "{{ SITEURL }}",
       genode_rest_api: "{{ SITEURL }}mapstore/rest/",
       printUrl: "{{ GEOSERVER_PUBLIC_LOCATION }}pdf/info.json",
       translations: '',
+      bingApiKey: "{% bing_api_key %}",
       useAuthenticationRules: true,
       loadAfterTheme: true,
+      monitorState: [
+          {"name": "router", "path": "router.location.pathname"},
+          {"name": "browser", "path": "browser"},
+          {"name": "geostorymode", "path": "geostory.mode"},
+          {"name": "featuregridmode", "path": "featuregrid.mode"},
+          {"name": "userrole", "path": "security.user.role"},
+          {"name": "printEnabled", "path": "print.capabilities"}
+      ],
       projectionDefs: [{
           "code": "EPSG:3003",
           "def": "+proj=tmerc +lat_0=0 +lon_0=9 +k=0.9996 +x_0=1500000 +y_0=0 +ellps=intl+towgs84=-104.1,-49.1,-9.9,0.971,-2.917,0.714,-11.68 +units=m +no_defs",
@@ -48,6 +66,9 @@
         "urlPattern": ".*gs.*",
         "authkeyParamName": "access_token",
         "method": "authkey"
+      }, {
+        "urlPattern": ".*api/v2.*",
+        "method": "bearer"
       }]
     }
   }

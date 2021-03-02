@@ -1,7 +1,10 @@
 {% load i18n %}
 {% load static %}
 {% get_current_language as LANGUAGE_CODE %}
+
 {% with MAP_TYPE="openlayers" %}
+
+{% block map_libary %}
 {% if MAP_TYPE == "openlayers" %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.4/ol.css" />
 
@@ -9,7 +12,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/leaflet.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.css" />
 {% endif %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 {% if MAP_TYPE == "openlayers" %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.4/ol.js"></script>
@@ -18,6 +20,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/esri-leaflet/2.2.3/esri-leaflet.js"></script>
 {% endif %}
+{% endblock %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <script id="ms2-api" src="{% static 'mapstore/dist/ms2-geonode-api.js' %}"></script>
 
@@ -105,15 +110,20 @@
 </style>
 {% block style %}{% endblock %}
 
+{% block gn_user_info %}
 {% autoescape off %}
 <script type="text/javascript">
     const maptype = "{{ MAP_TYPE }}";
     localStorage.setItem("showPopoverSync", false);
     const accessToken = "{{ ACCESS_TOKEN }}";
     const user = {{ USER|default:"false" }};
+    const permsList = {{ perms_list|default:'[]' }};
+    const canEdit = permsList.indexOf('change_resourcebase') !== -1;
+    const canView = permsList.indexOf('view_resourcebase') !== -1;
 </script>
-
 {% endautoescape %}
+{% endblock %}
+
 {% endwith %}
 {% include './_config.html' %}
 {% block app_config %}{% endblock %}

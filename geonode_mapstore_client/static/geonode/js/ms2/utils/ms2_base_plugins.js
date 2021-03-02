@@ -3,7 +3,7 @@ var MS2_BASE_PLUGINS = {
 	"desktop": [{
 			"name": "Map",
 			"cfg": {
-				"tools": ["locate", "measurement", "draw"],
+				"tools": ["measurement", "draw", "box"],
 				"mapOptions": {
 					"openlayers": {
 						"attribution": {
@@ -95,6 +95,7 @@ var MS2_BASE_PLUGINS = {
 		{
 			"name": "Print",
 			"cfg": {
+				"disablePluginIf": "{state('mapType') === 'cesium'}",
 				"useFixedScales": true,
 				"mapWidth": 256
 			}
@@ -132,6 +133,7 @@ var MS2_BASE_PLUGINS = {
 				},
 				"compact": true
 			}
-		}, "Playback"
+		}, "Playback",
+		{ "name": "LayerDownload" }
 	]
 }

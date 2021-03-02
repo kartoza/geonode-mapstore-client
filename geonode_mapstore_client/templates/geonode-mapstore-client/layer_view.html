@@ -35,17 +35,18 @@
         const stylerCfg = {
                 "name": "StyleEditor",
                     "cfg": {
-                            "styleService": {
-                                "baseUrl": "{{ SITEURL }}gs/",
-                                "formats": ['css','sld'],
-                                "availableUrls": [geoserver, "{{ SITEURL }}gs/"]
+                        "styleService": {
+                            "baseUrl": "{{ SITEURL }}gs/",
+                            "formats": ['css','sld'],
+                            "availableUrls": [geoserver, "{{ SITEURL }}gs/"],
+                            "fonts": ["Arial", "Courier New", "Monospaced", "SansSerif", "Serif", "Times New Roman"]
                         },
                         "editingAllowedRoles": null,
                         "enableSetDefaultStyle": true
                     }
                 }
         MS2_PLUGINS.desktop.push(stylerCfg);
-        MS2_PLUGINS = window.excludeMS2Plugins(MS2_PLUGINS, ["Save", "SaveAs", "Widgets", "WidgetsBuilder"]);
+        MS2_PLUGINS = window.excludeMS2Plugins(MS2_PLUGINS, ["Save", "SaveAs", "Widgets", "WidgetsBuilder", "Swipe", "Locate"]);
         MS2_PLUGINS["mobile"] = MS2_PLUGINS.desktop;
         let localConfig = defaultConfig.localConfig;
         initMapstore2Api('edit', function(MapStore2, options) {

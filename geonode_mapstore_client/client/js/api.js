@@ -5,71 +5,52 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-require('react-widgets/dist/css/react-widgets.css');
-const assign = require("object-assign");
-const ConfigUtils = require('../MapStore2/web/client/utils/ConfigUtils');
-const LocaleUtils = require('../MapStore2/web/client/utils/LocaleUtils');
-const LayersUtils = require('../MapStore2/web/client/utils/LayersUtils');
-LayersUtils.setRegGeoserverRule(/\/[\w- ]*geoserver[\w- ]*\/|\/[\w- ]*gs[\w- ]*\//);
-const {keyBy, values} = require('lodash');
-/**
- * Add custom (overriding) translations with:
- *
- * ConfigUtils.setConfigProp('translationsPath', ['./MapStore2/web/client/translations', './translations']);
- */
-ConfigUtils.setConfigProp('translationsPath', ['../MapStore2/web/client', './'] );
-ConfigUtils.setConfigProp('themePrefix', 'msgapi');
-const Persistence = require("../MapStore2/web/client/api/persistence");
-Persistence.addApi("geonode", require("./api/geonode"));
-Persistence.setApi("geonode");
 
-/**
- * Use a custom plugins configuration file with:
- *
- * ConfigUtils.setLocalConfigurationFile('localConfig.json');
- */
-// ConfigUtils.setLocalConfigurationFile('MapStore2/web/client/localConfig.json');
+import assign from "object-assign";
+import keyBy from 'lodash/keyBy';
+import values from 'lodash/values';
+import { setConfigProp } from '@mapstore/framework/utils/ConfigUtils';
+import { getSupportedLocales, setSupportedLocales } from '@mapstore/framework/utils/LocaleUtils';
+import { setRegGeoserverRule } from '@mapstore/framework/utils/LayersUtils';
+import { addApi, setApi } from "@mapstore/framework/api/persistence";
+import geoNodeAPI from "@js/api/geonode";
+import MapStore2JSAPI from '@mapstore/framework/jsapi/MapStore2';
+import 'react-widgets/dist/css/react-widgets.css';
+import 'react-select/dist/react-select.css';
 
-/**
- * Use a custom application configuration file with:
- *
- * const appConfig = require('./appConfig');
- *
- * Or override the application configuration file with (e.g. only one page with a mapviewer):
- *
- * const appConfig = assign({}, require('../MapStore2/web/client/product/appConfig'), {
- *     pages: [{
- *         name: "mapviewer",
- *         path: "/",
- *         component: require('../MapStore2/web/client/product/pages/MapViewer')
- *     }]
- * });
- */
-// const appConfig = require('../MapStore2/web/client/product/appConfig');
+setRegGeoserverRule(/\/[\w- ]*geoserver[\w- ]*\/|\/[\w- ]*gs[\w- ]*\//);
 
+setConfigProp('themePrefix', 'msgapi');
+
+addApi("geonode", geoNodeAPI);
+setApi("geonode");
 
 const getScriptPath = function() {
     const scriptEl = document.getElementById('ms2-api');
-    return scriptEl && scriptEl.src && scriptEl.src.substring(0, scriptEl.src.lastIndexOf('/')) || 'https://dev.mapstore2.geo-solutions.it/mapstore/dist';
+    return scriptEl && scriptEl.src && scriptEl.src.substring(0, scriptEl.src.lastIndexOf('/')) || '';
 };
 
+const translationsPath = __GEONODE_PROJECT_CONFIG__.translationsPath || getScriptPath() + '/../ms-translations';
+
 // Set X-CSRFToken in axios;
-const axios = require('../MapStore2/web/client/libs/ajax');
+const axios = require('@mapstore/framework/libs/ajax');
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-const createMapStore2Api = function(plugins) {
-    const MapStore2 = require('../MapStore2/web/client/jsapi/MapStore2').withPlugins(plugins, {
+const createMapStore2Api = function(plugins, type) {
+    const MapStore2 = MapStore2JSAPI.withPlugins(plugins, {
         theme: {
             path: getScriptPath() + '/themes'
         },
         noLocalConfig: true,
-        translations: getScriptPath() + '/../MapStore2/web/client'
+        translations: translationsPath
     });
     // window.MapStore2 = MapStore2;
     return assign({}, MapStore2, { create: function(container, opts) {
         if (opts && opts.localConfig) {
-            Object.keys(opts.localConfig).map(function(c) {ConfigUtils.setConfigProp(c, opts.localConfig[c]); });
+            Object.keys(opts.localConfig).map(function(c) {setConfigProp(c, opts.localConfig[c]); });
+            // select mapLayout based on type
+            setConfigProp('mapLayout', opts.localConfig?.mapLayout?.[type]);
         }
         return MapStore2.create(container, opts);
     }
@@ -80,23 +61,29 @@ window.initMapstore2Api = function(config, resolve) {
 
     // force supported locales to the selected one
     const setLocale = (localeKey) => {
-        const supportedLocales = LocaleUtils.getSupportedLocales();
+        const supportedLocales = getSupportedLocales();
         const locale = supportedLocales[localeKey]
             ? { [localeKey]: supportedLocales[localeKey] }
             : { en: supportedLocales.en };
-        LocaleUtils.setSupportedLocales(locale);
+        setSupportedLocales(locale);
     };
-
-    require(`./components/${maptype}/ArcGisMapServer`);// eslint-disable-line
-    if (config === 'preview') {
-        require.ensure('./previewPlugins', function() {
-            resolve(createMapStore2Api(require('./previewPlugins')), { setLocale });
+    // Note: maptype is provided by the page template
+    import('./components/' + maptype + '/ArcGisMapServer') // eslint-disable-line
+        .then(() => {
+            if (config === 'preview') {
+                import('./previewPlugins')
+                    .then((mod) => {
+                        const previewPlugins = mod.default;
+                        resolve(createMapStore2Api(previewPlugins, 'preview'), { setLocale });
+                    });
+            } else {
+                import('./plugins')
+                    .then((mod) => {
+                        const plugins = mod.default;
+                        resolve(createMapStore2Api(plugins, 'viewer'), { setLocale });
+                    });
+            }
         });
-    } else {
-        require.ensure('./plugins', function() {
-            resolve(createMapStore2Api(require('./plugins')), { setLocale });
-        });
-    }
 };
 const createConfigObj = (cfg = []) => keyBy(cfg, (o) => o.name || o);
 
