@@ -114,6 +114,7 @@ var MS2_BASE_PLUGINS = {
 					"EPSG:4326",
 					"EPSG:3857"
 				],
+				"additionalCRS": {}
 			}
 		},
 		{

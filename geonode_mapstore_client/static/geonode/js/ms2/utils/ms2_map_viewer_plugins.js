@@ -133,7 +133,8 @@ var MS2_MAP_PLUGINS = {
 				"editCRS": true,
 				"showLabels": true,
 				"showToggle": true,
-				"filterAllowedCRS": ["EPSG:4326", "EPSG:3857"]
+				"filterAllowedCRS": ["EPSG:4326", "EPSG:3857"],
+				"additionalCRS": {}
 			}
 		},
 		{
