@@ -19,6 +19,7 @@ import {
 } from "../../MapStore2/web/client/selectors/featuregrid";
 import featuregrid from "../../MapStore2/web/client/reducers/featuregrid";
 import axios from "../../MapStore2/web/client/libs/ajax";
+const IGRAC_DOWNLOAD_URL = '/groundwater/record/download/';
 
 const downloadProgressHtml = (taskId) => (
     '<div>' +
@@ -67,10 +68,9 @@ export const startDownloadingIGRACData = (action$, { getState } = {}) =>
         .ofType(DOWNLOAD_IGRAC_DATA)
         .switchMap(() => {
             if (isLoggedIn(getState())) {
-                let downloadUrl = '/groundwater/well/download/';
                 const attributesFilter = getAttributeFilters(getState()) || {};
                 return Rx.Observable.fromPromise(
-                    axios.post(downloadUrl, attributesFilter).then( response => response.data.task_id )
+                    axios.post(IGRAC_DOWNLOAD_URL, attributesFilter).then( response => response.data.task_id )
                 ).switchMap(
                     (taskId) => Rx.Observable.of(finishDownloadingIGRACData(taskId))
                 );
