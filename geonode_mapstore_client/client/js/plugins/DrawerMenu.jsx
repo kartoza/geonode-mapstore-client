@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import './drawer/drawer.css';
+import '../../MapStore2/web/client/plugins/drawer/drawer.css';
 
 import { partialRight } from 'lodash';
 import assign from 'object-assign';
