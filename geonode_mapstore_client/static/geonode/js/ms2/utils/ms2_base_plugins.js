@@ -110,11 +110,6 @@ var MS2_BASE_PLUGINS = {
 		{
 			"name": "CRSSelector",
 			"cfg": {
-				"additionalCRS": {
-					"EPSG:8857": {
-						"label": "WGS84"
-					}
-				},
 				"filterAllowedCRS": [
 					"EPSG:4326",
 					"EPSG:3857"
