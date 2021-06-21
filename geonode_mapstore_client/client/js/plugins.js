@@ -14,7 +14,7 @@ import IdentifyPlugin from '@mapstore/framework/plugins/Identify';
 import TOCPlugin from '@mapstore/framework/plugins/TOC';
 import MapPlugin from '@mapstore/framework/plugins/Map';
 import ToolbarPlugin from '@mapstore/framework/plugins/Toolbar';
-import DrawerMenuPlugin from '@mapstore/framework/plugins/DrawerMenu';
+
 import ZoomAllPlugin from '@mapstore/framework/plugins/ZoomAll';
 import MapLoadingPlugin from '@mapstore/framework/plugins/MapLoading';
 import OmniBarPlugin from '@mapstore/framework/plugins/OmniBar';
@@ -56,6 +56,7 @@ import SaveAsPlugin from '@js/plugins/SaveAs';
 import SharePlugin from '@js/plugins/Share';
 import GeonodeMetadataPlugin from '@js/plugins/GeonodeMetadata';
 import IgracDownloadPlugin from '@js/plugins/IgracDownload';
+import DrawerMenuPlugin from '@js/plugins/DrawerMenu';
 
 import security from '@mapstore/framework/reducers/security';
 import maps from '@mapstore/framework/reducers/maps';

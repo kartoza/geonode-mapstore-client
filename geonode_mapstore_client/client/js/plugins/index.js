@@ -73,6 +73,10 @@ const plugins = {
     IgracDownloadPlugin: () => toLazyPlugin(
         'IgracDownload',
         import(/* webpackChunkName: 'plugins/metadata-plugin' */ '@js/plugins/IgracDownload')
+    ),
+    DrawerMenuPlugin: () => toLazyPlugin(
+        'DrawerMenu',
+        import(/* webpackChunkName: 'plugins/metadata-plugin' */ '@js/plugins/DrawerMenu')
     )
 };
 

@@ -49,8 +49,8 @@
   },
   "geonode": {
     "devServer": {
-      "host": "staging.igrac.kartoza.com",
-      "protocol": "https"
+      "host": "igrac.test:3002",
+      "protocol": "http"
     }
   }
 }

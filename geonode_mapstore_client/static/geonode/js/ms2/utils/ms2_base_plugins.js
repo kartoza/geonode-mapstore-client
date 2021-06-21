@@ -88,7 +88,12 @@ var MS2_BASE_PLUGINS = {
 				}
 			}
 		},
-		"DrawerMenu",
+		{
+			"name": "DrawerMenu",
+			"cfg": {
+				"show": true
+			}
+		},
 		"Cookie",
 		"OmniBar",
 		"Expander",
