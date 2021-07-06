@@ -1,6 +1,6 @@
 {
   "name": "geonode-mapstore-client",
-  "version": "2.0.11-kartoza",
+  "version": "2.0.12-kartoza",
   "description": "MapStore 2 Api bundle specific to geonode framework",
   "main": "api.js",
   "eslintConfig": {
@@ -49,8 +49,8 @@
   },
   "geonode": {
     "devServer": {
-      "host": "igrac.test:3002",
-      "protocol": "http"
+      "host": "ggis.un-igrac.org",
+      "protocol": "https"
     }
   }
 }
