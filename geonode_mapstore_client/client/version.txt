@@ -1,1 +1,1 @@
-geonode-mapstore-client-v2.0.12-kartoza-51ea37d569d09c0cfe1ef519856afe79209d001d
+geonode-mapstore-client-v2.0.12-kartoza-276e9d898671764fe762b03ab6a74f34eb9969ac
