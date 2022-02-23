@@ -126,7 +126,7 @@ window.initMapstore2Api = function(config, resolve) {
     let layerAttributes = {};
     let layerAttributeFetched = 0;
 
-    if (currentUrl.includes('groundwater-well') || currentUrl.includes('well-and-monitoring-data')) {
+    if (currentUrl.includes('groundwater-well') || currentUrl.includes('well-and-monitoring-data') || currentUrl.includes('view/ggmn')) {
         axios.get(uuidUrl, {}).then((response) => {
             setConfigProp('viewparams', `uuid:${response.data['uuid']}`);
             if (response.data['extent']) {
@@ -134,19 +134,21 @@ window.initMapstore2Api = function(config, resolve) {
                 ms2_config.map.maxExtent = ol.proj.transformExtent(response.data.extent,  'EPSG:4326', 'EPSG:3857');
             }
             const layers = ms2_config.map.layers || [];
-            layers.forEach((_layer, index) => {
-                let attributesUrl = `/api/layer/${_layer.name}/attributes`;
+            for (let _layer of layers) {
+                if (!_layer.id || !_layer.id.toLowerCase().includes('groundwater_well')) {
+                    continue;
+                }
+                let layerName = _layer.name;
+                layerName = layerName.replace('groundwater:Groundwater_Well_GGMN', 'groundwater:Groundwater_Well');
+                let attributesUrl = `/api/layer/${layerName}/attributes`;
                 axios.get(attributesUrl, {}).then((_response) => {
                     layerAttributes[_layer.name] = _response.data;
                 }).catch((error) => {
                 }).finally(() => {
-                    layerAttributeFetched += 1;
-                    if (layerAttributeFetched === layers.length) {
-                        setConfigProp('layerattributes', layerAttributes);
-                        _initMapstore2Api(config, resolve);
-                    }
+                    setConfigProp('layerattributes', layerAttributes);
+                    _initMapstore2Api(config, resolve);
                 });
-            });
+            }
         });
     } else {
         _initMapstore2Api(config, resolve);
