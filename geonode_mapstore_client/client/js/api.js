@@ -73,7 +73,6 @@ const createMapStore2Api = function(plugins, type) {
                         MapStore2.triggerAction({ type: 'QUERY:TOGGLE_SYNC_WMS' });
                         MapStore2.triggerAction({ type: 'LAYERS:CHANGE_LAYER_PARAMS', layer: layer.id, params: { 'VIEWPARAMS': getConfigProp('viewparams') }});
                         MapStore2.triggerAction({ type: 'LAYERS:SELECT_NODE', id: layer.id, nodeType: 'layer', ctrlKey: false});
-                        MapStore2.triggerAction({ type: 'LAYERS:BROWSE_DATA', layer});
                     }
                 } catch (e) {
                 }
