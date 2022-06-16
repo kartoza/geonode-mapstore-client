@@ -128,10 +128,6 @@ window.initMapstore2Api = function(config, resolve) {
     if (currentUrl.includes('groundwater-well') || currentUrl.includes('well-and-monitoring-data') || currentUrl.includes('view/ggmn')) {
         axios.get(uuidUrl, {}).then((response) => {
             setConfigProp('viewparams', `uuid:${response.data['uuid']}`);
-            if (response.data['extent']) {
-                setConfigProp('groundwater_extent', response.data['extent']);
-                ms2_config.map.maxExtent = ol.proj.transformExtent(response.data.extent,  'EPSG:4326', 'EPSG:3857');
-            }
             const layers = ms2_config.map.layers || [];
             for (let _layer of layers) {
                 if (!_layer.id || !_layer.id.toLowerCase().includes('groundwater_well')) {
