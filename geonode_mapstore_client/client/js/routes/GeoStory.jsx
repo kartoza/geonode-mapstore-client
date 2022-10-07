@@ -5,9 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import isArray from 'lodash/isArray';
 import url from 'url';
 import BorderLayout from '@mapstore/framework/components/layout/BorderLayout';
 import { getMonitoredState } from '@mapstore/framework/utils/PluginsUtils';
@@ -16,7 +17,6 @@ import { updateUrlOnScroll } from '@mapstore/framework/actions/geostory';
 import PluginsContainer from '@mapstore/framework/components/plugins/PluginsContainer';
 
 import useLazyPlugins from '@js/hooks/useLazyPlugins';
-import pluginsEntries from '@js/plugins/index';
 
 const urlQuery = url.parse(window.location.href, true).query;
 
@@ -26,21 +26,28 @@ const ConnectedPluginsContainer = connect((state) => ({
 }))(PluginsContainer);
 
 function GeoStoryRoute({
-    pluginsConfig,
+    name,
+    pluginsConfig: propPluginsConfig,
     params,
     onMount,
-    loaderComponent
+    loaderComponent,
+    lazyPlugins,
+    plugins
 }) {
-    const [loading, setLoading] = useState(true);
-    const { plugins } = useLazyPlugins({
-        pluginsEntries,
-        pluginsConfig: pluginsConfig || getConfigProp('plugins')
+
+    const pluginsConfig = isArray(propPluginsConfig)
+        ? propPluginsConfig
+        : propPluginsConfig && propPluginsConfig[name] || [];
+
+    const { plugins: loadedPlugins, pending } = useLazyPlugins({
+        pluginsEntries: lazyPlugins,
+        pluginsConfig
     });
     useEffect(() => {
-        if (!loading && onMount) {
+        if (!pending && onMount) {
             onMount(true);
         }
-    }, [ loading, onMount ]);
+    }, [ pending, onMount ]);
     const Loader = loaderComponent;
     return (
         <>
@@ -49,12 +56,11 @@ function GeoStoryRoute({
                 id="page-geostory"
                 className="page page-geostory"
                 component={BorderLayout}
-                pluginsConfig={pluginsConfig || getConfigProp('plugins')}
-                plugins={plugins}
+                pluginsConfig={pluginsConfig}
+                plugins={{ ...loadedPlugins, ...plugins }}
                 params={params}
-                onPluginsLoaded={() => setLoading(false)}
             />
-            {loading && Loader && <Loader />}
+            {pending && Loader && <Loader />}
         </>
     );
 }

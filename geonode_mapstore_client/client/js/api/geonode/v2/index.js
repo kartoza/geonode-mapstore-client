@@ -12,13 +12,15 @@ import {
     setRequestOptions,
     getRequestOptions
 } from '@js/utils/APIUtils';
+import merge from 'lodash/merge';
 import mergeWith from 'lodash/mergeWith';
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import isObject from 'lodash/isObject';
 import castArray from 'lodash/castArray';
+import get from 'lodash/get';
 import { getUserInfo } from '@js/api/geonode/v1';
 import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
-import { setFilterById } from '@js/utils/GNSearchUtils';
 
 let endpoints = {
     // default values
@@ -28,6 +30,7 @@ let endpoints = {
     'maps': '/api/v2/maps',
     'geoapps': '/api/v2/geoapps',
     'geostories': '/api/v2/geostories',
+    'dashboards': '/api/v2/dashboards',
     'users': '/api/v2/users',
     'resource_types': '/api/v2/resources/resource_types'
 };
@@ -38,6 +41,7 @@ const LAYERS = 'layers';
 const MAPS = 'maps';
 const GEOAPPS = 'geoapps';
 const GEOSTORIES = 'geostories';
+const DASHBOARDS = 'dashboards';
 const USERS = 'users';
 const RESOURCE_TYPES = 'resource_types';
 // const GROUPS = 'groups';
@@ -255,6 +259,24 @@ export const updateGeoStory = (pk, body) => {
         .then(({ data }) => data.geostory);
 };
 
+export const createDashboard = (body) => {
+    return axios.post(parseDevHostname(`${endpoints[DASHBOARDS]}`), body, {
+        params: {
+            include: ['data']
+        }
+    })
+        .then(({ data }) => data.dashboard);
+};
+
+export const updateDashboard = (pk, body) => {
+    return axios.patch(parseDevHostname(`${endpoints[DASHBOARDS]}/${pk}`), body, {
+        params: {
+            include: ['data']
+        }
+    })
+        .then(({ data }) => data.dashboard);
+};
+
 export const getUserByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[USERS]}/${pk}`))
         .then(({ data }) => data.user);
@@ -275,16 +297,37 @@ export const getAccountInfo = () => {
         .catch(() => null);
 };
 
-export const getConfiguration = (configUrl) => {
+export const getConfiguration = (configUrl = '/static/mapstore/configs/localConfig.json') => {
     return axios.get(configUrl)
         .then(({ data }) => {
-            return data;
+            const geoNodePageConfig = window.__GEONODE_CONFIG__ || {};
+            const localConfig = mergeWith(
+                data,
+                geoNodePageConfig.localConfig || {},
+                (objValue, srcValue) => {
+                    if (isArray(objValue)) {
+                        return srcValue;
+                    }
+                    return undefined; // eslint-disable-line consistent-return
+                });
+            if (geoNodePageConfig.overrideLocalConfig) {
+                return geoNodePageConfig.overrideLocalConfig(localConfig, {
+                    mergeWith,
+                    merge,
+                    isArray,
+                    isString,
+                    isObject,
+                    castArray,
+                    get
+                });
+            }
+            return localConfig;
         });
 };
 
 
 let availableResourceTypes;
-export const getResourceTypes = ({}, filterKey = 'resource-types') => {
+export const getResourceTypes = ({}) => {
     if (availableResourceTypes) {
         return new Promise(resolve => resolve(availableResourceTypes));
     }
@@ -300,11 +343,27 @@ export const getResourceTypes = ({}, filterKey = 'resource-types') => {
                         value,
                         selectOption
                     };
-                    setFilterById(filterKey + value, resourceType);
                     return resourceType;
                 });
             return [...availableResourceTypes];
         });
+};
+
+export const getLayerByName = name => {
+    const url = parseDevHostname(`${endpoints[LAYERS]}/?filter{alternate}=${name}`);
+    return axios.get(url)
+        .then(({data}) => data?.layers[0]);
+};
+
+export const getLayersByName = names => {
+    const url = parseDevHostname(endpoints[LAYERS]);
+    return axios.get(url, {
+        params: {
+            page_size: names.length,
+            'filter{alternate.in}': names
+        }
+    })
+        .then(({data}) => data?.layers);
 };
 
 export const getResourcesTotalCount = () => {
@@ -349,6 +408,8 @@ export default {
     createGeoApp,
     createGeoStory,
     updateGeoStory,
+    createDashboard,
+    updateDashboard,
     getMaps,
     getDocumentsByDocType,
     getUserByPk,

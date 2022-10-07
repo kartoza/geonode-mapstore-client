@@ -6,18 +6,20 @@
 
 {% block body %}
   <div class="page-header">
-    {% if not READ_ONLY_MODE %}
+    {% if user.is_authenticated and not READ_ONLY_MODE and not request.user_agent.is_mobile %}
     <div class="dropdown" style="float: right;">
       <button class="btn btn-primary dropdown-toggle" type="button" id="create-new-app-dropdown-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
         {% trans "Create New" %} {% blocktrans %}{{GEONODE_APPS_NAME}}{% endblocktrans %}
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="create-new-app-dropdown-menu">
+      {% for app in GEONODE_APPS_INSTALLED %}
         <li>
-          <a href="{% url "new_geoapp" %}?appType=GeoStory">
-            {% blocktrans %}GeoStory{% endblocktrans %}
+          <a href="{% url "new_geoapp" %}?appType={{app}}">
+            {% blocktrans %}{{app}}{% endblocktrans %}
           </a>
         </li>
+      {% endfor %}
       </ul>
     </div>
     {% endif %}

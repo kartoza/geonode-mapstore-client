@@ -1,4 +1,11 @@
-{% extends "./app_new.html" %}
+
+{% if appType == "GeoStory" %}
+    {% include "./app_new.html" with plugins_config_key="geostory_embed" is_new="false" is_embed="true"%}
+{% endif %}
+
+{% if appType == "Dashboard" %}
+    {% include "./app_new.html" with plugins_config_key="dashboard_embed" is_new="false" is_embed="true"%}
+{% endif %}
 
 {% block style %}
 <style>
@@ -21,10 +28,4 @@
         height: 100%;
     }
 </style>
-{% endblock %}
-
-{% block gn_geo_app %}
-    {% with is_embed="true" %}
-        {{ block.super }}
-    {% endwith %}
 {% endblock %}

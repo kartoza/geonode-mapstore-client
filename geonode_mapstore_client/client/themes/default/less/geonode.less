@@ -6,7 +6,6 @@
 }
 .modal-dialog.modal-content.modal-dialog-container.react-draggable{
     position: fixed;
-    z-index: 100000 !important;
 }
 .gfi-t {
     float: left;
@@ -91,8 +90,26 @@
     }
 }
 
-.gn-share-modal .modal-footer {
-    display: none;
+.gn-share-modal {
+    overflow: visible;
+    .modal-dialog,
+    .ms-resizable-modal > .modal-content > .modal-body > div {
+        overflow: visible;
+    }
+    .col-md-4 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .modal-body {
+        margin: 8px;
+    }
+    .modal-footer {
+        display: none;
+    }
 }
 
 // the style of geonode add a margin on label
@@ -107,4 +124,42 @@
 // temporary remove the 'Open advanced map editor' in the inline editor of geostory
 .ms-geostory-map-editor-toolbar .square-button-md:last-child {
     display: none;
+}
+
+.ms-template-viewer .row {
+    margin: 0;
+}
+.mapstore-identify-viewer .panel-body {
+    padding: 0;
+}
+
+#page-map-viewer > .ms2-border-layout-body {
+    overflow: hidden !important;
+}
+
+// the popover for mark selector, scale denominator and filters
+// are not displayed correctly in the style editor
+// we need am higher z-index to make them visible 
+.ms-popover-overlay {
+    z-index: 1500;
+}
+// ensure the map layout set the correct position for the toolbar and background selector
+// when the attribute table is open
+.page-map-viewer {
+    transform: translate(0, 0);
+}
+
+.add-bar-popover {
+    max-width: 500px;
+}
+
+// remove margin inherit from base.css
+.ms-annotations-panel .items-list .btn {
+    margin-right: 0;
+    margin-top: 0;
+}
+
+// fix position of dashboard full screen button
+.widget-container .mapstore-widget-card .mapstore-widget-header .widget-icons .btn-group button {
+    top: 0;
 }

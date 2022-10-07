@@ -7,7 +7,7 @@
  */
 
 import { Observable } from 'rxjs';
-import { mapSelector } from '@mapstore/framework/selectors/map';
+import { mapSelector, mapInfoSelector } from '@mapstore/framework/selectors/map';
 import { layersSelector, groupsSelector } from '@mapstore/framework/selectors/layers';
 import { backgroundListSelector } from '@mapstore/framework/selectors/backgroundselector';
 import { mapOptionsToSaveSelector } from '@mapstore/framework/selectors/mapsave';
@@ -18,7 +18,10 @@ import {
 import { saveMapConfiguration } from '@mapstore/framework/utils/MapUtils';
 import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
 import { currentStorySelector } from '@mapstore/framework/selectors/geostory';
+import { widgetsConfig } from '@mapstore/framework/selectors/widgets';
 import { userSelector } from '@mapstore/framework/selectors/security';
+import { error as errorNotification, success as successNotification } from '@mapstore/framework/actions/notifications';
+
 
 import {
     creatMapStoreMap,
@@ -29,7 +32,9 @@ import {
     UPDATE_RESOURCE_BEFORE_SAVE,
     saveSuccess,
     saveError,
-    savingResource
+    savingResource,
+    SAVE_DIRECT_CONTENT,
+    saveContent
 } from '@js/actions/gnsave';
 import {
     resourceLoading,
@@ -40,7 +45,9 @@ import {
 import {
     getResourceByPk,
     createGeoStory,
-    updateGeoStory
+    updateGeoStory,
+    createDashboard,
+    updateDashboard
 } from '@js/api/geonode/v2';
 import { parseDevHostname } from '@js/utils/APIUtils';
 import uuid from 'uuid';
@@ -96,7 +103,8 @@ const SaveAPI = {
             : creatMapStoreMap(body)
                 .then((response) => {
                     if (reload) {
-                        window.location.href = parseDevHostname(`${getConfigProp('geonode_url')}maps/${response.id}/edit`);
+                        const { geonodeUrl = '/' } = getConfigProp('geoNodeSettings') || {};
+                        window.location.href = parseDevHostname(`${geonodeUrl}maps/${response.id}/edit`);
                     }
                     return response.data;
                 });
@@ -118,7 +126,31 @@ const SaveAPI = {
                 ...body
             }).then((response) => {
                 if (reload) {
-                    window.location.href = parseDevHostname(`${getConfigProp('geonode_url')}apps/${response.pk}/edit`);
+                    const { geonodeUrl = '/' } = getConfigProp('geoNodeSettings') || {};
+                    window.location.href = parseDevHostname(`${geonodeUrl}apps/${response.pk}/edit`);
+                }
+                return response.data;
+            });
+    },
+    dashboard: (state, id, metadata, reload) => {
+        const dashboard = widgetsConfig(state);
+        const user = userSelector(state);
+        const body = {
+            'title': metadata.name,
+            'abstract': metadata.description,
+            'data': JSON.stringify(dashboard),
+            'thumbnail_url': metadata.thumbnail
+        };
+        return id
+            ? updateDashboard(id, body)
+            : createDashboard({
+                'name': metadata.name + ' ' + uuid(),
+                'owner': user.name,
+                ...body
+            }).then((response) => {
+                if (reload) {
+                    const { geonodeUrl = '/' } = getConfigProp('geoNodeSettings') || {};
+                    window.location.href = parseDevHostname(`${geonodeUrl}apps/${response.pk}/edit`);
                 }
                 return response.data;
             });
@@ -138,11 +170,48 @@ export const gnSaveContent = (action$, store) =>
                             'title': action.metadata.name,
                             'abstract': action.metadata.description,
                             'thumbnail_url': action.metadata.thumbnail
-                        })
+                        }),
+                        ...(action.showNotifications
+                            ? [successNotification({title: "saveDialog.saveSuccessTitle", message: "saveDialog.saveSuccessMessage"})]
+                            : [])
                     );
                 })
                 .catch((error) => {
-                    return Observable.of(saveError(error.data || error.message));
+                    return Observable.of(
+                        saveError(error.data || error.message),
+                        ...(action.showNotifications
+                            ? [errorNotification({title: "map.mapError.errorTitle", message: "map.mapError.errorDefault"})]
+                            : [])
+                    );
+                })
+                .startWith(savingResource());
+
+        });
+
+export const gnSaveDirectContent = (action$, store) =>
+    action$.ofType(SAVE_DIRECT_CONTENT)
+        .switchMap(() => {
+            const state = store.getState();
+            const mapInfo = mapInfoSelector(state);
+            const resourceId = mapInfo?.id // injected map id
+            || state?.gnresource?.id; // injected geostory id
+            return Observable.defer(() => getResourceByPk(resourceId))
+                .switchMap((resource) => {
+                    const metadata = {
+                        name: resource?.title,
+                        description: resource?.abstract,
+                        thumbnail: resource?.thumbnail_url
+                    };
+                    return Observable.of(
+                        setResource(resource),
+                        saveContent(resourceId, metadata, false, true /* showNotification */)
+                    );
+                })
+                .catch((error) => {
+                    return Observable.of(
+                        saveError(error.data || error.message),
+                        errorNotification({title: "map.mapError.errorTitle", message: error.data || error.message || "map.mapError.errorDefault"})
+                    );
                 })
                 .startWith(savingResource());
         });
@@ -168,5 +237,6 @@ export const gnUpdateResource = (action$, store) =>
 
 export default {
     gnSaveContent,
-    gnUpdateResource
+    gnUpdateResource,
+    gnSaveDirectContent
 };

@@ -22,7 +22,7 @@ function MainLoader({
 }
 
 MainLoader.defaultProps = {
-    text: 'GeoNode'
+    text: ''
 };
 
 export default MainLoader;

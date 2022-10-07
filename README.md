@@ -1,6 +1,6 @@
 # GeoNode MapStore Client [![Build Status](https://travis-ci.org/GeoNode/geonode-mapstore-client.svg?branch=master)](https://travis-ci.org/GeoNode/geonode-mapstore-client) [![Code Climate](https://codeclimate.com/github/GeoNode/geonode-viewer/badges/gpa.svg)](https://codeclimate.com/github/GeoNode/geonode-viewer) [![Test Coverage](https://codecov.io/gh/GeoNode/geonode/branch/master/graph/badge.svg)](https://codecov.io/gh/GeoNode/geonode/branch/master)
 
-MapStore is an Open Source WebGIS framework based on ReactJS and it can be integrated inside GeoNode as maps, layers and apps viewer. GeoNode 
+MapStore is an Open Source WebGIS framework based on ReactJS and it can be integrated inside GeoNode as maps, layers and apps viewer. GeoNode
 
 - [Structure of directories](#structure-of-directories)
 - [Running in developer mode](#running-in-developer-mode)
@@ -17,7 +17,7 @@ The GeoNode MapStore client is structured in 4 main groups:
 - [Configurations files](#configurations-files)
 - [HTML templates files](#html-templates-files)
 
-```
+```shell
 geonode_mapstore_client/
 |-- ...
 |-- client/
@@ -38,14 +38,30 @@ geonode_mapstore_client/
 |    +-- version.txt
 |-- static/
 |    |-- ...
-|    |-- geonode/
-|    |    +-- js/
-|    |         +-- ms2/
-|    |              +-- utils/
 |    +-- mapstore/
 |-- templates/
 |    +-- geonode-mapstore-client/
 |-- ...
+mapstore2_adapter/
+|-- ...
+|-- api
+|    |-- ...
+|    |-- serializers.py  # MapStore2 REST APIs
+|    |-- ...
+|    |-- views.py
+|-- geoapps
+|    |-- ...
+|    |-- geostories
+|    |    |-- ...
+|    |    |-- api
+|    |    |    |-- ...
+|    |    |    |-- serializers.py  # MapStore2/GeoStories REST APIs
+|    |    |    |-- ...
+|    |    |    |-- views.py
+|-- plugins
+|    |-- ...
+|    |-- geonode.py  # Converts GeoNode Maps into MapStore2 ones
+|    |-- serializers.py  # Converts MapStore2 maps into a Model (MapStoreResource <--> Map)
 ```
 
 ### Javascript files
@@ -58,7 +74,7 @@ eg. The Save plugin will have plugins/Save.jsx, components/save/*.jsx, utils/Sav
 
 Below the structure of the `geonode_mapstore_client/client/js/` folder:
 
-```
+```shell
 geonode_mapstore_client/
 |-- ...
 |-- client/
@@ -76,19 +92,13 @@ geonode_mapstore_client/
 |         |-- reducers/
 |         |-- routes/
 |         |-- selector/
-|         |-- utils/
-|         |-- api.js
-|         |-- plugins.js
-|         +-- previewPlugins.js
+|         +-- utils/
 |
 |-- ...
 ```
 Some directories and files have special behaviors:
 
 - `geonode_mapstore_client/client/js/apps/`: each file in this folder will be compiled as a new entry point so only .js or .jsx files are allowed. eg. `geonode_mapstore_client/client/js/apps/gn-geostory.js` will become a `gn-geostory.js` file in the dist folder.
-- `geonode_mapstore_client/client/js/api.js`:  entry point for the custom js api of MapStore used in the GeoNode template as map viewer. This compiled name of this file is `ms2-geonode-api.js`
-- `geonode_mapstore_client/client/js/plugins.js`: list of MapStore plugins available inside the full page map viewer
-- `geonode_mapstore_client/client/js/previewPlugins.js`: list of MapStore plugins available inside the preview map viewer
 
 ### Themes files
 
@@ -100,7 +110,7 @@ eg. `geonode_mapstore_client/client/themes/my-theme/theme.less` will become a `m
 - default.css used by the full page map viewer
 - preview.css used by the preview map viewer
 
-```
+```shell
 geonode_mapstore_client/
 |-- ...
 |-- client/
@@ -126,21 +136,20 @@ The language used for the styles is [less](http://lesscss.org/) and it's compati
 The MapStore application needs [configurations](https://mapstore.readthedocs.io/en/latest/developer-guide/local-config/) to load the correct plugins or enable/disable/change functionality. The GeoNode/MapStore integration currently supports two approach one for the MapStore js api (map/layer viewer) and one for the new applications such as geostory and home. Future approach will follow the configuration style of the new application and it will try to align also the map/layer view application.
 
 We need to provide two main type of configuration:
-
- - plugins and app configurations: this includes list of needed plugin in a page and customization of functionalities:
-   - js api imports a combination of files from the directory `geonode_mapstore_client/static/geonode/js/ms2/utils/` inside the templates. The files inside `geonode_mapstore_client/static/geonode/js/ms2/utils/` are list of plugins grouped by purpose: view, embed or edit. There is also an additional app configuration in the _config.html template.
-   - new app imports static configuration from json files of the `geonode_mapstore_client/client/static/mapstore/configs/` folder or centralize the configuration in the correspondent template (see [geostory.html](geonode_mapstore_client/templates/geonode-mapstore-client/app/geostory.html)).
+ - apps and plugins configurations is centralized in [localConfig.json](geonode_mapstore_client/client/static/mapstore/configs/localConfig.json)
  - translations: both approaches retrieve custom translations for the geonode client from the `geonode_mapstore_client/client/static/translations/` folder
 
-```
+```shell
 geonode_mapstore_client/
 |-- ...
 |-- client/
 |    |-- ...
 |    |-- static/
 |    |    +-- mapstore/
-|    |         |-- configs/ (new app)
-|    |         |-- img/ (new app)
+|    |         |-- configs/
+|    |         |    |-- ...
+|    |         |    |-- localConfig.json
+|    |         |-- img/
 |    |         +-- translations/
 |    |              |-- ...
 |    |              |-- data.de-DE.json
@@ -151,16 +160,6 @@ geonode_mapstore_client/
 |    |-- ...
 |-- static/
 |    |-- ...
-|    |-- geonode/
-|    |    +-- js/
-|    |         +-- ms2/
-|    |              +-- utils/
-|    |                   |-- ms2_base_plugins.js (js api)
-|    |                   |-- ms2_composer_plugins.js (js api)
-|    |                   |-- ms2_map_embed_plugins.js (js api)
-|    |                   |-- ms2_map_viewer_plugins.js (js api)
-|    |                   |-- ms2_viewer_plugins.js (js api)
-|    |                   +-- thumbnail.js (js api)
 |    +-- mapstore/ (only compiled files here from client/ folder 'npm run compile')
 |-- ...
 ```
@@ -171,7 +170,7 @@ geonode_mapstore_client/
 
 The HTML templates represents all the pages where the MapStore client is integrated. Each template has its own configuration based on the resource type layer, map or app, and for a specific purpose view, edit or embed.
 
-There are special templates used as base configuration for other templates: _config.html and base_ms.html.
+There _geonode_config.html template is used as base configuration for other templates.
 
 
 ```
@@ -183,34 +182,24 @@ geonode_mapstore_client/
 |         |-- app/
 |         |    |-- ...
 |         |    +-- geostory.html
-|         |-- _client_composer_js.html (deprecated)
-|         |-- _client_viewer_js.html (deprecated)
-|         |-- _config.html
+|         |-- _geonode_config.html
 |         |-- app_edit.html
 |         |-- app_embed.html
 |         |-- app_list.html
 |         |-- app_new.html
 |         |-- app_view.html
-|         |-- base_ms.html
-|         |-- edit_map.html
-|         |-- layer_edit.html
-|         |-- layer_map.html
+|         |-- layer_data_edit.html
+|         |-- layer_detail.html
+|         |-- layer_embed.html
 |         |-- layer_style_edit.html
 |         |-- layer_view.html
 |         |-- map_detail.html
+|         |-- map_edit.html
 |         |-- map_embed.html
 |         |-- map_new.html
 |         +-- map_view.html
 |-- ...
 ```
-
-List of templates based on the resource type:
-
-- Layers - templates in use _config.html, base_ms.html, layer_edit.html, layer_map.html, layer_style_edit.html and layer_view.html
-
-- Maps - templates in use _config.html, base_ms.html, edit_map.html, map_detail.html, map_embed.html, map_new.html and map_view.html
-
-- Apps - app_edit.html, app_embed.html, app_list.html, app_new.html, app_view.html and app/geostory.html
 
 ## Running in developer mode
 
@@ -242,6 +231,7 @@ Note: ensure the `geonode-mapstore-client/geonode_mapstore_client/client/MapStor
 `npm install`
 
 Now all the client dependencies are installed. The command `npm install` should be used every time there is an update in the [package.json](geonode_mapstore_client/client/package.json) or after switching to a different branch. If the package are not installed correctly you can try to run `npm update` before `npm install`.
+
 ### Getting Started
 
 The geonode-mapstore-client uses the webpack dev server to proxy requests of a remote or local instance of GeoNode and to replace only the files used by the MapStore client. Once we have a [running instance of GeoNode](#before-starting) and credentials to work on it we can add some environment variables and start the client in development mode.
@@ -256,8 +246,10 @@ eg.
     ...
     "geonode": {
         "devServer": {
+            // host in use by the local dev application
+            "host": "localhost",
             // if my GeoNode runs on http://localhost:8000/ use
-            "host": "localhost:8080",
+            "proxyTargetHost": "localhost:8080",
             "protocol": "http"
             // if my GeoNode runs on https://my-geonode/ use
             // "host": "my-geonode",
@@ -320,13 +312,165 @@ There are three ways to customize the GeoNode MapStore client: changing the conf
 Useful links for customization of the MapStore client
 - [MapStore documentation](https://mapstore.readthedocs.io/)
 - [Framework API](https://mapstore.geo-solutions.it/mapstore/docs/api/framework)
-- [MapStore JS API](https://mapstore.geo-solutions.it/mapstore/docs/api/jsapi)
 - [Plugins](https://mapstore.geo-solutions.it/mapstore/docs/api/plugins)
 
 ### Customization via configurations/templates
 
-It's possible to remove and configure plugins by changing configuration and css directly inside templates. See the [configurations files locations](#configurations-files) in the repository and the MapStore documentations about plugins for more information.
+It's possible to override the localConfig configuration extending the [_geonode_config.html]() template in your geonode project.
+The template needs to be located in the `{geonode-project}/{project-name}/templates/geonode-mapstore-client/` folder:
 
+```
+geonode-project/
+|-- ...
+|-- project-name/
+|    |-- ...
+|    +-- templates/
+|         |-- ...
+|         +-- geonode-mapstore-client/
+|              +-- _geonode_config.html
+|-- ...
+```
+The extended _geonode_config.html template should set the `__GEONODE_CONFIG__.overrideLocalConfig` function and return the modified localConfig.
+
+Some examples:
+
+- override localConfig properties
+
+```html
+{% extends 'geonode-mapstore-client/_geonode_config.html' %}
+{% block override_local_config %}
+<script>
+    window.__GEONODE_CONFIG__.overrideLocalConfig = function(localConfig, _) {
+        /*
+        _ is a subset of lodash and contains following functions
+        {
+            mergeWith,
+            merge,
+            isArray,
+            isString,
+            isObject,
+            castArray,
+            get
+        }
+        */
+        return _.mergeWith(localConfig, {
+            /*
+            ... my custom configuration
+            */
+        }, function(objValue, srcValue, key) {
+            if (_.isArray(objValue)) {
+                return srcValue;
+            }
+            // supportedLocales is an object so it's merged with the default one
+            // so to remove the default languages we should take only the supportedLocales from override
+            if (key === 'supportedLocales') {
+                return srcValue;
+            }
+        });
+    };
+</script>
+{% endblock %}
+```
+
+- enable plugin
+
+```html
+{% extends 'geonode-mapstore-client/_geonode_config.html' %}
+{% block override_local_config %}
+<script>
+    window.__GEONODE_CONFIG__.overrideLocalConfig = function(localConfig) {
+        /*
+        "SearchServicesConfig" has been disabled by default but still available
+        inside the list of imported plugin.
+        It should be enabled only in the pages that contains the "Search" plugin.
+        */
+        // map_edit page used for path /maps/{pk}/edit
+        localConfig.plugins.map_edit.push({ "name": "SearchServicesConfig" });
+        // map_view page used for path /maps/{pk}/view
+        localConfig.plugins.map_view.push({ "name": "SearchServicesConfig" });
+
+        return localConfig;
+    };
+</script>
+{% endblock %}
+```
+
+- update plugin configuration
+
+```html
+{% extends 'geonode-mapstore-client/_geonode_config.html' %}
+{% block override_local_config %}
+<script>
+    window.__GEONODE_CONFIG__.overrideLocalConfig = function(localConfig, _) {
+        /**
+        * this is an example of function used to merge new plugin configuration in the default localConfig
+        * if match the plugin name for the GeoNode section, extend or override it
+        * if the plugin is new, add it to localConfig
+        * Note: you can create your on function or manipulate the localConfig to get your expected final configuration
+        * @param {object} config localConfig to update
+        * @param {string[]} options.pages array of page keys to target
+        * @param {string} options.name name of plugin
+        * @param {object} options.cfg new cfg to apply
+        */
+        function mergePluginConfig(config, options) {
+            var pages = options.pages;
+            var pluginName = options.name;
+            var pluginCfg = options.cfg;
+            for (var j = 0; j < pages.length; j++ ) {
+                var page = pages[j];
+                var plugins = config.plugins[page];
+                var merged = false;
+                for (var i = 0; i < config.plugins[page].length; i++ ) {
+                    var plugin = plugins[i];
+                    if (plugin.name === pluginName) {
+                        plugin.cfg = _.merge(plugin.cfg, pluginCfg);
+                        merged = true;
+                        break;
+                    }
+                }
+                if (!merged) {
+                    plugins.push({
+                        name: pluginName,
+                        cfg: pluginCfg
+                    })
+                }
+            }
+        }
+        mergePluginConfig(localConfig, {
+            pages: [ 'map_edit', 'map_view' ],
+            name: 'Search',
+            cfg: {
+                "searchOptions": {
+                    "services": [
+                        // { "type": "nominatim", "priority": 5 }, // default service
+                        {
+                            "type": "wfs",
+                            "priority": 3,
+                            "displayName": "${properties.propToDisplay}",
+                            "subTitle": " (a subtitle for the results coming from this service [ can contain expressions like ${properties.propForSubtitle}])",
+                            "options": {
+                                "url": "{state('settings') && state('settings').geoserverUrl ? state('settings').geoserverUrl + '/wfs' : '/geoserver/wfs'}",
+                                "typeName": "workspace:layer",
+                                "queriableAttributes": [
+                                    "attribute_to_query"
+                                ],
+                                "sortBy": "id",
+                                "srsName": "EPSG:4326",
+                                "maxFeatures": 20,
+                                "blacklist": [
+                                    "... an array of strings to exclude from  the final search filter "
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+        return localConfig;
+    };
+</script>
+{% endblock %}
+```
 ### Customization via fork/branch (advanced)
 
 Create a new fork/branch, apply changes, compile the new client then install the specific branch with pip in the requirement.txt of the geonode-project.
@@ -336,187 +480,180 @@ Expected version in requirement.txt
 -e git+https://github.com/GeoNode/geonode-mapstore-client.git@{commit}#egg=django_geonode_mapstore_client
 ```
 
-### Customization via @mapstore/project (advanced/experimental)
-
-This type of customization has been introduced to be applied to geonode-project and add, replace or remove plugins for the map and layer viewer. This approach is still in development and aim to normalize the way various apps inside geonode-mapstore-client could be customized.
-
-Given a geonode-project with this directories structure:
-
-```
-geonode-project/
-|-- ...
-|-- project-name/
-|    |-- ...
-|    +-- ...
-|-- ...
-```
-
-- Navigate to `geonode-project/project-name/`
-
-`cd geonode-project/project-name/`
-
-- Run the create script of `@mapstore/project`
-
-`npx @mapstore/project create geonode`
-
-The script above will create a folder called `client` inside `geonode-project/project-name/` with the following structure:
-
-```
-geonode-project/
-|-- ...
-|-- project-name/
-|    |-- ...
-|    |-- client/
-|    |    |-- js/
-|    |    |     |-- ...
-|    |    |     |-- apps/
-|    |    |     +-- jsapi/
-|    |    |          |-- plugins.js
-|    |    |          +-- previewPlugins.js
-|    |    |-- static/
-|    |    |     +-- mapstore/
-|    |    |     |    |-- ...
-|    |    |          +-- translations/
-|    |    |-- themes/
-|    |    |     |-- default/
-|    |    |     |    |-- ...
-|    |    |     |    +-- theme.less
-|    |    |     +-- preview/
-|    |    |          +-- theme.less
-|    |    |-- .gitignore
-|    |    |-- package.json
-|    |    +-- version.txt
-|    +-- ...
-|-- ...
-```
-
-This new `client/` directory has a similar structure of `geonode-mapstore-client/geonode_mapstore_client/client/` with some special file and folders:
-
-- `client/js/apps/` each .js file in this directory will became an application entry
-- `client/js/jsapi/plugins.js` and `client/js/jsapi/previewPlugins.js` this two file have a function that get current plugins imported in mapstore client and should return a plugin list
-
-```js
-// example to add a new plugin
-import MyCustomPlugin from '../plugins/MyCustomPlugin.jsx';
-export const extendPluginsDefinition = ({ plugins,  requires }) =>
-    ({
-        plugins: {
-            ...plugins,
-            MyCustomPlugin
-        },
-        requires
-});
-```
-
-- `client/static/mapstore/translations` extend translations of the client
-- `client/themes/default/theme.less` extend the default theme
-- `client/themes/preview/theme.less` extend the preview theme
-
-Inside this client folder it's possible to use the same scripts used in the geonode-mapstore-client `npm start`, `npm run test`, `npm run compile`, ... .
-
-You can run the `npm run compile` to create the new client application in the `static/mapstore` of the geonode-project once the new customizations are applied.
-
-Important!: the branch/commit of the geonode-mapstore-client inside the package.json must be the same of the pip package inside the requirement.txt
-
-expected version in requirement.txt
-```
--e git+https://github.com/GeoNode/geonode-mapstore-client.git@{commit}#egg=django_geonode_mapstore_client
-```
-expected version in client/package.json
-```js
-"dependencies": {
-    ...,
-    "geonode-mapstore-client": "git+https://github.com/GeoNode/geonode-mapstore-client.git#{commit}",
-    ...
-}
-```
-
 ## Integrating into GeoNode/Django
 
-- Execute `pip install django-mapstore-adapter --upgrade`
+### WARNING:
+
+- **Deprecated** `django-mapstore-adapter`; this library has been now merged into `django-geonode-mapstore-client`
+- You don't have to change anything on your `settings.py` but you will have to **remove** `django-mapstore-adapter` from `requirements.txt` and `setup.cfg`
+
+### Setup
+
 - Execute `pip install django-geonode-mapstore-client --upgrade`
 
 ### GeoNode settings update
 Update your `GeoNode` > `settings.py` as follows:
 
-```
-# To enable the MapStore2 based Client enable those
-if 'geonode_mapstore_client' not in INSTALLED_APPS:
-    INSTALLED_APPS += (
-        'mapstore2_adapter',
-        'geonode_mapstore_client',)
+```python
+# -- START Client Hooksets Setup
 
-GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY = 'mapstore'  # DEPRECATED use HOOKSET instead
-GEONODE_CLIENT_HOOKSET = "geonode_mapstore_client.hooksets.MapStoreHookSet"
+# GeoNode javascript client configuration
 
-def get_geonode_catalogue_service():
-    if PYCSW:
-        pycsw_config = PYCSW["CONFIGURATION"]
-        if pycsw_config:
-                pycsw_catalogue = {
-                    ("%s" % pycsw_config['metadata:main']['identification_title']): {
-                        "url": CATALOGUE['default']['URL'],
-                        "type": "csw",
-                        "title": pycsw_config['metadata:main']['identification_title'],
-                        "autoload": True
-                     }
-                }
-                return pycsw_catalogue
-    return None
+# default map projection
+# Note: If set to EPSG:4326, then only EPSG:4326 basemaps will work.
+DEFAULT_MAP_CRS = os.environ.get('DEFAULT_MAP_CRS', "EPSG:3857")
 
-GEONODE_CATALOGUE_SERVICE = get_geonode_catalogue_service()
+DEFAULT_LAYER_FORMAT = os.environ.get('DEFAULT_LAYER_FORMAT', "image/png")
 
-MAPSTORE_CATALOGUE_SERVICES = {
-    "Demo WMS Service": {
-        "url": "https://demo.geo-solutions.it/geoserver/wms",
-        "type": "wms",
-        "title": "Demo WMS Service",
-        "autoload": False
-     },
-    "Demo WMTS Service": {
-        "url": "https://demo.geo-solutions.it/geoserver/gwc/service/wmts",
-        "type": "wmts",
-        "title": "Demo WMTS Service",
-        "autoload": False
+# Where should newly created maps be focused?
+DEFAULT_MAP_CENTER = (os.environ.get('DEFAULT_MAP_CENTER_X', 0), os.environ.get('DEFAULT_MAP_CENTER_Y', 0))
+
+# How tightly zoomed should newly created maps be?
+# 0 = entire world;
+# maximum zoom is between 12 and 15 (for Google Maps, coverage varies by area)
+DEFAULT_MAP_ZOOM = int(os.environ.get('DEFAULT_MAP_ZOOM', 0))
+
+MAPBOX_ACCESS_TOKEN = os.environ.get('MAPBOX_ACCESS_TOKEN', None)
+BING_API_KEY = os.environ.get('BING_API_KEY', None)
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', None)
+
+GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY = os.getenv('GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY', 'mapstore')
+
+MAP_BASELAYERS = [{}]
+
+"""
+To enable the MapStore2 REACT based Client:
+1. pip install pip install django-geonode-mapstore-client>=2.1.0
+2. enable those:
+"""
+if GEONODE_CLIENT_LAYER_PREVIEW_LIBRARY == 'mapstore':
+    GEONODE_CLIENT_HOOKSET = os.getenv('GEONODE_CLIENT_HOOKSET', 'geonode_mapstore_client.hooksets.MapStoreHookSet')
+
+    if 'geonode_mapstore_client' not in INSTALLED_APPS:
+        INSTALLED_APPS += (
+            'mapstore2_adapter',
+            'mapstore2_adapter.geoapps',
+            'mapstore2_adapter.geoapps.geostories',
+            'geonode_mapstore_client',)
+
+    def get_geonode_catalogue_service():
+        if PYCSW:
+            pycsw_config = PYCSW["CONFIGURATION"]
+            if pycsw_config:
+                    pycsw_catalogue = {
+                        ("%s" % pycsw_config['metadata:main']['identification_title']): {
+                            "url": CATALOGUE['default']['URL'],
+                            "type": "csw",
+                            "title": pycsw_config['metadata:main']['identification_title'],
+                            "autoload": True
+                         }
+                    }
+                    return pycsw_catalogue
+        return None
+
+    GEONODE_CATALOGUE_SERVICE = get_geonode_catalogue_service()
+
+    MAPSTORE_CATALOGUE_SERVICES = {
+        "Demo WMS Service": {
+            "url": "https://demo.geo-solutions.it/geoserver/wms",
+            "type": "wms",
+            "title": "Demo WMS Service",
+            "autoload": False
+         },
+        "Demo WMTS Service": {
+            "url": "https://demo.geo-solutions.it/geoserver/gwc/service/wmts",
+            "type": "wmts",
+            "title": "Demo WMTS Service",
+            "autoload": False
+        }
     }
-}
 
-MAPSTORE_CATALOGUE_SELECTED_SERVICE = "Demo WMS Service"
+    MAPSTORE_CATALOGUE_SELECTED_SERVICE = "Demo WMS Service"
 
-if GEONODE_CATALOGUE_SERVICE:
-    MAPSTORE_CATALOGUE_SERVICES[list(GEONODE_CATALOGUE_SERVICE.keys())[0]] = GEONODE_CATALOGUE_SERVICE[list(GEONODE_CATALOGUE_SERVICE.keys())[0]]
-    MAPSTORE_CATALOGUE_SELECTED_SERVICE = list(GEONODE_CATALOGUE_SERVICE.keys())[0]
+    if GEONODE_CATALOGUE_SERVICE:
+        MAPSTORE_CATALOGUE_SERVICES[list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]] = GEONODE_CATALOGUE_SERVICE[list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]]
+        MAPSTORE_CATALOGUE_SELECTED_SERVICE = list(list(GEONODE_CATALOGUE_SERVICE.keys()))[0]
 
-DEFAULT_MS2_BACKGROUNDS = [{
-        "type": "osm",
-        "title": "Open Street Map",
-        "name": "mapnik",
-        "source": "osm",
-        "group": "background",
-        "visibility": True
-    },
-    {
-        "group": "background",
-        "name": "osm",
-        "source": "mapquest",
-        "title": "MapQuest OSM",
-        "type": "mapquest",
-        "visibility": False
-    }
-]
+    DEFAULT_MS2_BACKGROUNDS = [
+        {
+            "type": "osm",
+            "title": "Open Street Map",
+            "name": "mapnik",
+            "source": "osm",
+            "group": "background",
+            "visibility": True
+        }, {
+            "type": "tileprovider",
+            "title": "OpenTopoMap",
+            "provider": "OpenTopoMap",
+            "name": "OpenTopoMap",
+            "source": "OpenTopoMap",
+            "group": "background",
+            "visibility": False
+        }, {
+            "type": "wms",
+            "title": "Sentinel-2 cloudless - https://s2maps.eu",
+            "format": "image/jpeg",
+            "id": "s2cloudless",
+            "name": "s2cloudless:s2cloudless",
+            "url": "https://maps.geo-solutions.it/geoserver/wms",
+            "group": "background",
+            "thumbURL": "%sstatic/mapstorestyle/img/s2cloudless-s2cloudless.png" % SITEURL,
+            "visibility": False
+       }, {
+            "source": "ol",
+            "group": "background",
+            "id": "none",
+            "name": "empty",
+            "title": "Empty Background",
+            "type": "empty",
+            "visibility": False,
+            "args": ["Empty Background", {"visibility": False}]
+       }
+       # Custom XYZ Tile Provider
+        # {
+        #     "type": "tileprovider",
+        #     "title": "Title",
+        #     "provider": "custom", // or undefined
+        #     "name": "Name",
+        #     "group": "background",
+        #     "visibility": false,
+        #     "url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        #     "options": {
+        #         "subdomains": [ "a", "b"]
+        #     }
+        # }
+    ]
 
-MAPSTORE_BASELAYERS = DEFAULT_MS2_BACKGROUNDS
+    if MAPBOX_ACCESS_TOKEN:
+        BASEMAP = {
+            "type": "tileprovider",
+            "title": "MapBox streets-v11",
+            "provider": "MapBoxStyle",
+            "name": "MapBox streets-v11",
+            "accessToken": "%s" % MAPBOX_ACCESS_TOKEN,
+            "source": "streets-v11",
+            "thumbURL": "https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/6/33/23?access_token=%s" % MAPBOX_ACCESS_TOKEN,
+            "group": "background",
+            "visibility": True
+        }
+        DEFAULT_MS2_BACKGROUNDS = [BASEMAP,] + DEFAULT_MS2_BACKGROUNDS
 
-if 'geonode.geoserver' in INSTALLED_APPS:
-    LOCAL_GEOSERVER = {
-        "type": "wms",
-        "url": OGC_SERVER['default']['PUBLIC_LOCATION'] + "wms",
-        "visibility": True,
-        "title": "Local GeoServer",
-        "group": "background",
-        "format": "image/png8",
-        "restUrl": "/gs/rest"
-    }
+    if BING_API_KEY:
+        BASEMAP = {
+            "type": "bing",
+            "title": "Bing Aerial",
+            "name": "AerialWithLabels",
+            "source": "bing",
+            "group": "background",
+            "apiKey": "{{apiKey}}",
+            "visibility": False
+        }
+        DEFAULT_MS2_BACKGROUNDS = [BASEMAP,] + DEFAULT_MS2_BACKGROUNDS
+
+    MAPSTORE_BASELAYERS = DEFAULT_MS2_BACKGROUNDS
+
+# -- END Client Hooksets Setup
 ```
 
 ### Update migrations and static files

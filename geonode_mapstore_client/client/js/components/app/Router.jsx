@@ -16,7 +16,6 @@ import Theme from '@mapstore/framework/components/theme/Theme';
 import { ErrorBoundary } from 'react-error-boundary';
 import history from '@mapstore/framework/stores/History';
 import ErrorFallback from '@js/components/app/ErrorFallback';
-import RootStyle from '@js/components/theme/RootStyle';
 
 export const withRoutes = (routes) => (Component) => {
     const WithRoutes = forwardRef((props, ref) => {
@@ -32,7 +31,7 @@ function ThemeLoader({
 }) {
     const [loading, setLoading] = useState(true);
     const Loader = loaderComponent;
-    // explict remove load theme
+    // explicit remove load theme
     if (themeCfg === null) {
         return children;
     }
@@ -56,13 +55,10 @@ const Router = forwardRef(({
     pluginsConfig,
     themeCfg,
     loaderComponent,
-    geoNodeConfiguration
+    lazyPlugins
 }, ref) => {
     return (
         <>
-            <RootStyle
-                theme={geoNodeConfiguration.theme}
-            />
             <ThemeLoader
                 themeCfg={themeCfg}
                 loaderComponent={loaderComponent}
@@ -93,16 +89,11 @@ const Router = forwardRef(({
                                             component={(props) =>
                                                 <Component
                                                     {...props}
+                                                    name={route.name}
+                                                    lazyPlugins={lazyPlugins}
                                                     plugins={plugins}
                                                     pluginsConfig={pluginsConfig}
                                                     loaderComponent={loaderComponent}
-
-                                                    theme={geoNodeConfiguration.theme}
-                                                    navbar={geoNodeConfiguration.navbar}
-                                                    menu={geoNodeConfiguration.menu}
-                                                    footer={geoNodeConfiguration.footer}
-                                                    filters={geoNodeConfiguration.filters}
-
                                                     {...routeConfig}
                                                 />}
                                         />
@@ -125,8 +116,7 @@ Router.propTypes = {
     pluginsConfig: PropTypes.oneOfType([
         PropTypes.array,
         PropTypes.object
-    ]),
-    geoNodeConfiguration: PropTypes.object
+    ])
 };
 
 Router.defaultProps = {
@@ -135,8 +125,7 @@ Router.defaultProps = {
         messages: {},
         current: 'en-US'
     },
-    className: 'app-router',
-    geoNodeConfiguration: {}
+    className: 'app-router fill'
 };
 
 export default Router;

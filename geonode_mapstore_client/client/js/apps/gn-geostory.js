@@ -7,48 +7,55 @@
  */
 
 import { connect } from 'react-redux';
-import { setConfigProp, setLocalConfigurationFile } from '@mapstore/framework/utils/ConfigUtils';
-import { setRegGeoserverRule } from '@mapstore/framework/utils/LayersUtils';
-import { getSupportedLocales, setSupportedLocales } from '@mapstore/framework/utils/LocaleUtils';
-import axios from '@mapstore/framework/libs/ajax';
 import main from '@mapstore/framework/components/app/main';
+import MainLoader from '@js/components/app/MainLoader';
 import GeoStory from '@js/routes/GeoStory';
 import Router, { withRoutes } from '@js/components/app/Router';
 import security from '@mapstore/framework/reducers/security';
 import maptype from '@mapstore/framework/reducers/maptype';
 import geostory from '@mapstore/framework/reducers/geostory';
 import gnresource from '@js/reducers/gnresource';
+import gnsettings from '@js/reducers/gnsettings';
 import { registerMediaAPI } from '@mapstore/framework/api/media';
 import * as geoNodeMediaApi from '@js/observables/media/geonode';
-import { getEndpoints } from '@js/api/geonode/v2';
+import {
+    getEndpoints,
+    getConfiguration, getAccountInfo
+} from '@js/api/geonode/v2';
 import {
     setResourceType,
     setNewResource,
     setResourceId,
     setResourcePermissions
 } from '@js/actions/gnresource';
+import { updateGeoNodeSettings } from '@js/actions/gnsettings';
 import { setCurrentStory } from '@mapstore/framework/actions/geostory';
 import isMobile from 'ismobilejs';
 import uuid from 'uuid';
+import {
+    setupConfiguration,
+    getVersion,
+    initializeApp,
+    getPluginsConfiguration,
+    storeEpicsCache
+} from '@js/utils/AppUtils';
+import pluginsDefinition from '@js/plugins/index';
+import ReactSwipe from 'react-swipeable-views';
+import SwipeHeader from '@mapstore/framework/components/data/identify/SwipeHeader';
+const requires = {
+    ReactSwipe,
+    SwipeHeader
+};
 
 registerMediaAPI('geonode', geoNodeMediaApi);
 
 // TODO: check styles on less files
 import 'react-select/dist/react-select.css';
 
-// Set X-CSRFToken in axios;
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.xsrfCookieName = "csrftoken";
-
 const DEFAULT_LOCALE = {};
 const ConnectedRouter = connect((state) => ({
     locale: state?.locale || DEFAULT_LOCALE
 }))(Router);
-
-const getScriptPath = function() {
-    const scriptEl = document.getElementById('ms2-api');
-    return scriptEl && scriptEl.src && scriptEl.src.substring(0, scriptEl.src.lastIndexOf('/')) || '';
-};
 
 const routes = [{
     name: 'geostory',
@@ -56,42 +63,75 @@ const routes = [{
     component: GeoStory
 }];
 
-const setLocale = (localeKey) => {
-    const supportedLocales = getSupportedLocales();
-    const locale = supportedLocales[localeKey]
-        ? { [localeKey]: supportedLocales[localeKey] }
-        : { en: supportedLocales.en };
-    setSupportedLocales(locale);
+const newStoryTemplate = {
+    "type": "cascade",
+    "resources": [],
+    "settings": {
+        "theme": {
+            "general": {
+                "color": "#333333",
+                "backgroundColor": "#ffffff",
+                "borderColor": "#e6e6e6"
+            },
+            "overlay": {
+                "backgroundColor": "rgba(255, 255, 255, 0.75)",
+                "borderColor": "#dddddd",
+                "boxShadow": "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
+                "color": "#333333"
+            }
+        }
+    },
+    "sections": [
+        {
+            "type": "title",
+            "id": "section_id",
+            "title": "Abstract",
+            "cover": true,
+            "contents": [
+                {
+                    "id": "content_id",
+                    "type": "text",
+                    "size": "large",
+                    "align": "center",
+                    "theme": "",
+                    "html": "",
+                    "background": {
+                        "fit": "cover",
+                        "size": "full",
+                        "align": "center"
+                    }
+                }
+            ]
+        }
+    ]
 };
 
-const getVersion = () => {
-    if (!__DEVTOOLS__) {
-        return __GEONODE_PROJECT_CONFIG__.version;
-    }
-    return 'dev';
-};
+initializeApp();
 
-window.initMapStore = function initMapStore(geoNodeMSConfig) {
-    // get all v2 api endpoints
-    getEndpoints()
-        .then(() => {
-
+document.addEventListener('DOMContentLoaded', function() {
+    Promise.all([
+        getConfiguration(),
+        getAccountInfo(),
+        getEndpoints()
+    ])
+        .then(([localConfig, user]) => {
             const {
+                securityState,
+                pluginsConfigKey,
+                geoNodePageConfig,
+                query,
+                configEpics,
                 permissions,
-                language,
-                userDetails,
-                defaultConfig,
-                geoStoryConfig = {},
-                plugins = [],
-                isNewResource,
-                appId
-            } = geoNodeMSConfig || {};
+                onStoreInit,
+                targetId = 'ms-container',
+                settings
+            } = setupConfiguration({ localConfig, user });
 
-            const currentStory = isNewResource
+            const currentStory = geoNodePageConfig.isNewResource
                 // change id of new story sections and contents
                 ? {
-                    ...geoStoryConfig,
-                    sections: geoStoryConfig?.sections
+                    ...newStoryTemplate,
+                    sections: newStoryTemplate?.sections
                         .map((section) => {
                             return {
                                 ...section,
@@ -106,76 +146,75 @@ window.initMapStore = function initMapStore(geoNodeMSConfig) {
                             };
                         }) || []
                 }
-                : geoStoryConfig;
+                : geoNodePageConfig.resourceConfig;
 
-            setLocalConfigurationFile('');
-            setLocale(language);
-            setRegGeoserverRule(/\/[\w- ]*geoserver[\w- ]*\/|\/[\w- ]*gs[\w- ]*\//);
-            setConfigProp('translationsPath', __GEONODE_PROJECT_CONFIG__.translationsPath || [
-                getScriptPath() + '/../MapStore2/web/client',
-                getScriptPath() + '/../translations'
-            ]);
-            setConfigProp('loadAfterTheme', true);
-            setConfigProp('themePrefix', 'msgapi');
-            setConfigProp('plugins', plugins);
-
-            if (defaultConfig && defaultConfig.localConfig) {
-                Object.keys(defaultConfig.localConfig).forEach(function(key) {
-                    setConfigProp(key, defaultConfig.localConfig[key]);
-                });
-            }
-
-            if (defaultConfig && defaultConfig.proxy) {
-                setConfigProp('proxyUrl', defaultConfig.proxy);
-            }
-
-            setConfigProp('initialState', {
-                defaultState: {
-                    maptype: {
-                        mapType: "{context.mode === 'desktop' ? 'openlayers' : 'leaflet'}"
+            const appEpics = {
+                ...configEpics
+            };
+            storeEpicsCache(appEpics);
+            main({
+                targetId,
+                appComponent: withRoutes(routes)(ConnectedRouter),
+                pluginsConfig: getPluginsConfiguration(localConfig.plugins, pluginsConfigKey),
+                loaderComponent: MainLoader,
+                lazyPlugins: pluginsDefinition.lazyPlugins,
+                pluginsDef: {
+                    plugins: {
+                        ...pluginsDefinition.plugins
                     },
-                    security: userDetails,
-                    geostory: {
-                        isCollapsed: false,
-                        focusedContent: {},
-                        currentPage: {},
-                        settings: {},
-                        oldSettings: {},
-                        updateUrlOnScroll: false,
-                        currentStory: {},
-                        mode: isMobile.any || !permissions.canEdit ? 'view' : 'edit',
-                        resource: {
-                            canEdit: permissions.canEdit
+                    requires: {
+                        ...requires,
+                        ...pluginsDefinition.requires
+                    }
+                },
+                initialState: {
+                    defaultState: {
+                        maptype: {
+                            mapType: 'openlayers'
+                        },
+                        ...securityState,
+                        geostory: {
+                            isCollapsed: false,
+                            focusedContent: {},
+                            currentPage: {},
+                            settings: {},
+                            oldSettings: {},
+                            updateUrlOnScroll: false,
+                            currentStory: {},
+                            mode: geoNodePageConfig.isEmbed || isMobile.any || !permissions.canEdit ? 'view' : 'edit',
+                            resource: {
+                                canEdit: permissions.canEdit
+                            }
                         }
                     }
-                }
-            });
-
-            main({
-                targetId: 'ms-container',
-                appComponent: withRoutes(routes)(ConnectedRouter),
-                pluginsDef: {
-                    plugins: {},
-                    requires: {}
                 },
                 themeCfg: {
-                    path: getScriptPath() + '/themes',
-                    prefixContainer: '#ms-container',
-                    version: getVersion()
+                    path: '/static/mapstore/dist/themes',
+                    prefixContainer: '#' + targetId,
+                    version: getVersion(),
+                    prefix: 'msgapi',
+                    theme: query.theme
                 },
                 appReducers: {
                     geostory,
                     gnresource,
+                    gnsettings,
                     security,
                     maptype
                 },
+                appEpics,
+                onStoreInit,
                 initialActions: [
+                    // add some settings in the global state to make them accessible in the monitor state
+                    // later we could use expression in localConfig
+                    updateGeoNodeSettings.bind(null, settings),
                     setCurrentStory.bind(null, currentStory),
                     setResourceType.bind(null, 'geostory'),
                     setResourcePermissions.bind(null, permissions),
-                    ...(appId ? [setResourceId.bind(null, appId)] : []),
-                    ...(isNewResource ? [setNewResource] : [])
+                    ...(geoNodePageConfig.resourceId ? [setResourceId.bind(null, geoNodePageConfig.resourceId)] : []),
+                    ...(geoNodePageConfig.isNewResource ? [setNewResource] : [])
                 ]
             });
         });
-};
+
+});

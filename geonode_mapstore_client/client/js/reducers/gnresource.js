@@ -14,10 +14,11 @@ import {
     SET_RESOURCE_TYPE,
     SET_NEW_RESOURCE,
     SET_RESOURCE_ID,
-    SET_RESOURCE_PERMISSIONS
+    SET_RESOURCE_PERMISSIONS,
+    SET_SELECTED_LAYER_PERMISSIONS
 } from '@js/actions/gnresource';
 
-function gnresource(state = {}, action) {
+function gnresource(state = {selectedLayerPermissions: []}, action) {
     switch (action.type) {
     case RESOURCE_LOADING: {
         return {
@@ -74,6 +75,11 @@ function gnresource(state = {}, action) {
             permissions: action.permissions
         };
     }
+    case SET_SELECTED_LAYER_PERMISSIONS:
+        return {
+            ...state,
+            selectedLayerPermissions: action.permissions
+        };
     default:
         return state;
     }
