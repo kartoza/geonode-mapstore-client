@@ -1750,7 +1750,13 @@
                 }
             },
             {
-                "name": "DrawerMenu"
+                "name": "DrawerMenu",
+                "cfg": {
+                    "show": true
+                }
+            },
+            {
+                "name": "GeonodeMetadata"
             },
             {
                 "name": "Cookie"

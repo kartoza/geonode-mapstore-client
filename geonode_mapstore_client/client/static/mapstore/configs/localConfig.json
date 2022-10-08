@@ -1953,6 +1953,9 @@
             },
             {
                 "name": "GeonodeMetadata"
+            },
+            {
+                "name": "Annotations"
             }
         ],
         "map_edit": [
@@ -1979,6 +1982,9 @@
             },
             {
                 "name": "BackgroundSelector"
+            },
+            {
+                "name": "Annotations"
             },
             {
                 "name": "Identify",

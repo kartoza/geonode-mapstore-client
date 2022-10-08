@@ -90,6 +90,10 @@ function splitLazyAndStaticPlugins(pluginsDefinition) {
 // provides a way to import dynamically plugins similar to extensions
 
 export const plugins = {
+    AnnotationsPlugin: toLazyPlugin(
+        'Annotations',
+        import(/* webpackChunkName: 'plugins/annotations' */ '@mapstore/framework/plugins/Annotations')
+    ),
     LayerDownloadPlugin: toLazyPlugin(
         'LayerDownload',
         import(/* webpackChunkName: 'plugins/layer-download' */ '@mapstore/framework/plugins/LayerDownload')
