@@ -265,6 +265,10 @@ export const plugins = {
     DrawerMenuPlugin: toLazyPlugin(
         'DrawerMenu',
         import(/* webpackChunkName: 'plugins/drawer-menu-plugin' */ '@mapstore/framework/plugins/DrawerMenu')
+    ),
+    GeonodeMetadataPlugin: toLazyPlugin(
+        'GeonodeMetadata',
+        import(/* webpackChunkName: 'plugins/geonode-metadata-plugin' */ '@js/plugins/GeonodeMetadata')
     )
 };
 

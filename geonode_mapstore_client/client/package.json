@@ -28,7 +28,7 @@
   "license": "BSD-2-Clause",
   "devDependencies": {
     "@mapstore/project": "1.0.7",
-    "webpack-cli": "4.9.0"
+    "webpack-cli": "^4.10.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.15.1",
@@ -36,12 +36,13 @@
     "dompurify": "2.2.6",
     "js-cookie": "2.2.1",
     "mapstore": "file:MapStore2",
-    "react-bootstrap-v1": "npm:react-bootstrap@1.3.0"
+    "react-bootstrap-v1": "npm:react-bootstrap@1.3.0",
+    "yargs": "^17.6.0"
   },
   "geonode": {
     "devServer": {
       "host": "localhost",
-      "proxyTargetHost": "localhost:8000",
+      "proxyTargetHost": "192.168.50.197:3002",
       "protocol": "http"
     }
   }

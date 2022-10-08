@@ -1950,6 +1950,9 @@
             },
             {
                 "name": "Locate"
+            },
+            {
+                "name": "GeonodeMetadata"
             }
         ],
         "map_edit": [
