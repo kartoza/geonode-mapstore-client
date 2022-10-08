@@ -69,6 +69,10 @@ import 'react-select/dist/react-select.css';
 import pluginsDefinition from '@js/plugins/index';
 import ReactSwipe from 'react-swipeable-views';
 import SwipeHeader from '@mapstore/framework/components/data/identify/SwipeHeader';
+import {
+    initIgracMapstore
+} from '@js/utils/IGRACUtils';
+
 const requires = {
     ReactSwipe,
     SwipeHeader
@@ -115,6 +119,9 @@ Promise.all([
         // get the correct map layout
         const mapLayout = getConfigProp('mapLayout') || {};
         setConfigProp('mapLayout', mapLayout[query.theme] || mapLayout.viewer);
+
+        // Init IGRAC custom functions
+        initIgracMapstore();
 
         // register custom arcgis layer
         import('@js/components/' + mapType + '/ArcGisMapServer')
