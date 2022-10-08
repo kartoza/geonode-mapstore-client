@@ -1955,6 +1955,9 @@
                 "name": "GeonodeMetadata"
             },
             {
+                "name": "IgracDownload"
+            },
+            {
                 "name": "Annotations"
             }
         ],

@@ -17,9 +17,11 @@ import { Glyphicon } from 'react-bootstrap';
 import controls from '@mapstore/framework/reducers/controls';
 import ShareEmbed from '@mapstore/framework/components/share/ShareEmbed';
 import ShareLink from '@mapstore/framework/components/share/ShareLink';
+import ShareQRCode from '@mapstore/framework/components/share/ShareQRCode';
 import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import { mapInfoSelector } from '@mapstore/framework/selectors/map';
 import url from 'url';
+import './share.scss';
 
 function getShareUrl({
     resourceId,
@@ -56,6 +58,11 @@ function Share({
             clickOutEnabled={false}
             onClose={() => onClose()}
         >
+            <div className="share-qr-code">
+                <ShareQRCode
+                    shareUrl={shareUrl}
+                />
+            </div>
             <ShareLink
                 shareUrl={shareUrl}
             />
