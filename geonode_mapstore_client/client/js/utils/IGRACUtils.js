@@ -16,23 +16,6 @@ export function initIgracMapstore() {
             const layers = window.__GEONODE_CONFIG__.resourceConfig.map.layers || [];
             if (response.data['extent']) {
                 setTimeout(function() {
-                    const extent = response.data['extent'];
-                    window.MapStoreAPI.triggerAction({
-                        type: 'ZOOM_TO_EXTENT',
-                        extent: {
-                            minx: extent[0],
-                            miny: extent[1],
-                            maxx: extent[2],
-                            maxy: extent[3]
-                        },
-                        crs: 'EPSG:4326',
-                        padding: {
-                            top: 0,
-                            bottom: 0,
-                            right: 0,
-                            left: 0
-                        }
-                    });
                     // Find groundwater layer
                     for (let i = 0; i < layers.length; i++) {
                         try {
@@ -41,6 +24,8 @@ export function initIgracMapstore() {
                                 window.MapStoreAPI.triggerAction({ type: 'LAYERS:SELECT_NODE', id: layer.id, nodeType: 'layer', ctrlKey: false});
                             }
                         } catch (e) {
+                            // eslint-disable-next-line no-console
+                            console.log(e);
                         }
                     }
                 }, 3000);
