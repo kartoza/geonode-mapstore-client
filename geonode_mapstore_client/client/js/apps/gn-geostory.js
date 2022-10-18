@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 targetId = 'ms-container',
                 settings
             } = setupConfiguration({ localConfig, user });
+            const currentUrl = window.location.href;
 
             const currentStory = geoNodePageConfig.isNewResource
                 // change id of new story sections and contents
@@ -177,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             oldSettings: {},
                             updateUrlOnScroll: false,
                             currentStory: {},
-                            mode: geoNodePageConfig.isEmbed || isMobile.any || !permissions.canEdit ? 'view' : 'edit',
+                            mode: geoNodePageConfig.isEmbed || isMobile.any || !permissions.canEdit || currentUrl.includes('/view') ? 'view' : 'edit',
                             resource: {
                                 canEdit: permissions.canEdit
                             }
