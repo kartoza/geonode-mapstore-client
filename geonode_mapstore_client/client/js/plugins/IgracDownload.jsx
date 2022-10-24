@@ -6,6 +6,7 @@ import {mapInfoSelector} from "@mapstore/framework/selectors/map";
 import {connect} from "react-redux";
 import {createSelector} from "reselect";
 import {Alert} from "react-bootstrap";
+import Rx from 'rxjs';
 import ResizableModal from "@mapstore/framework/components/misc/ResizableModal";
 import {
     DOWNLOAD_IGRAC_DATA, FINISH_DOWNLOADING_IGRAC_DATA
@@ -16,9 +17,7 @@ const IGRAC_DOWNLOAD_URL = '/groundwater/record/download-request';
 
 const downloadProgressHtml = (taskId) => (
     '<div>' +
-    '<h1>Download has been started</h1> <hr> ' +
-    '<p> Please check this page to see the progress of the download : <br/><a target="_blank" href="/groundwater/download?task_id=' + taskId + '">' +
-    window.location.origin + '/groundwater/download?task_id=' + taskId + '</a></p>' +
+    '<h1>Redirecting...</h1> <hr> ' +
     '</div>'
 );
 
@@ -60,7 +59,8 @@ export const startDownloadingIGRACData = (action$, { getState } = {}) =>
     action$
         .ofType(DOWNLOAD_IGRAC_DATA)
         .switchMap(() => {
-            return window.location.href = IGRAC_DOWNLOAD_URL
+            window.location.href = IGRAC_DOWNLOAD_URL;
+            return Rx.Observable.of(finishDownloadingIGRACData());
         });
 
 // Reducers
