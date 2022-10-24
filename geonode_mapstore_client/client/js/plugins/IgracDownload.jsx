@@ -1,9 +1,7 @@
 import React, {useRef} from 'react';
 import PropTypes from 'prop-types';
 import assign from 'object-assign';
-import Rx from 'rxjs';
 import {createPlugin} from "@mapstore/framework/utils/PluginsUtils";
-import {isLoggedIn} from "@mapstore/framework/selectors/security";
 import {mapInfoSelector} from "@mapstore/framework/selectors/map";
 import {connect} from "react-redux";
 import {createSelector} from "reselect";
@@ -12,13 +10,9 @@ import ResizableModal from "@mapstore/framework/components/misc/ResizableModal";
 import {
     DOWNLOAD_IGRAC_DATA, FINISH_DOWNLOADING_IGRAC_DATA
 } from "@mapstore/framework/actions/featuregrid";
-import {
-    getAttributeFilters
-} from "@mapstore/framework/selectors/featuregrid";
 import featuregrid from "@mapstore/framework/reducers/featuregrid";
-import axios from "@mapstore/framework/libs/ajax";
 
-const IGRAC_DOWNLOAD_URL = '/groundwater/record/download/';
+const IGRAC_DOWNLOAD_URL = '/groundwater/record/download-request';
 
 const downloadProgressHtml = (taskId) => (
     '<div>' +
@@ -66,15 +60,7 @@ export const startDownloadingIGRACData = (action$, { getState } = {}) =>
     action$
         .ofType(DOWNLOAD_IGRAC_DATA)
         .switchMap(() => {
-            if (isLoggedIn(getState())) {
-                const attributesFilter = getAttributeFilters(getState()) || {};
-                return Rx.Observable.fromPromise(
-                    axios.post(IGRAC_DOWNLOAD_URL, attributesFilter).then( response => response.data.task_id )
-                ).switchMap(
-                    (taskId) => Rx.Observable.of(finishDownloadingIGRACData(taskId))
-                );
-            }
-            return Rx.Observable.of(finishDownloadingIGRACData(), errorDownloadingIGRACData());
+            return window.location.href = IGRAC_DOWNLOAD_URL
         });
 
 // Reducers
