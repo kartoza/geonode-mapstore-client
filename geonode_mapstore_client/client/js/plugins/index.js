@@ -300,9 +300,9 @@ export const plugins = {
         'MediaViewer',
         () => import(/* webpackChunkName: 'plugins/media-viewer-plugin' */ '@js/plugins/MediaViewer')
     ),
-    GeonodeMetadata: toModulePlugin(
+    GeonodeMetadataPlugin: toModulePlugin(
         'GeonodeMetadata',
-        () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/GeonodeMetadata')
+        () => import(/* webpackChunkName: 'plugins/geonode-metadata-plugin' */ '@js/plugins/GeonodeMetadata')
     ),
     DashboardEditorPlugin: toModulePlugin(
         'DashboardEditor',
