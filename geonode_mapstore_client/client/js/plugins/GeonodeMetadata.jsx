@@ -14,6 +14,9 @@ import Loader from '@mapstore/framework/components/misc/Loader';
 import {getResourceId, isNewResource} from "@js/selectors/resource";
 import {setControlProperty} from "mapstore/web/client/actions/controls";
 import Button from "@js/components/Button";
+import Dialog from "../../MapStore2/web/client/components/misc/Dialog";
+import {TOGGLE_CONTROL} from "../../MapStore2/web/client/actions/controls";
+import {measureSelector} from "../../MapStore2/web/client/selectors/controls";
 
 // Api
 export const getMetadataBySlugName = () => {
@@ -21,8 +24,8 @@ export const getMetadataBySlugName = () => {
     if (currentUrl.includes('/maps/')) {
         currentUrl = currentUrl.replace('/view', '').replace('/edit', '');
     }
-    const url = `${currentUrl.replace('#', '')}/metadata_detail/article`;
-    console.log('getMetadataBySlugName');
+    const mapId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+    const url = `/maps/${mapId}/metadata_detail/article`;
     return axios.get(url)
         // add pk as alias to id
         // used in save and save as for map
@@ -40,6 +43,11 @@ function setMetadata(data) {
     return {
         type: 'SET_GEONODE_METADATA',
         data
+    };
+}
+function clearMetadata() {
+    return {
+        type: 'CLEAR_GEONODE_METADATA'
     };
 }
 function metadataError(error) {
@@ -73,6 +81,12 @@ export function gnmetadataresource(state = {}, action) {
             loading: false
         };
     }
+    case 'CLEAR_GEONODE_METADATA': {
+        return {
+            data: null,
+            loading: false
+        };
+    }
     default:
         return state;
     }
@@ -89,6 +103,13 @@ export const gnGetMetadata = (action$, store) =>
                 .catch((error) => {
                     return Observable.of(metadataError(error.data || error.message));
                 });
+        });
+
+export const gnCloseMetadata = (action$, store) =>
+    action$.ofType(TOGGLE_CONTROL)
+        .filter(action => action.control === "metadata" && !measureSelector(store.getState()))
+        .switchMap(() => {
+            return Observable.of(clearMetadata());
         });
 
 function GeonodeMetadata({
@@ -113,43 +134,40 @@ function GeonodeMetadata({
     }, [ enabled ]);
 
     return (
-        <ResizableModal
-            modalClassName="gn-metadata-modal"
-            title="Map Metadata"
-            show={enabled}
-            size={'lg'}
-            fitContent
-            enableFooter={false}
-            clickOutEnabled={false}
-            onClose={() => onClose()}
-        >
-            <div
-                style={{
-                    top: 0,
-                    left: 0,
-                    minHeight: 550,
-                    maxHeight: 550,
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    zIndex: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}
-            >
-                {error && <Alert bsStyle="danger" style={{ margin: 0 }}>
-                    <div>Metadata cannot be fetched</div>
-                </Alert>}
-                {data && <div style={{
-                    overflowY: 'scroll',
-                    height: 550,
-                    width: '100%',
-                    paddingLeft: 20,
-                    paddingRight: 20}} dangerouslySetInnerHTML={{ __html: data }}/>}
-                {loading && <Loader size={80} />}
-            </div>
-        </ResizableModal>
+        enabled ?
+            <Dialog id="metadata-dialog">
+                <div key="header" role="header">
+                    <Glyphicon glyph="list-alt"/>&nbsp;<span>Metadata</span>
+                    <button key="close" onClick={onClose} className="close"><span>×</span></button>
+                </div>
+                <div
+                    key="body" role="body"
+                    style={{
+                        top: 0,
+                        left: 0,
+                        minHeight: 550,
+                        maxHeight: 550,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        zIndex: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    {error && <Alert bsStyle="danger" style={{ margin: 0 }}>
+                        <div>Metadata cannot be fetched</div>
+                    </Alert>}
+                    {data && <div style={{
+                        overflowY: 'scroll',
+                        height: 550,
+                        width: '100%',
+                        paddingLeft: 20,
+                        paddingRight: 20}} dangerouslySetInnerHTML={{ __html: data }}/>}
+                    {loading && <Loader size={80} />}
+                </div>
+            </Dialog> : null
     );
 }
 
@@ -158,7 +176,7 @@ GeonodeMetadata.propTypes = {
     resourceId: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]),
     enabled: PropTypes.bool,
     loading: PropTypes.bool,
-    error: PropTypes.obj,
+    error: PropTypes.string,
     data: PropTypes.string,
     onClose: PropTypes.func,
     onInit: PropTypes.func
@@ -167,7 +185,7 @@ GeonodeMetadata.propTypes = {
 GeonodeMetadata.defaultProps = {
     resourceId: null,
     enabled: false,
-    loading: false,
+    loading: true,
     error: null,
     data: '',
     onClose: () => {},
@@ -206,7 +224,7 @@ function GeonodeMetadataButton({
             size={size}
             onClick={() => onClick()}
         >
-            Geonode Metadata
+            Metadata
         </Button>
         : null
     ;
@@ -222,20 +240,36 @@ const ConnectedGeonodeMetadataButton = connect(
         })
     ),
     {
-        onClick: setControlProperty.bind(null, 'rightOverlay', 'enabled', 'Metadata')
+        onClick: () => setControlProperty("metadata", "enabled", true)
     }
 )((GeonodeMetadataButton));
 
 export default createPlugin('GeonodeMetadata', {
     component: GeonodeMetadataPlugin,
     containers: {
+        BurgerMenu: {
+            name: 'metadata',
+            position: 30,
+            text: 'Metadata',
+            icon: <Glyphicon glyph="list-alt"/>,
+            action: toggleControl.bind(null, 'metadata', null),
+            // display the BurgerMenu button only if page is in the view mode
+            selector: createSelector(
+                isLoggedIn,
+                mapInfoSelector,
+                (loggedIn, {canEdit, id} = {}) => ({
+                    style: window.location.href.includes('/view/') || window.location.href.includes('/maps/') && id ? {} : { display: 'none'} // the resource is new (no resource) or if present, is editable
+                })
+            )
+        },
         ActionNavbar: {
             name: 'GeonodeMetadata',
             Component: ConnectedGeonodeMetadataButton
         }
     },
     epics: {
-        gnGetMetadata
+        gnGetMetadata,
+        gnCloseMetadata
     },
     reducers: {
         gnmetadataresource

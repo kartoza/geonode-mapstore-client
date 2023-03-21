@@ -378,9 +378,9 @@ export const plugins = {
         'FitBounds',
         () => import(/* webpackChunkName: 'plugins/fit-bounds-plugin' */ '@js/plugins/FitBounds')
     ),
-    GeonodeMetadata: toLazyPlugin(
+    GeonodeMetadataPlugin: toLazyPlugin(
         'GeonodeMetadata',
-        () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/GeonodeMetadata')
+        () => import(/* webpackChunkName: 'plugins/geonode-metadata-plugin' */ '@js/plugins/GeonodeMetadata')
     ),
     DashboardEditorPlugin: toLazyPlugin(
         'DashboardEditor',

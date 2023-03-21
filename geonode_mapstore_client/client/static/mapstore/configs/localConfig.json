@@ -2180,10 +2180,7 @@
                 }
             },
             {
-                "name": "GeonodeMetadata",
-                "cfg": {
-                    "containerPosition": "rightOverlay"
-                }
+                "name": "GeonodeMetadata"
             },
             {
                 "name": "Swipe"
