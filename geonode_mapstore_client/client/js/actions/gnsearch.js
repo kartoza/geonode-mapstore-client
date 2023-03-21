@@ -79,9 +79,9 @@ export function setFeaturedResources(data) {
 * Actions for GeoNode resource featured items
 * loads new featured resources basing on the action, previous or next
 * @param action {string} can be either next or previous
-* @param pageSize { number } page_size of items to load defaults to 4;
+* @param pageSize { number } page_size of items to load defaults to 99;
 */
-export function loadFeaturedResources(action, pageSize = 4) {
+export function loadFeaturedResources(action, pageSize = 99) {
     return {
         type: UPDATE_FEATURED_RESOURCES,
         action,

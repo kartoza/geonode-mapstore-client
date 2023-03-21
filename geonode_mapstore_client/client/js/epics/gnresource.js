@@ -117,6 +117,7 @@ import { VisualizationModes } from '@mapstore/framework/utils/MapTypeUtils';
 import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
 
 const FIT_BOUNDS_CONTROL = 'fitBounds';
+import { initIgracMapstore } from "@js/utils/IGRACUtils";
 
 const resourceTypes = {
     [ResourceTypes.DATASET]: {
@@ -231,6 +232,10 @@ const resourceTypes = {
                     const mapConfig = options.data
                         ? options.data
                         : toMapStoreMapConfig(mapResource, baseConfig);
+
+                    // IGRAC initialization
+                    initIgracMapstore(mapConfig);
+
                     return Observable.of(
                         configureMap(mapConfig),
                         setControlProperty('toolbar', 'expanded', false),
