@@ -378,6 +378,10 @@ export const plugins = {
         'FitBounds',
         () => import(/* webpackChunkName: 'plugins/fit-bounds-plugin' */ '@js/plugins/FitBounds')
     ),
+    GeonodeMetadata: toLazyPlugin(
+        'GeonodeMetadata',
+        () => import(/* webpackChunkName: 'plugins/detail-viewer-plugin' */ '@js/plugins/GeonodeMetadata')
+    ),
     DashboardEditorPlugin: toLazyPlugin(
         'DashboardEditor',
         () => import(/* webpackChunkName: 'plugins/dashboard-editor-plugin' */ '@mapstore/framework/plugins/DashboardEditor')

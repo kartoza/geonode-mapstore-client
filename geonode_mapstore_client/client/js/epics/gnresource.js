@@ -88,6 +88,7 @@ import {
     warning as warningNotification
 } from '@mapstore/framework/actions/notifications';
 import { getStyleProperties } from '@js/api/geonode/style';
+import {initIgracMapstore} from "@js/utils/IGRACUtils";
 
 const resourceTypes = {
     [ResourceTypes.DATASET]: {
@@ -185,6 +186,10 @@ const resourceTypes = {
                     const mapConfig = options.data
                         ? options.data
                         : toMapStoreMapConfig(resource, baseConfig);
+
+                    // IGRAC initialization
+                    initIgracMapstore(mapConfig);
+
                     return Observable.of(
                         configureMap(mapConfig),
                         setControlProperty('toolbar', 'expanded', false),

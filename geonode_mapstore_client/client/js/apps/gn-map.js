@@ -52,6 +52,9 @@ import {
 import { ResourceTypes } from '@js/utils/ResourceUtils';
 import { requestResourceConfig } from '@js/actions/gnresource';
 import { updateGeoNodeSettings } from '@js/actions/gnsettings';
+import {
+    initIgracMapstore
+} from "@js/utils/IGRACUtils";
 
 import {
     updateMapLayoutEpic,

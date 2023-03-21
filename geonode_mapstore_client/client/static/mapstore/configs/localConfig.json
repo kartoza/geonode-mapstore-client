@@ -789,7 +789,7 @@
             {
                 "name": "Playback"
             }
-            
+
         ],
         "geostory_embed": [
             {
@@ -954,7 +954,7 @@
                         },
                         {
                             "type": "plugin",
-                            "name": "Share"
+                            "name": "GeonodeMetadata"
                         },
                         {
                             "type": "plugin",
@@ -1759,6 +1759,10 @@
                         },
                         {
                             "type": "plugin",
+                            "name": "GeonodeMetadata"
+                        },
+                        {
+                            "type": "plugin",
                             "name": "Print"
                         },
                         {
@@ -2171,6 +2175,12 @@
             },
             {
                 "name": "Share",
+                "cfg": {
+                    "containerPosition": "rightOverlay"
+                }
+            },
+            {
+                "name": "GeonodeMetadata",
                 "cfg": {
                     "containerPosition": "rightOverlay"
                 }
