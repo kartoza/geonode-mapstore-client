@@ -9,7 +9,6 @@ import {createSelector} from "reselect";
 import {isLoggedIn} from "@mapstore/framework/selectors/security";
 import {mapInfoSelector} from "@mapstore/framework/selectors/map";
 import {connect} from "react-redux";
-import ResizableModal from '@mapstore/framework/components/misc/ResizableModal';
 import Loader from '@mapstore/framework/components/misc/Loader';
 import {getResourceId, isNewResource} from "@js/selectors/resource";
 import {setControlProperty} from "mapstore/web/client/actions/controls";
@@ -18,12 +17,14 @@ import Dialog from "../../MapStore2/web/client/components/misc/Dialog";
 import {TOGGLE_CONTROL} from "../../MapStore2/web/client/actions/controls";
 import {measureSelector} from "../../MapStore2/web/client/selectors/controls";
 
+const METADATA_DIALOG_STYLE = {
+    position: 'fixed',
+    top: '0%',
+    left: '25%'
+}
 // Api
 export const getMetadataBySlugName = () => {
     let currentUrl = window.location.href;
-    if (currentUrl.includes('/maps/')) {
-        currentUrl = currentUrl.replace('/view', '').replace('/edit', '');
-    }
     const mapId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
     const url = `/maps/${mapId}/metadata_detail/article`;
     return axios.get(url)
@@ -135,7 +136,7 @@ function GeonodeMetadata({
 
     return (
         enabled ?
-            <Dialog id="metadata-dialog">
+            <Dialog id="metadata-dialog" style={METADATA_DIALOG_STYLE}>
                 <div key="header" role="header">
                     <Glyphicon glyph="list-alt"/>&nbsp;<span>Metadata</span>
                     <button key="close" onClick={onClose} className="close"><span>×</span></button>
