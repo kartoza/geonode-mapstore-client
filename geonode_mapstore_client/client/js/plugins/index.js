@@ -319,6 +319,10 @@ export const plugins = {
             }
         }
     ),
+    IgracDownloadPlugin: toModulePlugin(
+        'IgracDownload',
+        () => import(/* webpackChunkName: 'plugins/igrac-download-plugin' */ '@js/plugins/IgracDownload')
+    ),
     DashboardPlugin: toModulePlugin(
         'Dashboard',
         () => import(/* webpackChunkName: 'plugins/dashboard-plugin' */ '@mapstore/framework/plugins/Dashboard')
