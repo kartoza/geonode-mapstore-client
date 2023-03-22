@@ -382,6 +382,10 @@ export const plugins = {
         'GeonodeMetadata',
         () => import(/* webpackChunkName: 'plugins/geonode-metadata-plugin' */ '@js/plugins/GeonodeMetadata')
     ),
+    IgracDownloadPlugin: toLazyPlugin(
+        'IgracDownload',
+        () => import(/* webpackChunkName: 'plugins/igrac-download-plugin' */ '@js/plugins/IgracDownload')
+    ),
     DashboardEditorPlugin: toLazyPlugin(
         'DashboardEditor',
         () => import(/* webpackChunkName: 'plugins/dashboard-editor-plugin' */ '@mapstore/framework/plugins/DashboardEditor')
