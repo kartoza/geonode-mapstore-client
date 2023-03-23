@@ -32,7 +32,6 @@ import {
     getThemeLayoutSize
 } from '@js/utils/AppUtils';
 
-import ConnectedCardGrid from '@js/routes/catalogue/ConnectedCardGrid';
 import { getFeaturedResults, getTotalResources } from '@js/selectors/search';
 import DeleteResource from '@js/plugins/DeleteResource';
 import SaveAs from '@js/plugins/SaveAs';
@@ -111,7 +110,6 @@ function Home({
     }
 
     const { query } = url.parse(location.search, true);
-    const queryFilters = getQueryFilters(query);
 
     return (
         <div className="gn-container">
@@ -122,45 +120,12 @@ function Home({
                         pageSize={99}
                         formatHref={handleFormatHref}
                         buildHrefByTemplate={buildHrefByTemplate}
-                        onLoad={fetchFeaturedResources}
+                        onLoad={() => fetchFeaturedResources(null, 99)}
                         containerStyle={{
                             minHeight: 'auto'
                         }}/>
-
                 </div>
             </div>
-            {/*<div className="gn-row">*/}
-            {/*    <div className="gn-grid-container">*/}
-            {/*        <ConnectedCardGrid*/}
-            {/*            user={user}*/}
-            {/*            query={query}*/}
-            {/*            pageSize={pageSize}*/}
-            {/*            cardOptions={cardOptionsItemsAllowed}*/}
-            {/*            buildHrefByTemplate={buildHrefByTemplate}*/}
-            {/*            page={params.page ? parseFloat(params.page) : 1}*/}
-            {/*            formatHref={handleFormatHref}*/}
-            {/*            onLoad={(value) => {*/}
-            {/*                handleUpdate({*/}
-            {/*                    page: value*/}
-            {/*                });*/}
-            {/*            }}*/}
-            {/*        >*/}
-            {/*            <FiltersMenu*/}
-            {/*                formatHref={handleFormatHref}*/}
-            {/*                cardsMenu={filterMenuItemsAllowed || []}*/}
-            {/*                order={query?.sort}*/}
-            {/*                onClear={handleClear}*/}
-            {/*                onClick={handleShowFilterForm}*/}
-            {/*                orderOptions={filters?.order?.options}*/}
-            {/*                defaultLabelId={filters?.order?.defaultLabelId}*/}
-            {/*                totalResources={totalResources}*/}
-            {/*                totalFilters={queryFilters.length}*/}
-            {/*                filtersActive={!!(queryFilters.length > 0)}*/}
-            {/*                loading={loading}*/}
-            {/*            />*/}
-            {/*        </ConnectedCardGrid>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
             <DeleteResourcePlugin redirectTo={false} />
             <SaveAsPlugin closeOnSave labelId="gnviewer.clone" />
             <NotificationsPlugin />

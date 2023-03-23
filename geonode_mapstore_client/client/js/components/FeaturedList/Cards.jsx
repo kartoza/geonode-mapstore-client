@@ -22,6 +22,7 @@ const Cards = ({
     onResize,
     actions,
     onAction,
+    onClick,
     onDownload,
     downloading
 }) => {
@@ -87,6 +88,7 @@ const Cards = ({
                             featured
                             actions={actions}
                             onAction={onAction}
+                            onClick={onClick}
                             onDownload={onDownload}
                             downloading={downloading?.find((download) => download.pk === resource.pk) ? true : false}
                         />

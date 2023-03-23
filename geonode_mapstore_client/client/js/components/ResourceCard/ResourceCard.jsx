@@ -137,9 +137,11 @@ const ResourceCard = forwardRef(({
                                 <ResourceStatus resource={res} />
                             </div>
                         </div>
-                        <p className="card-text gn-card-description">
-                            {res.raw_abstract ? res.raw_abstract : '...'}
-                        </p>
+                        <div className="map-abstract">
+                            <p className="card-text gn-card-description">
+                                {res.raw_abstract ? res.raw_abstract : '...'}
+                            </p>
+                        </div>
                         {!readOnly &&
                             options &&
                             options.length > 0 &&

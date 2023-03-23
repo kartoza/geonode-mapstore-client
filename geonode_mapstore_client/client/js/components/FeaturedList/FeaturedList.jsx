@@ -51,15 +51,20 @@ const FeaturedList = withResizeDetector(({
         <div className="gn-card-grid" style={resources.length === 0 ? { display: 'none' } : {}}>
             {header}
             <div style={{
-                display: 'flex', width: '100%'
+                display: 'flex', width: '100%', height: '100%'
             }}>
-                <div style={{ flex: 1, width: '100%' }}>
+                <div style={{ flex: 1, width: '100%', height: '100%', paddingBottom: '50px' }}>
                     <div className="gn-card-grid-container" style={containerStyle}>
-                        <h3><HTML msgId={`gnhome.featuredList`}/></h3>
+                        <h1 className="explore-viewer-title">Explore the viewers</h1>
                         <Cards
                             featured
                             resources={resources}
-                            formatHref={formatHref}
+                            formatHref={(res) => {
+                                if ('pathname' in res) {
+                                    return res.pathname.replace('/detail', '/catalogue/#');
+                                }
+                                return res;
+                            }}
                             isCardActive={isCardActive}
                             options={cardOptions}
                             buildHrefByTemplate={buildHrefByTemplate}
@@ -79,24 +84,6 @@ const FeaturedList = withResizeDetector(({
                             onDownload={onDownload}
                             downloading={downloading}
                         />
-                        <div className="gn-card-grid-pagination featured-list">
-
-                            <Button size="sm" onClick={() => loadFeaturedResources("previous", count)} disabled={!isPreviousPageAvailable || loading}
-                                aria-hidden="true">
-                                <FaIcon  style={previousIconStyles} name="caret-left"/>
-                            </Button>
-
-                            <div>
-                                { loading && <Spinner size="sm"  animation="border" role="status">
-                                    <span className="sr-only">Loading...</span>
-                                </Spinner>}
-                            </div>
-                            <Button size="sm" onClick={() => loadFeaturedResources("next", count)} disabled={!isNextPageAvailable || loading}
-                                aria-hidden="true">
-                                <FaIcon style={nextIconStyles} name="caret-right"/>
-
-                            </Button>
-                        </div>
                     </div>
                 </div>
             </div>

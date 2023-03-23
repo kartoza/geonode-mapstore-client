@@ -789,7 +789,7 @@
             {
                 "name": "Playback"
             }
-            
+
         ],
         "geostory_embed": [
             {
@@ -954,7 +954,7 @@
                         },
                         {
                             "type": "plugin",
-                            "name": "Share"
+                            "name": "GeonodeMetadata"
                         },
                         {
                             "type": "plugin",
@@ -1759,6 +1759,10 @@
                         },
                         {
                             "type": "plugin",
+                            "name": "GeonodeMetadata"
+                        },
+                        {
+                            "type": "plugin",
                             "name": "Print"
                         },
                         {
@@ -2174,6 +2178,12 @@
                 "cfg": {
                     "containerPosition": "rightOverlay"
                 }
+            },
+            {
+                "name": "GeonodeMetadata"
+            },
+            {
+                "name": "IgracDownload"
             },
             {
                 "name": "Swipe"

@@ -10,8 +10,8 @@ export function initIgracMapstore(mapConfig) {
         if (_layer.id && _layer.id.toLowerCase().includes('groundwater_well')) {
             let layerName = _layer.name;
             setTimeout(function() {
-                window.MapStoreAPI.triggerAction({ type: 'LAYERS:BROWSE_DATA', layer: _layer });
-            }, 3000);
+                window.MapStoreAPI.triggerAction({ type: 'LAYERS:SELECT_NODE', id: _layer.id, nodeType: 'layer', ctrlKey: false});
+            }, 500);
             layerName = layerName.replace('groundwater:Groundwater_Well_GGMN', 'groundwater:Groundwater_Well');
             let attributesUrl = `/api/layer/${layerName}/attributes`;
             axios.get(attributesUrl, {}).then((_response) => {
