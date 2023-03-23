@@ -146,9 +146,11 @@ const ResourceCard = forwardRef(({
                                 <Unadvertised resource={res}/>
                             </div>
                         </div>
-                        <p ref={abstractRef} className={`card-text gn-card-description ${layoutCardsStyle}`}>
-                            {res.raw_abstract ? res.raw_abstract : '...'}
-                        </p>
+                        <div className="map-abstract">
+                            <p ref={abstractRef} className="card-text gn-card-description">
+                                {res.raw_abstract ? res.raw_abstract : '...'}
+                            </p>
+                        </div>
                         {renderEllipsis()}
                         {!readOnly &&
                             options &&

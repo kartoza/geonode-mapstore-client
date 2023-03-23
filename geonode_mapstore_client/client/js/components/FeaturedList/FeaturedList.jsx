@@ -50,35 +50,22 @@ const FeaturedList = withResizeDetector(({
         <div className="gn-card-grid" style={resources.length === 0 ? { display: 'none' } : {}}>
             {header}
             <div className="gn-card-grid-container" style={containerStyle}>
-                <h3><HTML msgId={`gnhome.featuredList`}/></h3>
+                <h1 className="explore-viewer-title">Explore the viewers</h1>
                 <Cards
                     featured
                     resources={resources}
-                    formatHref={formatHref}
+                    formatHref={(res) => {
+                        if ('pathname' in res) {
+                            return res.pathname.replace('/detail', '/catalogue/#');
+                        }
+                        return res;
+                    }}
                     isCardActive={isCardActive}
                     buildHrefByTemplate={buildHrefByTemplate}
                     containerWidth={width}
                     downloading={downloading}
                     getDetailHref={getDetailHref}
                 />
-                <div className="gn-card-grid-pagination featured-list">
-
-                    <Button size="sm" onClick={() => loadFeaturedResources("previous", cardsCount)} disabled={!isPreviousPageAvailable || loading}
-                        aria-hidden="true">
-                        <FaIcon  style={previousIconStyles} name="caret-left"/>
-                    </Button>
-
-                    <div>
-                        { loading && <Spinner size="sm"  animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </Spinner>}
-                    </div>
-                    <Button size="sm" onClick={() => loadFeaturedResources("next", cardsCount)} disabled={!isNextPageAvailable || loading}
-                        aria-hidden="true">
-                        <FaIcon style={nextIconStyles} name="caret-right"/>
-
-                    </Button>
-                </div>
             </div>
         </div>
     );

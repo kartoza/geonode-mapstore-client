@@ -17,7 +17,8 @@ const Cards = ({
     buildHrefByTemplate,
     options,
     downloading,
-    getDetailHref
+    getDetailHref,
+    onClick
 }) => {
     return (
         <ul
@@ -42,6 +43,7 @@ const Cards = ({
                             featured
                             downloading={downloading?.find((download) => download.pk === resource.pk) ? true : false}
                             getDetailHref={getDetailHref}
+                            onClick={onClick}
                         />
                     </li>
                 );
