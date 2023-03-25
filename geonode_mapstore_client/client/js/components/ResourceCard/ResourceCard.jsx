@@ -35,7 +35,7 @@ const ResourceCard = forwardRef(({
     downloading,
     getDetailHref = res => formatHref({
         query: {
-            'd': `${res.pk};${res.resource_type}${res.subtype ? `;${res.subtype}` : ''}`
+            'd': `${res.slug ? res.slug : res.pk};${res.resource_type}${res.subtype ? `;${res.subtype}` : ''}`
         },
         replaceQuery: true,
         excludeQueryKeys: []

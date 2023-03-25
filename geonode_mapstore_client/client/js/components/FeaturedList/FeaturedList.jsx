@@ -54,12 +54,7 @@ const FeaturedList = withResizeDetector(({
                 <Cards
                     featured
                     resources={resources}
-                    formatHref={(res) => {
-                        if ('pathname' in res) {
-                            return res.pathname.replace('/detail', '/catalogue/#');
-                        }
-                        return res;
-                    }}
+                    formatHref={formatHref}
                     isCardActive={isCardActive}
                     buildHrefByTemplate={buildHrefByTemplate}
                     containerWidth={width}

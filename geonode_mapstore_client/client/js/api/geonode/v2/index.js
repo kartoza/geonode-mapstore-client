@@ -689,6 +689,16 @@ export const getFeaturedResources = (page = 1, page_size =  4) => {
     }).then(({data}) => data);
 };
 
+export const getIgracFeaturedResources = (page = 1, page_size =  4) => {
+    return axios.get(parseDevHostname('/igrac_api/featured/'), {
+        params: {
+            page_size,
+            page,
+            'filter{featured}': true
+        }
+    }).then(({data}) => data);
+};
+
 export const getCompactPermissionsByPk = (pk) => {
     return axios.get(parseDevHostname(`${endpoints[RESOURCES]}/${pk}/permissions`))
         .then(({ data }) => data);
