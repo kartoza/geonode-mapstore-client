@@ -69,7 +69,7 @@ const ResourceCard = forwardRef(({
                 <a
                     className="gn-resource-card-link"
                     href={formatHref({
-                        pathname: `/detail/${res.resource_type}/${res.pk}`
+                        pathname: `/detail/${res.resource_type}/${res.slug ? res.slug : res.pk}`
                     })}
                 />
             )}
@@ -127,7 +127,7 @@ const ResourceCard = forwardRef(({
                                     }
                                     readOnly={readOnly}
                                     href={formatHref({
-                                        pathname: `/detail/${res.resource_type}/${res.pk}`
+                                        pathname: `/detail/${res.resource_type}/${res.slug ? res.slug : res.pk}`
                                     })}
                                 >
                                     {res.title}

@@ -103,10 +103,11 @@ function Home({
     }
 
     function handleFormatHref(options) {
-        return cataloguePage + hashLocationToHref({
+        const href = cataloguePage + hashLocationToHref({
             location,
             ...options
         });
+        return href.replace('/catalogue/#/detail/map', '/view');
     }
 
     const { query } = url.parse(location.search, true);

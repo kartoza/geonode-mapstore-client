@@ -15,7 +15,7 @@ import {
     getResourceByPk,
     getDocumentByPk,
     getFeaturedResources,
-    getResourceByUuid
+    getResourceByUuid, getIgracFeaturedResources
 } from '@js/api/geonode/v2';
 import {
     SEARCH_RESOURCES,
@@ -256,7 +256,7 @@ export const getFeaturedResourcesEpic = (action$, {getState = () => {}}) =>
     action$.ofType(UPDATE_FEATURED_RESOURCES)
         .switchMap(({action, pageSize}) => {
             const page = getNextPage(action, getState());
-            return Observable.defer( () => getFeaturedResources(page, pageSize))
+            return Observable.defer( () => getIgracFeaturedResources(page, pageSize))
                 .switchMap((data) => {
                     return Observable.of(setFeaturedResources({...data,
                         isNextPageAvailable: !!data?.links?.next,

@@ -596,6 +596,16 @@ export const getFeaturedResources = (page = 1, page_size =  4) => {
     }).then(({data}) => data);
 };
 
+export const getIgracFeaturedResources = (page = 1, page_size =  4) => {
+    return axios.get(parseDevHostname('/igrac_api/featured/'), {
+        params: {
+            page_size,
+            page,
+            'filter{featured}': true
+        }
+    }).then(({data}) => data);
+};
+
 export const getCategories = ({ q, includes, page, pageSize, config, ...params }, filterKey = 'categories') => {
     return axios.get(parseDevHostname(`${endpoints[CATEGORIES]}`), {
         ...config,
