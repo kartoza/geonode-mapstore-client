@@ -243,11 +243,6 @@ Promise.all([
                 };
 
                 storeEpicsCache(appEpics);
-                setTimeout(function() {
-                    const geonodeSettings = getConfigProp('geoNodeSettings') || {};
-                    const geoNodeResourcesInfo = getConfigProp('geoNodeResourcesInfo') || {};
-                    console.log('geonodeSettings', geonodeSettings, geoNodeResourcesInfo);
-                }, 5000);
 
                 // register custom arcgis layer
                 import('@js/map/' + mapType + '/plugins/ArcGisMapServer')

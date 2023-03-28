@@ -41,7 +41,7 @@ const Cards = withResizeDetector(({
 
     const ulPadding = Math.floor(margin / 2);
     const isSingleCard = count === 0 || count === 1;
-    const [cardLayoutStyle] = useLocalStorage('layoutCardsStyle');
+    const [cardLayoutStyle] = useLocalStorage('layoutCardsStyle', 'list');
 
     const gridLayoutSpace = (idx) => {
 

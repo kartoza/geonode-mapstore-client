@@ -35,7 +35,7 @@ const FiltersMenu = forwardRef(({
 
     const { isMobile } = getConfigProp('geoNodeSettings');
     const selectedSort = orderOptions.find(({ value }) => order === value);
-    const [cardLayoutStyle, setCardLayoutStyle] = useLocalStorage('layoutCardsStyle', 'grid');
+    const [cardLayoutStyle, setCardLayoutStyle] = useLocalStorage('layoutCardsStyle', 'list');
     function handleToggleCardLayoutStyle() {
         setCardLayoutStyle(cardLayoutStyle === 'grid' ? 'list' : 'grid');
     }
