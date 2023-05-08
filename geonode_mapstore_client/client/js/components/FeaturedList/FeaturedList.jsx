@@ -55,7 +55,7 @@ const FeaturedList = withResizeDetector(({
             }}>
                 <div style={{ flex: 1, width: '100%', height: '100%', paddingBottom: '50px' }}>
                     <div className="gn-card-grid-container" style={containerStyle}>
-                        <h1 className="explore-viewer-title">Explore the viewers</h1>
+                        <h1 className="explore-viewer-title">Featured</h1>
                         <Cards
                             featured
                             resources={resources}

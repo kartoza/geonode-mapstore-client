@@ -115,7 +115,7 @@ function Home({
     return (
         <div className="gn-container">
             <div className="gn-row gn-home-section">
-                <div className="gn-grid-container">
+                <div className="gn-grid-container container" style={{ paddingLeft: '-12px'}}>
                     <ConnectedFeatureList
                         query={query}
                         pageSize={99}
@@ -123,7 +123,7 @@ function Home({
                         buildHrefByTemplate={buildHrefByTemplate}
                         onLoad={() => fetchFeaturedResources(null, 99)}
                         containerStyle={{
-                            minHeight: 'auto'
+                            minHeight: 'auto',
                         }}/>
                 </div>
             </div>
