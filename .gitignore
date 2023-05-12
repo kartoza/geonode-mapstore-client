@@ -14,7 +14,7 @@ build/
 _build/
 reports/
 coverage/
-node_modules/
+client/node_modules/
 
 build
 target
