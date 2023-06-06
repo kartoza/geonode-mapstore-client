@@ -49,7 +49,7 @@ const entriesTabs = [
         },
         responseToEntries: ({ response, entries }) => {
             return response?.users.map(user => {
-                const { permissions } = entries.find(entry => entry.id === user.pk) || {};
+                const { permissions } = entries.filter(entry => entry.type === 'user').find(entry => entry.id === user.pk) || {};
                 return {
                     ...resourceToPermissionEntry('user', user),
                     permissions
@@ -74,7 +74,7 @@ const entriesTabs = [
         },
         responseToEntries: ({ response, entries }) => {
             return response?.groups.map(group => {
-                const { permissions } = entries.find(entry => entry.id === group.group.pk) || {};
+                const { permissions } = entries.filter(entry => entry.type === 'group').find(entry => entry.id === group.group.pk) || {};
                 return {
                     ...resourceToPermissionEntry('group', group),
                     permissions
