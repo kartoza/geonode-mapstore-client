@@ -7,7 +7,7 @@ import axios from '@mapstore/framework/libs/ajax';
 export function initIgracMapstore(mapConfig) {
     let layerAttributes = {};
     for (let _layer of mapConfig?.map?.layers) {
-        if (_layer.id && _layer?.style?.includes("groundwater:Groundwater_Well")) {
+        if (_layer.id && (_layer?.style?.includes("groundwater:Groundwater_Well") || _layer?.name?.includes("groundwater:"))) {
             let layerName = _layer.name;
             setTimeout(function() {
                 window.MapStoreAPI.triggerAction({ type: 'LAYERS:SELECT_NODE', id: _layer.id, nodeType: 'layer', ctrlKey: false});
