@@ -23,7 +23,34 @@ import { determineResourceType } from '@js/utils/FileUtils';
 
 function getExtentFromResource({ ll_bbox_polygon: llBboxPolygon }) {
     if (!llBboxPolygon) {
-        return null;
+        // eslint-disable-next-line no-param-reassign
+        llBboxPolygon = {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [
+                        -180,
+                        -90
+                    ],
+                    [
+                        -180,
+                        90
+                    ],
+                    [
+                        180,
+                        90
+                    ],
+                    [
+                        180,
+                        -90
+                    ],
+                    [
+                        -180,
+                        -90
+                    ]
+                ]
+            ]
+        };
     }
     const extent = turfBbox({
         type: 'Feature',
