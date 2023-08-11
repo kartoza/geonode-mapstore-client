@@ -227,16 +227,10 @@
                     "authenticated": true
                 },
                 {
-                    "labelId": "gnhome.categories",
-                    "placeholderId": "gnhome.categoriesPlaceholder",
+                    "labelId": "gnhome.profiles",
+                    "placeholderId": "gnhome.profilesPlaceholder",
                     "type": "select",
-                    "suggestionsRequestKey": "categories"
-                },
-                {
-                    "labelId": "gnhome.keywords",
-                    "placeholderId": "gnhome.keywordsPlaceholder",
-                    "type": "select",
-                    "suggestionsRequestKey": "keywords"
+                    "suggestionsRequestKey": "groups"
                 },
                 {
                     "labelId": "gnhome.regions",
@@ -249,6 +243,43 @@
                     "placeholderId": "gnhome.ownersPlaceholder",
                     "type": "select",
                     "suggestionsRequestKey": "owners"
+                },
+
+
+                {
+                    "labelId": "gnhome.keywordsPhases",
+                    "placeholderId": "gnhome.keywordsPhasesPlaceholder",
+                    "type": "select",
+                    "suggestionsRequestKey": "keywordsPhases",
+                    "keywordId": "phases"
+                },
+                {
+                    "labelId": "gnhome.keywordsThematicAreas",
+                    "placeholderId": "gnhome.keywordsThematicAreasPlaceholder",
+                    "type": "select",
+                    "suggestionsRequestKey": "keywordsThematicAreas",
+                    "keywordId": "thematic-areas"
+                },
+                {
+                    "labelId": "gnhome.keywordsActivities",
+                    "placeholderId": "gnhome.keywordsActivitiesPlaceholder",
+                    "type": "select",
+                    "suggestionsRequestKey": "keywordsActivities",
+                    "keywordId": "type-of-activities"
+                },
+                {
+                    "labelId": "gnhome.keywordsOutputs",
+                    "placeholderId": "gnhome.keywordsOutputsPlaceholder",
+                    "type": "select",
+                    "suggestionsRequestKey": "keywordsOutputs",
+                    "keywordId": "type-of-outputs"
+                },
+                {
+                    "labelId": "gnhome.keywordsOther",
+                    "placeholderId": "gnhome.keywordsOtherPlaceholder",
+                    "type": "select",
+                    "suggestionsRequestKey": "keywordsOther",
+                    "keywordId": "_other"
                 }
             ]
         },
@@ -789,7 +820,7 @@
             {
                 "name": "Playback"
             }
-            
+
         ],
         "geostory_embed": [
             {

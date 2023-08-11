@@ -32,7 +32,13 @@ import {
 } from '@js/utils/SearchUtils';
 import { withResizeDetector } from 'react-resize-detector';
 
-import { getCategories, getRegions, getOwners, getKeywords } from '@js/api/geonode/v2';
+import {
+    getCategories,
+    getRegions,
+    getOwners,
+    getKeywords,
+    getGroupsFilter
+} from '@js/api/geonode/v2';
 import MetaTags from "@js/components/MetaTags";
 import { getResourceImageSource } from '@js/utils/ResourceUtils';
 
@@ -64,6 +70,32 @@ const suggestionsRequestTypes = {
     owners: {
         filterKey: 'filter{owner.username.in}',
         loadOptions: params => getOwners(params, 'filter{owner.username.in}')
+    },
+    groups: {
+        filterKey: 'filter{group.name.in}',
+        loadOptions: params => getGroupsFilter(params, 'filter{group.name.in}')
+    },
+
+    // TODO: Delft specifically keywords
+    keywordsPhases: {
+        filterKey: 'keywords{phases.slug.in}',
+        loadOptions: params => getKeywords(params, 'keywords{phases.slug.in}', 'keywordsPhases')
+    },
+    keywordsThematicAreas: {
+        filterKey: 'keywords{thematic-areas.slug.in}',
+        loadOptions: params => getKeywords(params, 'keywords{thematic-areas.slug.in}', 'keywordsThematicAreas')
+    },
+    keywordsActivities: {
+        filterKey: 'keywords{type-of-activities.slug.in}',
+        loadOptions: params => getKeywords(params, 'keywords{type-of-activities.slug.in}', 'keywordsActivities')
+    },
+    keywordsOutputs: {
+        filterKey: 'keywords{type-of-outputs.slug.in}',
+        loadOptions: params => getKeywords(params, 'keywords{type-of-outputs.slug.in}', 'keywordsOutputs')
+    },
+    keywordsOther: {
+        filterKey: 'keywords{_other.slug.in}',
+        loadOptions: params => getKeywords(params, 'keywords{_other.slug.in}', 'keywordsOther')
     }
 };
 

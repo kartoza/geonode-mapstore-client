@@ -129,7 +129,21 @@
             "search": "Search...",
             "permissionsMissing": "You don't have permission to view or download the resource",
             "filter": "Filter",
-            "noPreview": "A preview is not available for this resource"
+            "noPreview": "A preview is not available for this resource",
+
+            "profiles": "Profiles",
+            "profilesPlaceholder": "Select profiles",
+
+            "keywordsPhases": "Phases",
+            "keywordsPhasesPlaceholder": "Select phases",
+            "keywordsThematicAreas": "Thematic areas",
+            "keywordsThematicAreasPlaceholder": "Select thematic areas",
+            "keywordsActivities": "Type of activities",
+            "keywordsActivitiesPlaceholder": "Select type of activities",
+            "keywordsOutputs": "Type of outputs",
+            "keywordsOutputsPlaceholder": "Select type of outputs",
+            "keywordsOther": "Keywords",
+            "keywordsOtherPlaceholder": "Select Keywords"
         },
         "viewer": {
             "document": {

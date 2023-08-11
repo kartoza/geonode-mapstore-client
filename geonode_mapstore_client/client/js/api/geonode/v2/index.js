@@ -45,7 +45,14 @@ let endpoints = {
     'groups': '/api/v2/groups',
     'uploads': '/api/v2/uploads',
     'status': '/api/v2/resource-service/execution-status',
-    'exectionRequest': '/api/v2/executionrequest'
+    'exectionRequest': '/api/v2/executionrequest',
+
+    // TODO: Delft specifically keywords
+    'keywordsPhases': '/api/v2/keywords?parent=phases',
+    'keywordsThematicAreas': '/api/v2/keywords?parent=thematic-areas',
+    'keywordsActivities': '/api/v2/keywords?parent=type-of-activities',
+    'keywordsOutputs': '/api/v2/keywords?parent=type-of-outputs',
+    'keywordsOther': '/api/v2/keywords?parent=_other'
 };
 
 const RESOURCES = 'resources';
@@ -697,8 +704,8 @@ export const getOwners = ({ q, includes, page, pageSize, config, ...params }, fi
         });
 };
 
-export const getKeywords = ({ q, includes, page, pageSize, config, ...params }, filterKey =  'keywords') => {
-    return axios.get(parseDevHostname(`${endpoints[KEYWORDS]}`), {
+export const getKeywords = ({ q, includes, page, pageSize, config, ...params }, filterKey =  'keywords', endpoint = KEYWORDS) => {
+    return axios.get(parseDevHostname(`${endpoints[endpoint]}`), {
         ...config,
         params: {
             page_size: pageSize || 9999,
@@ -713,7 +720,40 @@ export const getKeywords = ({ q, includes, page, pageSize, config, ...params }, 
                 .map((result) => {
                     const selectOption = {
                         value: result.slug,
-                        label: addCountToLabel(result.slug, result.count)
+                        label: addCountToLabel(result.name, result.count)
+                    };
+                    const keyword = {
+                        ...result,
+                        selectOption
+                    };
+                    setFilterById(filterKey + result.slug, keyword);
+                    return keyword;
+                });
+            return {
+                results,
+                total: data.total,
+                isNextPageAvailable: !!data.links.next
+            };
+        });
+};
+
+export const getGroupsFilter = ({ q, includes, page, pageSize, config, ...params }, filterKey =  'groups', endpoint = GROUPS) => {
+    return axios.get(parseDevHostname(`${endpoints[endpoint]}`), {
+        ...config,
+        params: {
+            page_size: pageSize || 9999,
+            page,
+            ...params,
+            ...(includes && {'filter{slug.in}': includes}),
+            ...(q && { 'filter{slug.icontains}': q })
+        }
+    })
+        .then(({ data }) => {
+            const results = (data?.group_profiles || [])
+                .map((result) => {
+                    const selectOption = {
+                        value: result.slug,
+                        label: addCountToLabel(result.title, result.count)
                     };
                     const keyword = {
                         ...result,

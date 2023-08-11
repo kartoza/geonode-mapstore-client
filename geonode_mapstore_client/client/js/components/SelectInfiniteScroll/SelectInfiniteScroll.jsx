@@ -20,7 +20,6 @@ function SelectInfiniteScroll({
     debounceTime = 500,
     ...props
 }) {
-
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
     const [isNextPageAvailable, setIsNextPageAvailable] = useState(false);

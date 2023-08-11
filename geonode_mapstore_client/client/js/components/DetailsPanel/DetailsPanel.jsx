@@ -295,6 +295,19 @@ function DetailsPanel({
 
     const linkName = readMore ? 'Read Less' : 'Read More';
 
+    // TODO: Delft specified
+    const keywowrdsByGroup = {};
+    resource?.keywords?.map(keyword =>{
+        let groupName = 'Keywords';
+        if (keyword.parent_slug) {
+            groupName = keyword.parent_name;
+        }
+        if (!keywowrdsByGroup[groupName]) {
+            keywowrdsByGroup[groupName] = [];
+        }
+        keywowrdsByGroup[groupName].push(keyword);
+    });
+
     const infoField = [
         {
             "label": "Title",
@@ -309,12 +322,12 @@ function DetailsPanel({
             "value": validateDataType(resource?.owner?.username) && <a href={`/people/profile/${resource?.owner?.username}/`}> {(resource?.owner?.first_name !== "" && resource?.owner?.last_name !== "" ) ? (resource?.owner?.first_name + " " + resource?.owner?.last_name) : resource?.owner?.username} </a>
         },
         {
-            "label": "Created",
-            "value": validateDataType(resource?.created) && moment(resource?.created).format('MMMM Do YYYY')
-        },
-        {
             "label": "Published",
             "value": validateDataType(resource?.date) && moment(resource?.date).format('MMMM Do YYYY')
+        },
+        {
+            "label": "Created",
+            "value": validateDataType(resource?.created) && moment(resource?.created).format('MMMM Do YYYY')
         },
         {
             "label": "Last Modified",
@@ -329,26 +342,15 @@ function DetailsPanel({
                 }
             })}>{resource?.resource_type}</a>
         },
-        {
-            "label": "Category",
-            "value": validateDataType(resource.category?.identifier) && <a href={formatHref({
-                pathname: '/search/filter/',
-                query: {
-                    'filter{category.identifier.in}': resource.category?.identifier
-                }
-            })}>{resource.category?.identifier}</a>
-        },
-        {
-            "label": "Keywords",
-            "value": validateDataType(resource?.keywords) && resource?.keywords?.map((map) => {
-                return (<a href={formatHref({
-                    pathname: '/search/filter/',
-                    query: {
-                        'filter{keywords.slug.in}': map.slug
-                    }
-                })}>{map.name + " "}</a>);
-            })
-        },
+        // {
+        //     "label": "Category",
+        //     "value": validateDataType(resource.category?.identifier) && <a href={formatHref({
+        //         pathname: '/search/filter/',
+        //         query: {
+        //             'filter{category.identifier.in}': resource.category?.identifier
+        //         }
+        //     })}>{resource.category?.identifier}</a>
+        // },
         {
             "label": "Regions",
             "value": validateDataType(resource?.regions) && resource?.regions?.map((map) => {
@@ -359,8 +361,36 @@ function DetailsPanel({
                     }
                 })}>{map.name + " "}</a>);
             })
+        },
+        {
+            "label": "Keywords",
+            "value": validateDataType(keywowrdsByGroup.Keywords) && keywowrdsByGroup.Keywords?.map((map, idx) => {
+                return (<a href={formatHref({
+                    pathname: '/search/filter/',
+                    query: {
+                        'filter{keywords.slug.in}': map.slug
+                    }
+                })}>{map.name + (idx !== keywowrdsByGroup.Keywords.length - 1 ? ', ' : '')}</a>);
+            })
         }
     ];
+
+    // TODO: Delft specified
+    for (const [key, values] of Object.entries(keywowrdsByGroup)) {
+        if (key !== 'Keywords') {
+            infoField.push({
+                "label": key,
+                "value": validateDataType(values) && values.map((map, idx) => {
+                    return (<a href={formatHref({
+                        pathname: '/search/filter/',
+                        query: {
+                            'filter{keywords.slug.in}': map.slug
+                        }
+                    })}>{map.name + (idx !== values.length - 1 ? ', ' : '')}</a>);
+                })
+            });
+        }
+    }
 
 
     const extraItemsList = [

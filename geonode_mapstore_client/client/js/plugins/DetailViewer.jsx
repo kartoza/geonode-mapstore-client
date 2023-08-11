@@ -85,7 +85,8 @@ const ButtonViewer = ({ onClick, hide, variant, size, showMessage }) => {
         onClick();
     };
 
-    return !hide ? (
+    // TODO: Delft specified
+    return !hide && !showMessage ? (
         <Button
             variant={variant}
             size={size}
