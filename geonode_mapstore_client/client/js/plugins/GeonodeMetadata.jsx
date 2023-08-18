@@ -25,7 +25,10 @@ const METADATA_DIALOG_STYLE = {
 // Api
 export const getMetadataBySlugName = () => {
     let currentUrl = window.location.href;
-    const mapId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+    let mapId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+    if (!mapId) {
+        mapId = resourceId;
+    }
     const url = `/maps/${mapId}/metadata_detail/article`;
     return axios.get(url)
         // add pk as alias to id
