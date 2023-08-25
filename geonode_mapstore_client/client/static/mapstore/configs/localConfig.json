@@ -238,12 +238,6 @@
                     "type": "select",
                     "suggestionsRequestKey": "regions"
                 },
-                {
-                    "labelId": "gnhome.owners",
-                    "placeholderId": "gnhome.ownersPlaceholder",
-                    "type": "select",
-                    "suggestionsRequestKey": "owners"
-                },
 
 
                 {

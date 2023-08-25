@@ -308,6 +308,11 @@ function DetailsPanel({
         keywowrdsByGroup[groupName].push(keyword);
     });
 
+    let regionsAsParent = [];
+    resource?.regions.map(region => {
+        regionsAsParent = regionsAsParent.concat(region.parents.map(parent=> parent.code))
+    })
+
     const infoField = [
         {
             "label": "Title",
@@ -353,13 +358,27 @@ function DetailsPanel({
         // },
         {
             "label": "Regions",
-            "value": validateDataType(resource?.regions) && resource?.regions?.map((map) => {
-                return (<a href={formatHref({
-                    pathname: '/search/filter/',
-                    query: {
-                        'filter{regions.name.in}': map.name
+            "value": validateDataType(resource?.regions) && resource?.regions?.filter(region => !regionsAsParent.includes(region.code)).map((map) => {
+                return <div>
+                    {
+                        map.parents.map((parent, idx) =>
+                          <span>
+                              <a href={formatHref({
+                                pathname: '/search/filter/',
+                                query: {
+                                    'filter{regions.name.in}': parent.name
+                                }
+                            })}>{parent.name}</a> ->&nbsp;
+                          </span>
+                        )
                     }
-                })}>{map.name + " "}</a>);
+                    <a href={formatHref({
+                        pathname: '/search/filter/',
+                        query: {
+                            'filter{regions.name.in}': map.name
+                        }
+                    })}>{map.name}</a>
+                </div>;
             })
         },
         {
