@@ -309,8 +309,8 @@ function DetailsPanel({
     });
 
     let regionsAsParent = [];
-    resource?.regions.map(region => {
-        regionsAsParent = regionsAsParent.concat(region.parents.map(parent=> parent.code))
+    resource?.regions?.map(region => {
+        regionsAsParent = regionsAsParent.concat(region.parents?.map(parent=> parent.code))
     })
 
     const infoField = [
