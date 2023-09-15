@@ -152,41 +152,7 @@
                             "type": "filter",
                             "query": {
                                 "filter{resource_type.in}": "dataset"
-                            },
-                            "items": [
-                                {
-                                    "id": "store-vector",
-                                    "labelId": "gnhome.vector",
-                                    "type": "filter",
-                                    "query": {
-                                        "filter{subtype.in}": "vector"
-                                    }
-                                },
-                                {
-                                    "id": "store-raster",
-                                    "labelId": "gnhome.raster",
-                                    "type": "filter",
-                                    "query": {
-                                        "filter{subtype.in}": "raster"
-                                    }
-                                },
-                                {
-                                    "id": "store-remote",
-                                    "labelId": "gnhome.remote",
-                                    "type": "filter",
-                                    "query": {
-                                        "filter{subtype.in}": "remote"
-                                    }
-                                },
-                                {
-                                    "id": "store-time-series",
-                                    "labelId": "gnhome.timeSeries",
-                                    "type": "filter",
-                                    "query": {
-                                        "filter{subtype.in}": "vector_time"
-                                    }
-                                }
-                            ]
+                            }
                         },
                         {
                             "id": "document",
@@ -210,14 +176,6 @@
                             "type": "filter",
                             "query": {
                                 "filter{resource_type.in}": "geostory"
-                            }
-                        },
-                        {
-                            "id": "dashboard",
-                            "labelId": "gnhome.dashboards",
-                            "type": "filter",
-                            "query": {
-                                "filter{resource_type.in}": "dashboard"
                             }
                         }
                     ]
