@@ -259,6 +259,11 @@ export const getDocumentsByDocType = (docType = 'image', {
     ...params
 }) => {
 
+    // TODO: Delft specified
+    //  When in geostory, add by-profile params
+    if (window.location.href.includes('/geostory')) {
+      params['by-profile'] = true;
+    }
     return axios
         .get(
             parseDevHostname(
