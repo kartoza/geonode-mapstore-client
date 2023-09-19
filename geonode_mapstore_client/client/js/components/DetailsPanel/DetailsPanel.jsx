@@ -407,7 +407,6 @@ function DetailsPanel({
         }
     }
 
-
     const extraItemsList = [
         {
             "label": "Point of Contact",
@@ -431,11 +430,11 @@ function DetailsPanel({
         },
         {
             "label": "Maintenance Frequency",
-            "value": validateDataType(resource?.maintenance_frequency)
+            "value": validateDataType(resource?.maintenance_frequency_title)
         },
         {
             "label": "Language",
-            "value": validateDataType(resource?.language)
+            "value": validateDataType(resource?.language_title)
         },
         {
             "label": "Purpose",
