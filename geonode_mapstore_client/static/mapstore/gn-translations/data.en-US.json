@@ -131,8 +131,8 @@
             "filter": "Filter",
             "noPreview": "A preview is not available for this resource",
 
-            "profiles": "Profiles",
-            "profilesPlaceholder": "Select profiles",
+            "profiles": "Projects",
+            "profilesPlaceholder": "Select projects",
 
             "keywordsPhases": "Phases",
             "keywordsPhasesPlaceholder": "Select phases",
