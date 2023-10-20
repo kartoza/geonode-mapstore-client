@@ -15,6 +15,7 @@ _build/
 reports/
 coverage/
 node_modules/
+!geonode_mapstore_client/static/mapstore/dist/node_modules/
 
 build
 target
