@@ -1496,6 +1496,10 @@
                                     "name": "GeonodeMetadata"
                                 },
                                 {
+                                    "type": "plugin",
+                                    "name": "Share"
+                                },
+                                {
                                     "type": "divider",
                                     "disableIf": "{state('isNewResource') || !context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase')}"
                                 },
