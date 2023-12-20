@@ -319,6 +319,15 @@ function DetailsPanel({
             "value": validateDataType(resource?.title)
         },
         {
+            "label": "Project",
+            "value": validateDataType(resource?.group?.name) && <a href={formatHref({
+                pathname: '/search/filter/',
+                query: {
+                    'filter{group.name.in}': resource?.group?.name
+                }
+            })}>{resource?.group?.title}</a>
+        },
+        {
             "label": "Abstract",
             "value": validateDataType(resource?.raw_abstract)?.length > 100 ? <div>{validateDataType(resource?.raw_abstract)?.substring(0, 100)}{extraContent}{' '}<a className="read-more-link" onClick={() => setReadMore(!readMore) }>{linkName}</a></div> : validateDataType(resource?.raw_abstract)
         },
@@ -473,7 +482,7 @@ function DetailsPanel({
                 query: {
                     'filter{resource_type.in}': type
                 }
-            })} title="Search all similar resources">{type || 'resource'}</a>{' '}<Message msgId="gnviewer.resourceOrigin.from" />{' '}
+            })} title="Search all similar resources">{type || 'resource'}</a>
         </span>);
     };
 

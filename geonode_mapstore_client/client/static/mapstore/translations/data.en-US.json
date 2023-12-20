@@ -133,6 +133,7 @@
 
             "profiles": "Projects",
             "profilesPlaceholder": "Select projects",
+            "keywordsProject": "Project",
 
             "keywordsPhases": "Phases",
             "keywordsPhasesPlaceholder": "Select phases",
@@ -265,7 +266,8 @@
             "applyStyle": "Apply",
             "resourceOrigin": {
                 "a": "a",
-                "from": "from"
+                "from": "from",
+                "by": "by"
             },
             "styleEditorCloseTitle": "Pending changes",
             "styleEditorCloseMessage": "Are you sure you want to close the style editor without apply the changes?",

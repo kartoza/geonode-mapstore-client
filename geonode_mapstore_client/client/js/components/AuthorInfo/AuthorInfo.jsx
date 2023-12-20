@@ -2,15 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getUserName } from '@js/utils/SearchUtils';
 import ALink from '@js/components/ALink';
+import Message from "../../../MapStore2/web/client/components/I18N/Message";
 
 function AuthorInfo({ resource, readOnly, formatHref, ...props }) {
 
     if (props.detailsPanel) {
-        return (<ALink readOnly={readOnly} href={formatHref({
+        return (<>{' '}
+          {
+            resource.group?.title ? <>
+                <Message msgId="gnviewer.resourceOrigin.from"/>{' '}
+                <ALink readOnly={readOnly} href={formatHref({
+                  query: {
+                    'filter{group.name.in}': resource.group?.name
+                  }
+                })}>{resource.group?.title}</ALink>
+                {' '}
+              </>
+              : null
+          }
+          <Message msgId="gnviewer.resourceOrigin.by" />{' '}
+          <ALink readOnly={readOnly} href={formatHref({
             query: {
                 'filter{owner.username.in}': resource.owner?.username
             }
-        })}>{resource.owner && getUserName(resource.owner)}</ALink>);
+        })}>{resource.owner && getUserName(resource.owner)}</ALink></>);
     }
 
     return (<p className="card-text gn-card-user" {...props}>
@@ -21,7 +36,17 @@ function AuthorInfo({ resource, readOnly, formatHref, ...props }) {
             query: {
                 'filter{owner.username.in}': resource.owner?.username
             }
-        })}>{resource.owner && getUserName(resource.owner)}</ALink>
+        })}>{resource.owner && getUserName(resource.owner)}</ALink>{' '}
+        {
+          resource.group?.title ? <>
+            <Message msgId="gnviewer.resourceOrigin.from"/>{' '}
+            <ALink readOnly={readOnly} href={formatHref({
+              query: {
+                'filter{group.name.in}': resource.group?.name
+              }
+            })}>{resource.group?.title}</ALink>
+          </> : null
+        }
     </p>);
 }
 

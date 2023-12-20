@@ -124,9 +124,12 @@ def get_base_right_topbar_menu(context):
 def get_user_menu(context):
 
     is_mobile = _is_mobile_device(context)
-    user = context.get('request').user
+    try:
+        user = context.get('request').user
+    except AttributeError:
+        user = None
 
-    if not user.is_authenticated:
+    if not user or not user.is_authenticated:
         return [
             {
                 "label": "Register",
