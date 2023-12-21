@@ -70,10 +70,15 @@ export const gnSetDatasetsPermissions = (actions$, { getState = () => {}} = {}) 
                 }
                 return Rx.Observable.defer(() => getDatasetsByName(layerNames))
                     .switchMap((layers = []) => {
-                        const stateLayers = layers.map((l) => ({
-                            ...l,
-                            id: layersSelector(getState())?.find((la) => la.name === l.alternate)?.id
-                        }));
+                        const stateLayers = [];
+                        layers.map((l) => {
+                          layersSelector(getState())?.filter((la) => la.name === l.alternate).map(la=>{
+                              stateLayers.push({
+                              ...l,
+                              id: la?.id
+                            })
+                          })
+                        });
                         return Rx.Observable.of(...stateLayers.map((l) => updateNode(l.id, 'layer', {perms: l.perms || []}) ));
                     });
             }
