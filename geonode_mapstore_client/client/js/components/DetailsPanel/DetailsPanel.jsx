@@ -320,12 +320,9 @@ function DetailsPanel({
         },
         {
             "label": "Project",
-            "value": validateDataType(resource?.group?.name) && <a href={formatHref({
-                pathname: '/search/filter/',
-                query: {
-                    'filter{group.name.in}': resource?.group?.name
-                }
-            })}>{resource?.group?.title}</a>
+            "value": validateDataType(resource?.group?.name) && <a href={`/groups/group/${resource?.group?.name}/`}>
+                {resource?.group?.title}
+            </a>
         },
         {
             "label": "Abstract",
