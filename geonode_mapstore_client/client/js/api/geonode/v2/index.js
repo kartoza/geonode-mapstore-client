@@ -716,8 +716,8 @@ export const getKeywords = ({ q, includes, page, pageSize, config, ...params }, 
             page_size: pageSize || 9999,
             page,
             ...params,
-            ...(includes && {'filter{slug.in}': includes}),
-            ...(q && { 'filter{slug.icontains}': q })
+            ...(includes && {'filter{name.in}': includes}),
+            ...(q && { 'filter{name.icontains}': q })
         }
     })
         .then(({ data }) => {
@@ -749,8 +749,8 @@ export const getGroupsFilter = ({ q, includes, page, pageSize, config, ...params
             page_size: pageSize || 9999,
             page,
             ...params,
-            ...(includes && {'filter{slug.in}': includes}),
-            ...(q && { 'filter{slug.icontains}': q })
+            ...(includes && {'filter{title.in}': includes}),
+            ...(q && { 'filter{title.icontains}': q })
         }
     })
         .then(({ data }) => {
