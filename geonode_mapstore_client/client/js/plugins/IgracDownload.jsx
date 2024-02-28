@@ -13,7 +13,7 @@ import {
 } from "@mapstore/framework/actions/featuregrid";
 import featuregrid from "@mapstore/framework/reducers/featuregrid";
 
-const IGRAC_DOWNLOAD_URL = '/groundwater/record/download-request';
+export const IGRAC_DOWNLOAD_URL = '/groundwater/record/download';
 
 const downloadProgressHtml = (taskId) => (
     '<div>' +
