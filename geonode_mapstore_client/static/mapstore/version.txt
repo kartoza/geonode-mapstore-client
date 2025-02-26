@@ -1,1 +1,1 @@
-geonode-mapstore-client-v4.4.1-igrac
+geonode-mapstore-client-v4.4.0-6d6846b699674e5cdbcd7e200ae13f68c4a786b5
