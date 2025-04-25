@@ -115,6 +115,7 @@ import { ProcessTypes } from '@js/utils/ResourceServiceUtils';
 import { catalogClose } from '@mapstore/framework/actions/catalog';
 import { VisualizationModes } from '@mapstore/framework/utils/MapTypeUtils';
 import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
+import { changeSetting } from "../../MapStore2/web/client/actions/playback";
 
 const FIT_BOUNDS_CONTROL = 'fitBounds';
 import { initIgracMapstore } from "@js/utils/IGRACUtils";
@@ -233,6 +234,15 @@ const resourceTypes = {
                         ? options.data
                         : toMapStoreMapConfig(mapResource, baseConfig);
 
+                    // Save playback
+                    const playbackSettings = [];
+                    if (mapConfig.playback) {
+                        Object.entries(mapConfig.playback).forEach((entry) => {
+                            const [key, value] = entry;
+                            playbackSettings.push(changeSetting(key, value));
+                        });
+                    }
+
                     // IGRAC initialization
                     initIgracMapstore(mapConfig);
 
@@ -247,7 +257,8 @@ const resourceTypes = {
                             ...options?.params,
                             appPk: mapViewerResource?.pk,
                             hasViewer: !!mapViewerResource?.pk
-                        })
+                        }),
+                        ...playbackSettings
                     );
                 }),
         newResourceObservable: (options) => {
