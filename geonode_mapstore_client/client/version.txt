@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-geonode-mapstore-client-v4.4.0-6d6846b699674e5cdbcd7e200ae13f68c4a786b5
-=======
-geonode-mapstore-client-v4.4.0-f977e0e0180ca2aba0d1f717557b3fc84f443e20
->>>>>>> 02a3d02964de7b5b3d796c58d50d3ec4db7f4bd4
+geonode-mapstore-client-v4.4.3-3befcc30c05bef307048dbec5e6d0a5955772bd4
+\
