@@ -59,7 +59,7 @@ import { updateGeoNodeSettings } from '@js/actions/gnsettings';
 import {
     updateMapLayoutEpic,
     gnCheckSelectedDatasetPermissions,
-    gnSetDatasetsPermissions
+    gnSetDatasetsPermissions, gnFetchMissingLayerData
 } from '@js/epics';
 
 import timelineEpics from '@mapstore/framework/epics/timeline';
@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             ...standardEpics,
                             ...configEpics,
                             updateMapLayoutEpic,
+                            gnFetchMissingLayerData,
                             gnCheckSelectedDatasetPermissions,
                             gnSetDatasetsPermissions,
                             ...gnresourceEpics,

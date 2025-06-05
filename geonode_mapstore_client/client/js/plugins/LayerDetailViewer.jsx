@@ -71,8 +71,16 @@ const ButtonViewer = ({ onClick, layer, size, status }) => {
             variant="primary"
             size={size}
             onClick={handleClickButton}
+            style={{
+                width: '30px',
+                height: '30px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0
+            }}
         >
-            <FaIcon name={'info-circle'} />
+            <FaIcon name={'info-circle'} style={{ fontSize: "1.2em", paddingTop: "3px" }} />
         </Button>
     ) : null;
 };
