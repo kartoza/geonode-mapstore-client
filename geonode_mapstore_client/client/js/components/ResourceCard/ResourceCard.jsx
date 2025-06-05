@@ -35,7 +35,7 @@ const ResourceCard = forwardRef(({
     downloading,
     getDetailHref = res => formatHref({
         query: {
-            'd': `${res.pk};${res.resource_type}${res.subtype ? `;${res.subtype}` : ''}`
+            'd': `${res.slug ? res.slug : res.pk};${res.resource_type}${res.subtype ? `;${res.subtype}` : ''}`
         },
         replaceQuery: true,
         excludeQueryKeys: []
@@ -146,9 +146,11 @@ const ResourceCard = forwardRef(({
                                 <Unadvertised resource={res}/>
                             </div>
                         </div>
-                        <p ref={abstractRef} className={`card-text gn-card-description ${layoutCardsStyle}`}>
-                            {res.raw_abstract ? res.raw_abstract : '...'}
-                        </p>
+                        <div className="map-abstract">
+                            <p ref={abstractRef} className="card-text gn-card-description">
+                                {res.raw_abstract ? res.raw_abstract : '...'}
+                            </p>
+                        </div>
                         {renderEllipsis()}
                         {!readOnly &&
                             options &&

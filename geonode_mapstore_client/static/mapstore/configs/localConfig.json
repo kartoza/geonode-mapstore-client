@@ -1532,6 +1532,10 @@
                                 },
                                 {
                                     "type": "plugin",
+                                    "name": "GeonodeMetadata"
+                                },
+                                {
+                                    "type": "plugin",
                                     "name": "Share"
                                 },
                                 {
@@ -1594,6 +1598,10 @@
                                     "type": "plugin",
                                     "disableIf": "{!state('resourceParams')?.appPk || !context.resourceHasPermission(state('gnResourceData'), 'delete_resourcebase') || !context.resourceHasPermission(state('gnResourceLinkedViewer'), 'delete_resourcebase')}",
                                     "name": "RemoveMapViewer"
+                                },
+                                {
+                                    "type": "plugin",
+                                    "name": "GeonodeMetadata"
                                 }
                             ]
                         },
@@ -2180,6 +2188,12 @@
                 "cfg": {
                     "containerPosition": "rightOverlay"
                 }
+            },
+            {
+                "name": "GeonodeMetadata"
+            },
+            {
+                "name": "IgracDownload"
             },
             {
                 "name": "Swipe"

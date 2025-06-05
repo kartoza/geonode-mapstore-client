@@ -316,6 +316,10 @@ export const plugins = {
         'MediaViewer',
         () => import(/* webpackChunkName: 'plugins/media-viewer-plugin' */ '@js/plugins/MediaViewer')
     ),
+    GeonodeMetadataPlugin: toModulePlugin(
+        'GeonodeMetadata',
+        () => import(/* webpackChunkName: 'plugins/geonode-metadata-plugin' */ '@js/plugins/GeonodeMetadata')
+    ),
     DashboardEditorPlugin: toModulePlugin(
         'DashboardEditor',
         () => import(/* webpackChunkName: 'plugins/dashboard-editor-plugin' */ '@mapstore/framework/plugins/DashboardEditor'),
@@ -330,6 +334,10 @@ export const plugins = {
                 }
             }
         }
+    ),
+    IgracDownloadPlugin: toModulePlugin(
+        'IgracDownload',
+        () => import(/* webpackChunkName: 'plugins/igrac-download-plugin' */ '@js/plugins/IgracDownload')
     ),
     DashboardPlugin: toModulePlugin(
         'Dashboard',
