@@ -22,4 +22,4 @@ start:
 	cd geonode_mapstore_client/client && npm start
 
 compile:
-	cd geonode_mapstore_client/client && npm compile
+	cd geonode_mapstore_client/client && npm run compile
