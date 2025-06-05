@@ -205,8 +205,12 @@
             },
             "enableInteractiveLegendInfo": {
                 "label": "Abilita leggenda interattiva",
-                "info": "Se questa opzione è abilitata, è possibile applicare il filtro per legenda facendo clic sugli elementi della legenda di questo layer dal sommario. Nota: questo parametro richiede configurazioni specifiche su GeoServer",
+                "info": "Se questa opzione è abilitata, il filtro per legenda può essere applicato facendo clic sugli elementi della legenda di questo livello dalla TOC. Inoltre, questo abilita anche la legenda dinamica. Nota: Questo parametro richiede configurazioni specifiche su GeoServer",
                 "fetchError": "Impossibile ottenere le informazioni sulla leggenda dal servizio"
+            },
+            "enableDynamicLegend": {
+                "label": "Abilita legenda dinamica",
+                "info": "Se questa opzione è abilitata, la legenda verrà aggiornata in base alla vista della mappa e ai filtri dei livelli"
             },
             "enableLocalizedLayerStyles": {
                 "label": "Abilita stile localizzato",
@@ -240,7 +244,10 @@
               "clearCustomizationConfirm": "Sei sicuro di voler rimuovere tutte le modifiche effettuate ai campi?",
               "error": "Non è stato possibile recuperare i campi dalla sorgente dati"
             },
-            "disableFeaturesEditing": "Disabilita la modifica sulla tabella degli attributi"
+            "disableFeaturesEditing": "Disabilita la modifica sulla tabella degli attributi",
+            "interactiveLegend": {
+                "incompatibleFilterWarning": "I filtri della legenda sono incompatibili con il filtro del layer attivo, oppure non ci sono feature visibili all'interno della vista della mappa. Clicca su reset per cancellare i filtri della legenda",    "resetLegendFilter": "Reset",
+                "noLegendData": "Nessun elemento della legenda da mostrare"    }
         },
         "localizedInput": {
           "localize": "Traduci questo testo...",
@@ -1603,6 +1610,18 @@
             "servicePlaceholder": "seleziona un servizio",
             "url": "Url",
             "urlPlaceholder": "inserisci un url",
+            "urlPlaceHolders": {
+              "wfs": "e.g. https://mydomain.com/geoserver/wfs",
+              "wmts": "e.g. https://mydomain.com/geoserver/gwc/service/wmts",
+              "wms": "e.g. https://mydomain.com/geoserver/wms",
+              "csw": "e.g. https://mydomain.com/geoserver/csw",
+              "tms": "e.g. https://mydomain.com/geoserver/gwc/service/tms/1.0.0",
+              "custom": "e.g. https://{s}.myUrl.com/{variant}/{z}/{x}/{y}",
+              "3dtiles": "e.g. https://mydomain.com/tileset.json",
+              "cog": "e.g. https://mydomain.com/cog.tif",
+              "model": "e.g. https://mydomain.com/filename.ifc",
+              "arcgis": "e.g. https://mydomain.com/arcgis/rest/services"
+            },
             "type": "Tipo",
             "serviceTitle": "Titolo",
             "serviceTitlePlaceholder": "inserisci un titolo",

@@ -155,11 +155,18 @@
             },
             "errors": {
                 "noPermissions": "Sie sind nicht berechtigt eine GeoStory hinzuzufügen"
+            },
+            "print": {
+                "author": "Autor",
+                "authorPlaceholder": "Geben Sie einen Autorennamen ein...",
+                "copyright": "Urheberrecht",
+                "copyrightPlaceholder": "Geben Sie ein Urheberrecht ein..."
             }
         },
         "gnviewer": {
             "edit": "Bearbeiten",
-            "export": "Export",
+            "export": "Exportieren",
+            "exportData": "Daten exportieren",
             "editInfo": "Informationen anzeigen",
             "editMetadata": "Metadaten bearbeiten",
             "editStyle": "Stil bearbeiten",

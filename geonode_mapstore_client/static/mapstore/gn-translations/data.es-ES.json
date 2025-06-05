@@ -155,11 +155,18 @@
             },
             "errors": {
                 "noPermissions": "No tienes permisos para agregar una geohistoria"
+            },
+            "print": {
+                "author": "Autor",
+                "authorPlaceholder": "Ingrese un nombre de autor...",
+                "copyright": "Derechos de autor",
+                "copyrightPlaceholder": "Ingrese un derecho de autor..."
             }
         },
         "gnviewer": {
             "edit": "Editar",
             "export": "Exportar",
+            "exportData": "Exportar datos",
             "editInfo": "Editar información",
             "editMetadata": "Editar Metadatos",
             "editStyle": "Editar Estilo",

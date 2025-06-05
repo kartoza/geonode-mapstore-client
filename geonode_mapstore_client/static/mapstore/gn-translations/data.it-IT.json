@@ -157,11 +157,18 @@
             },
             "errors": {
                 "noPermissions": "Non hai i permessi per aggiungere una geostoria"
+            },
+            "print": {
+                "author": "Autore",
+                "authorPlaceholder": "Inserisci il nome dell'autore...",
+                "copyright": "Copyright",
+                "copyrightPlaceholder": "Inserisci un copyright..."
             }
         },
         "gnviewer": {
             "edit": "Modifica",
             "export": "Esporta",
+            "exportData": "Esporta Dati",
             "editMetadata": "Modifica Metadati",
             "view": "Visualizza",
             "viewMetadata": "Visualizza i metadati",

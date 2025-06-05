@@ -14,7 +14,7 @@ import { getConfigProp, convertFromLegacy, normalizeConfig } from '@mapstore/fra
 import { getGeoNodeLocalConfig, parseDevHostname } from '@js/utils/APIUtils';
 import { ProcessTypes, ProcessStatus } from '@js/utils/ResourceServiceUtils';
 import { uniqBy, orderBy, isString, isObject, pick, difference } from 'lodash';
-import { excludeGoogleBackground, extractTileMatrixFromSources } from '@mapstore/framework/utils/LayersUtils';
+import { excludeGoogleBackground, extractTileMatrixFromSources, ServerTypes } from '@mapstore/framework/utils/LayersUtils';
 import { determineResourceType } from '@js/utils/FileUtils';
 import { isImageServerUrl } from '@mapstore/framework/utils/ArcGISUtils';
 
@@ -56,6 +56,11 @@ export const isDefaultDatasetSubtype = (subtype) => !subtype || ['vector', 'rast
 
 export const FEATURE_INFO_FORMAT = 'TEMPLATE';
 
+export const SOURCE_TYPES = {
+    LOCAL: 'LOCAL',
+    REMOTE: 'REMOTE'
+};
+
 const datasetAttributeSetToFields = ({ attribute_set: attributeSet = [] }) => {
     return attributeSet
         .filter(({ attribute_type: type }) => !type.includes('gml:'))
@@ -89,7 +94,8 @@ export const resourceToLayerConfig = (resource) => {
         has_time: hasTime,
         default_style: defaultStyle,
         ptype,
-        subtype
+        subtype,
+        sourcetype
     } = resource;
 
     const bbox = getExtentFromResource(resource);
@@ -191,7 +197,10 @@ export const resourceToLayerConfig = (resource) => {
             ...(params && { params }),
             ...(dimensions.length > 0 && ({ dimensions })),
             extendedParams,
-            ...(fields && { fields })
+            ...(fields && { fields }),
+            ...(sourcetype === SOURCE_TYPES.REMOTE && !wmsUrl.includes('/geoserver/') && {
+                serverType: ServerTypes.NO_VENDOR
+            })
         };
     }
 };
@@ -295,7 +304,7 @@ export const ResourceTypes = {
 };
 
 export const isDocumentExternalSource = (resource) => {
-    return resource && resource.resource_type === ResourceTypes.DOCUMENT && resource.sourcetype === 'REMOTE';
+    return resource && resource.resource_type === ResourceTypes.DOCUMENT && resource.sourcetype === SOURCE_TYPES.REMOTE;
 };
 
 export const getResourceTypesInfo = () => ({
