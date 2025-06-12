@@ -14,6 +14,7 @@ import { getConfigProp } from '@mapstore/framework/utils/ConfigUtils';
 import DetailsPanel from '@js/components/DetailsPanel';
 import { enableMapThumbnailViewer } from '@js/actions/gnresource';
 import FaIcon from '@js/components/FaIcon/FaIcon';
+import Spinner from "@js/components/Spinner";
 import controls from '@mapstore/framework/reducers/controls';
 import { setControlProperty } from '@mapstore/framework/actions/controls';
 import gnresource from '@js/reducers/gnresource';
@@ -66,11 +67,15 @@ const ButtonViewer = ({ onClick, layer, size, status }) => {
     const handleClickButton = () => {
         onClick();
     };
-    return layerResourceId && status === 'LAYER' ? (
+    return status === 'LAYER' ? (
         <Button
             variant="primary"
             size={size}
-            onClick={handleClickButton}
+            onClick={() => {
+                if (layerResourceId) {
+                    handleClickButton();
+                }
+            }}
             style={{
                 width: '30px',
                 height: '30px',
@@ -80,7 +85,11 @@ const ButtonViewer = ({ onClick, layer, size, status }) => {
                 padding: 0
             }}
         >
-            <FaIcon name={'info-circle'} style={{ fontSize: "1.2em", paddingTop: "3px" }} />
+            {
+                layerResourceId ? <FaIcon name={'info-circle'} style={{ fontSize: "1.2em", paddingTop: "3px" }} /> :    <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </Spinner>
+            }
         </Button>
     ) : null;
 };

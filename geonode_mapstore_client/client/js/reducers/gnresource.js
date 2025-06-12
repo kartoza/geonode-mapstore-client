@@ -268,6 +268,12 @@ function gnresource(state = defaultState, action) {
             const linkedBy = linkedResources.linked_by ?? [];
             linkedResources = isEmpty(linkedTo) && isEmpty(linkedBy) ? {} : ({ linkedTo, linkedBy });
         }
+        const isExist = state.data?.maplayers.find(layer => layer.dataset?.pk === parseInt(pk, 10));
+        if (pk && !isExist) {
+            state.data?.maplayers.push(
+                { dataset: { pk: parseInt(pk, 10), ...newData } }
+            );
+        }
         return {
             ...state,
             data: {
