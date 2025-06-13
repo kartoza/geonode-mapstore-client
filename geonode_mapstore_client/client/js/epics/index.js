@@ -71,7 +71,7 @@ export const gnFetchMissingLayerData = (action$, { getState } = {}) =>
                 }
             )?.dataset;
             const layerResourceId = layerResourceDataset?.pk;
-            if (!layerResourceId && layer) {
+            if (state.gnresource.data?.pk && !layerResourceId && layer) {
                 return Rx.Observable.defer(() =>
                     getDatasetByName(layer.name)
                         .then((dataset) => {
