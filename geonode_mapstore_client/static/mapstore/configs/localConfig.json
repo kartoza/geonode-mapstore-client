@@ -2749,6 +2749,9 @@
             },
             {
                 "name": "Sync"
+            },
+            {
+                "name": "IgracGeonodePagePopup"
             }
         ],
         "document_viewer": [
@@ -3012,6 +3015,9 @@
             },
             {
                 "name": "MediaViewer"
+            },
+            {
+                "name": "IgracGeonodePagePopup"
             }
         ],
         "dashboard_viewer": [
