@@ -335,10 +335,16 @@ export const plugins = {
             }
         }
     ),
+    // ----------------- IGRAC ----------------------
     IgracDownloadPlugin: toModulePlugin(
         'IgracDownload',
         () => import(/* webpackChunkName: 'plugins/igrac-download-plugin' */ '@js/plugins/IgracDownload')
     ),
+    IgracGeonodePagePopupPlugin: toModulePlugin(
+        'IgracGeonodePagePopup',
+        () => import(/* webpackChunkName: 'plugins/igrac-geonode-page-popup-plugin' */ '@js/plugins/IgracGeonodePagePopup')
+    ),
+    // ----------------- IGRAC ----------------------
     DashboardPlugin: toModulePlugin(
         'Dashboard',
         () => import(/* webpackChunkName: 'plugins/dashboard-plugin' */ '@mapstore/framework/plugins/Dashboard')

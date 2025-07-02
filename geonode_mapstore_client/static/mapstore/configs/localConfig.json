@@ -1240,6 +1240,9 @@
             },
             {
                 "name": "SidebarMenu"
+            },
+            {
+                "name": "IgracGeonodePagePopup"
             }
         ],
         "dataset_edit_data_viewer": [
@@ -2194,6 +2197,9 @@
             },
             {
                 "name": "IgracDownload"
+            },
+            {
+                "name": "IgracGeonodePagePopup"
             },
             {
                 "name": "Swipe"
