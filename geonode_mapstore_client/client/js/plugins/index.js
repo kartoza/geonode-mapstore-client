@@ -344,6 +344,10 @@ export const plugins = {
         'IgracGeonodePagePopup',
         () => import(/* webpackChunkName: 'plugins/igrac-geonode-page-popup-plugin' */ '@js/plugins/IgracGeonodePagePopup')
     ),
+    IgracGroundwaterContributorPlugin: toModulePlugin(
+        'IgracGroundwaterContributor',
+        () => import(/* webpackChunkName: 'plugins/igrac-groundwater-contributor-plugin' */ '@js/plugins/IgracGroundwaterContributor')
+    ),
     // ----------------- IGRAC ----------------------
     DashboardPlugin: toModulePlugin(
         'Dashboard',

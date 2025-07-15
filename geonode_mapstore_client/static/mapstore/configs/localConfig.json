@@ -662,6 +662,10 @@
                             "href": "{context.getCreateNewMapLink(state('gnResourceData'))}",
                             "labelId": "gnviewer.createMap",
                             "disableIf": "{!(state('user') && state('user').perms && state('user').perms.includes('add_resource'))}"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "IgracGroundwaterContributor"
                         }
                     ],
                     "rightMenuItems": [
@@ -1243,6 +1247,9 @@
             },
             {
                 "name": "IgracGeonodePagePopup"
+            },
+            {
+                "name": "IgracGroundwaterContributor"
             }
         ],
         "dataset_edit_data_viewer": [
@@ -1616,6 +1623,10 @@
                             "type": "plugin",
                             "name": "DatasetsCatalog",
                             "disableIf": "{!context.resourceHasPermission(state('gnResourceData'), 'change_resourcebase') && !state('isNewResource')}"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "IgracGroundwaterContributor"
                         }
                     ],
                     "rightMenuItems": [
@@ -2200,6 +2211,9 @@
             },
             {
                 "name": "IgracGeonodePagePopup"
+            },
+            {
+                "name": "IgracGroundwaterContributor"
             },
             {
                 "name": "Swipe"
