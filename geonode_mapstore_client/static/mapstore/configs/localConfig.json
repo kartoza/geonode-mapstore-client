@@ -666,6 +666,10 @@
                         {
                             "type": "plugin",
                             "name": "IgracGroundwaterContributor"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "IgracGroundwaterDownload"
                         }
                     ],
                     "rightMenuItems": [
@@ -1250,6 +1254,9 @@
             },
             {
                 "name": "IgracGroundwaterContributor"
+            },
+            {
+                "name": "IgracGroundwaterDownload"
             }
         ],
         "dataset_edit_data_viewer": [
@@ -1627,6 +1634,10 @@
                         {
                             "type": "plugin",
                             "name": "IgracGroundwaterContributor"
+                        },
+                        {
+                            "type": "plugin",
+                            "name": "IgracGroundwaterDownload"
                         }
                     ],
                     "rightMenuItems": [
@@ -2214,6 +2225,9 @@
             },
             {
                 "name": "IgracGroundwaterContributor"
+            },
+            {
+                "name": "IgracGroundwaterDownload"
             },
             {
                 "name": "Swipe"
