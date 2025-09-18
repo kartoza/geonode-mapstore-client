@@ -43,6 +43,8 @@ export const SET_SELECTED_LAYER = 'GEONODE:SET_SELECTED_LAYER';
 export const UPDATE_LAYER_DATASET = 'GEONODE:UPDATE_LAYER_DATASET';
 export const SET_SELECTED_LAYER_DATASET = 'GEONODE:SET_SELECTED_LAYER_DATASET';
 
+import { sendEvent } from '@mapstore/framework/utils/GoogleAnalytics';
+
 /**
 * Actions for GeoNode resource
 * store information of the resource in use
@@ -64,6 +66,9 @@ export function resourceLoading() {
 * @param {object} pending declare if the request is still pending
 */
 export function setResource(data, pending) {
+    if (data?.uuid) {
+        sendEvent("resource_access", data);
+    }
     return {
         type: SET_RESOURCE,
         data,

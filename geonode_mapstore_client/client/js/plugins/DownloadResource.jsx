@@ -22,6 +22,7 @@ import {
 } from '@js/selectors/resource';
 import { downloadResource } from '@js/actions/gnresource';
 import { processingDownload } from '@js/selectors/resourceservice';
+import { sendEvent } from '@mapstore/framework/utils/GoogleAnalytics';
 
 const ButtonWithTooltip = tooltip(Button);
 
@@ -67,6 +68,9 @@ const DownloadButton = ({
                 href={ downloadInfo.url }
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                    sendEvent("resource_download", _resource);
+                }}
             >
                 {showIcon
                     ? <FaIcon name={isExternal ? "external-link" : "download"} />
@@ -79,7 +83,10 @@ const DownloadButton = ({
     return (
         <Component
             disabled={!!downloading}
-            onClick={() => downloading ? null : onAction(_resource)}
+            onClick={() => {
+                downloading ? null : onAction(_resource);
+                sendEvent("resource_download", _resource);
+            }}
             {...isButton && { variant, size}}
             {...showIcon && { tooltipId: downloadMsgId }}
         >
