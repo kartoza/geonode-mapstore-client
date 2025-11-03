@@ -23,6 +23,7 @@ import {
 import { downloadResource } from '@js/actions/gnresource';
 import { processingDownload } from '@js/selectors/resourceservice';
 import { sendEvent } from '@mapstore/framework/utils/GoogleAnalytics';
+import Spinner from "@js/components/Spinner";
 
 const ButtonWithTooltip = tooltip(Button);
 
@@ -92,7 +93,10 @@ const DownloadButton = ({
         >
             {showIcon
                 ? <FaIcon name="download" />
-                : <Message msgId={downloadMsgId} />
+                : <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                    <Message msgId={downloadMsgId} />
+                    {downloading && <Spinner style={{ borderLeftColor: "white",  borderTopColor: "rgba(255,255,255,0.2)", borderRightColor: "rgba(255,255,255,0.2)", borderBottomColor: "rgba(255,255,255,0.2)"}}/>}
+                </div>
             }
         </Component>
     );
