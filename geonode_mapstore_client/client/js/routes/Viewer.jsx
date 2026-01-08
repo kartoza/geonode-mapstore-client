@@ -10,6 +10,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
+import Error403Fallback from '@js/components/Error403Fallback';
 import url from 'url';
 import isArray from 'lodash/isArray';
 import { getMonitoredState } from '@mapstore/framework/utils/PluginsUtils';
@@ -69,6 +70,7 @@ function ViewerRoute({
     resourceType,
     loadingConfig,
     configError,
+    configErrorStatus,
     loaderStyle
 }) {
 
@@ -133,7 +135,7 @@ function ViewerRoute({
                 params={params}
             />
             {loading && Loader && <Loader style={loaderStyle}/>}
-            {configError && <MainEventView msgId={configError}/>}
+            {(configErrorStatus && configErrorStatus == 403) ? <Error403Fallback /> : (configError && <MainEventView msgId={configError}/>)}
         </>
     );
 }
@@ -147,12 +149,14 @@ const ConnectedViewerRoute = connect(
         state => state?.gnresource?.data,
         state => state?.gnsettings?.siteName || 'GeoNode',
         state => state?.gnresource?.loadingResourceConfig,
-        state => state?.gnresource?.configError
-    ], (resource, siteName, loadingConfig, configError) => ({
+        state => state?.gnresource?.configError,
+        state => state?.gnresource?.configErrorStatus,
+    ], (resource, siteName, loadingConfig, configError, configErrorStatus) => ({
         resource,
         siteName,
         loadingConfig,
-        configError
+        configError,
+        configErrorStatus
     })),
     {
         onUpdate: requestResourceConfig,

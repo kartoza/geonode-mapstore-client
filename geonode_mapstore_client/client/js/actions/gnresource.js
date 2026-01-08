@@ -265,10 +265,11 @@ export function loadingResourceConfig(loading) {
     };
 }
 
-export function resourceConfigError(message) {
+export function resourceConfigError(message, status) {
     return {
         type: RESOURCE_CONFIG_ERROR,
-        message
+        message,
+        status
     };
 }
 

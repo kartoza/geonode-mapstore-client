@@ -60,6 +60,7 @@ function gnresource(state = defaultState, action) {
         return {
             ...state,
             configError: undefined,
+            configErrorStatus: undefined,
             loadingResourceConfig: action.loading
         };
     }
@@ -67,7 +68,8 @@ function gnresource(state = defaultState, action) {
         return {
             ...state,
             loading: false,
-            configError: action.message
+            configError: action.message,
+            configErrorStatus: action.status
         };
     }
     case RESOURCE_LOADING: {

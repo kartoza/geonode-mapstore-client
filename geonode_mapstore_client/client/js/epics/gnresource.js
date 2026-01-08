@@ -508,7 +508,7 @@ export const gnViewerRequestNewResourceConfig = (action$, store) =>
                 .catch((error) => {
                     return Observable.of(
                         ...getResetActions(),
-                        resourceConfigError(error?.data?.detail || error?.statusText || error?.message)
+                        resourceConfigError(error?.data?.detail || error?.statusText || error?.message, error?.status)
                     );
                 });
         });
@@ -563,7 +563,7 @@ export const gnViewerRequestResourceConfig = (action$, store) =>
                 .catch((error) => {
                     return Observable.of(
                         ...getResetActions(),
-                        resourceConfigError(error?.data?.detail || error?.statusText || error?.message)
+                        resourceConfigError(error?.data?.detail || error?.statusText || error?.message, error?.status)
                     );
                 });
         });
