@@ -154,7 +154,11 @@
                 "unSupportedMedia": "Das Medienformat wird nicht unterstützt"
             },
             "errors": {
-                "noPermissions": "Sie sind nicht berechtigt eine GeoStory hinzuzufügen"
+                "noPermissions": "Sie sind nicht berechtigt eine GeoStory hinzuzufügen",
+                "error403": {
+                    "title": "Zugriff verweigert",
+                    "subtitle": "Sie scheinen nicht über die erforderlichen Zugriffsrechte für diese Ressource zu verfügen.</br>Bitte klicken <a href=\"{fallbackUrl}\">hier</a> zurückgehen {fallbackUrlText}."
+                }
             },
             "print": {
                 "author": "Autor",
