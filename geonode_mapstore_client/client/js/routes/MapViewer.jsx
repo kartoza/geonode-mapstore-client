@@ -98,8 +98,9 @@ const ConnectedMapViewerRoute = connect(
         state => state?.gnresource?.data,
         state => state?.gnresource?.params?.hasViewer,
         state => state?.gnresource?.loadingResourceConfig,
-        state => state?.gnresource?.configError
-    ], (viewerPluginsConfig, viewerMonitoredState, theme, customVariablesEnabled, resource, hasViewer, loadingConfig, configError) => ({
+        state => state?.gnresource?.configError,
+        state => state?.gnresource?.configErrorStatus,
+    ], (viewerPluginsConfig, viewerMonitoredState, theme, customVariablesEnabled, resource, hasViewer, loadingConfig, configError, configErrorStatus) => ({
         viewerPluginsConfig,
         viewerMonitoredState,
         theme,
@@ -107,7 +108,8 @@ const ConnectedMapViewerRoute = connect(
         resource,
         hasViewer,
         loadingConfig,
-        configError
+        configError,
+        configErrorStatus
     })),
     {}
 )(MapViewerRoute);
