@@ -158,7 +158,11 @@
                 "unSupportedMedia": "Media format is unsupported"
             },
             "errors": {
-                "noPermissions": "You dont have permissions to add a geostory"
+                "noPermissions": "You dont have permissions to add a geostory",
+                "error403": {
+                    "title": "Access Denied",
+                    "subtitle": "Looks like you don't have the necessary access rights to this resource.</br>Please click <a href=\"{fallbackUrl}\">here</a> to go back to {fallbackUrlText}."
+                }
             },
             "print": {
                 "author": "Author",

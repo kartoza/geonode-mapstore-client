@@ -158,7 +158,11 @@
                 "unSupportedMedia": "El formato de medios no es compatible"
             },
             "errors": {
-                "noPermissions": "No tienes permisos para agregar una geohistoria"
+                "noPermissions": "No tienes permisos para agregar una geohistoria",
+                "error403": {
+                    "title": "Acceso denegado",
+                    "subtitle": "Parece que no tienes los permisos necesarios para acceder a este recurso.</br>Por favor haz clic <a href=\"{fallbackUrl}\">aquí</a> para volver a {fallbackUrlText}."
+                }
             },
             "print": {
                 "author": "Autor",
