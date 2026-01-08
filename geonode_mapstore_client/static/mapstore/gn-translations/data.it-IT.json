@@ -160,7 +160,11 @@
                 "unSupportedMedia": "Il formato multimediale non è supportato"
             },
             "errors": {
-                "noPermissions": "Non hai i permessi per aggiungere una geostoria"
+                "noPermissions": "Non hai i permessi per aggiungere una geostoria",
+                "error403": {
+                    "title": "Accesso negato",
+                    "subtitle": "Sembra che tu non abbia i permessi necessari per accedere a questa risorsa.</br>Per favore clicca <a href=\"{fallbackUrl}\">qui</a> per tornare a {fallbackUrlText}."
+                }
             },
             "print": {
                 "author": "Autore",
