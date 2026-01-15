@@ -154,7 +154,11 @@
                 "unSupportedMedia": "Le format multimédia n'est pas pris en charge"
             },
             "errors": {
-                "noPermissions": "Vous n'êtes pas autorisé à ajouter une geostory"
+                "noPermissions": "Vous n'êtes pas autorisé à ajouter une geostory",
+                "error403": {
+                    "title": "Accès refusé",
+                    "subtitle": "Il semblerait que vous n'ayez pas les droits d'accès nécessaires à cette ressource.</br>Veuillez cliquer <a href=\"{fallbackUrl}\">ici</a> pour revenir à {fallbackUrlText}."
+                }
             },
             "print": {
                 "author": "Auteur",
