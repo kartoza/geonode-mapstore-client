@@ -115,7 +115,7 @@ function ViewerRoute({
     const Loader = loaderComponent;
     const className = `page-${resourceType || name}-viewer page-viewer`;
 
-    if (configErrorStatus && configErrorStatus == 401) {
+    if (configErrorStatus && configErrorStatus === 401) {
         window.location.href = `/account/login/?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`;
         return null;
     }
@@ -140,7 +140,7 @@ function ViewerRoute({
                 params={params}
             />
             {loading && Loader && <Loader style={loaderStyle}/>}
-            {(configErrorStatus && configErrorStatus == 403) ? <Error403Fallback /> : (configError && <MainEventView msgId={configError}/>)}
+            {(configErrorStatus && configErrorStatus === 403) ? <Error403Fallback /> : (configError && <MainEventView msgId={configError}/>)}
         </>
     );
 }
