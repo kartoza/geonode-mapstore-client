@@ -133,6 +133,11 @@ function ViewerRoute({
     const Loader = loaderComponent;
     const className = `page-${resourceType || name}-viewer page-viewer`;
 
+    if (configErrorStatus && configErrorStatus == 401) {
+        window.location.href = `/account/login/?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`;
+        return null;
+    }
+
     return (
         <>
             {resource && <MetaTags
