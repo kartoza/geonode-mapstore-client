@@ -4,13 +4,15 @@ import {
     IGRAC_DRAWING_FILTER_SET_TYPE,
     IGRAC_DRAWING_FILTER_SET_GEOM,
     IGRAC_DRAWING_FILTER_REMOVE_GEOM,
+    IGRAC_DRAWING_FILTER_SET_DATA,
     IGRAC_DRAWING_FILTER_CLEAR
 } from '@js/actions/igracDrawingFilter';
 
 const initialState = {
     active: false,
     geometryType: 'Polygon',
-    filterGeometries: []
+    filterGeometries: [],
+    filterData: [] // parallel to filterGeometries: null = loading, array = loaded
 };
 
 export default function igracDrawingFilter(state = initialState, action) {
@@ -22,9 +24,22 @@ export default function igracDrawingFilter(state = initialState, action) {
     case IGRAC_DRAWING_FILTER_SET_TYPE:
         return { ...state, geometryType: action.geometryType };
     case IGRAC_DRAWING_FILTER_SET_GEOM:
-        return { ...state, filterGeometries: [...state.filterGeometries, action.geometry] };
+        return {
+            ...state,
+            filterGeometries: [...state.filterGeometries, action.geometry],
+            filterData: [...state.filterData, null]
+        };
     case IGRAC_DRAWING_FILTER_REMOVE_GEOM:
-        return { ...state, filterGeometries: state.filterGeometries.filter((_, i) => i !== action.index) };
+        return {
+            ...state,
+            filterGeometries: state.filterGeometries.filter((_, i) => i !== action.index),
+            filterData: state.filterData.filter((_, i) => i !== action.index)
+        };
+    case IGRAC_DRAWING_FILTER_SET_DATA:
+        return {
+            ...state,
+            filterData: state.filterData.map((d, i) => i === action.index ? action.features : d)
+        };
     case IGRAC_DRAWING_FILTER_CLEAR:
         return { ...initialState };
     default:

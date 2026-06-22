@@ -2,3 +2,4 @@ export const isIgracDrawingFilterActive      = state => state?.igracDrawingFilte
 export const igracDrawingFilterGeometryType  = state => state?.igracDrawingFilter?.geometryType ?? 'Polygon';
 export const igracDrawingFilterGeometries    = state => state?.igracDrawingFilter?.filterGeometries ?? [];
 export const hasIgracDrawingFilterGeometries = state => (state?.igracDrawingFilter?.filterGeometries ?? []).length > 0;
+export const igracDrawingFilterData          = state => state?.igracDrawingFilter?.filterData ?? [];
