@@ -6,7 +6,14 @@ import { createSelector } from 'reselect';
 import { Glyphicon } from 'react-bootstrap';
 import { toggleControl, TOGGLE_CONTROL } from '@mapstore/framework/actions/controls';
 import { CLICK_ON_MAP } from '@mapstore/framework/actions/map';
-import { changeMapInfoState } from '@mapstore/framework/actions/mapInfo';
+import {
+    newMapInfoRequest,
+    loadFeatureInfo,
+    purgeMapInfoResults
+} from '@mapstore/framework/actions/mapInfo';
+import { changeDrawingStatus } from '@mapstore/framework/actions/draw';
+import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
+import uuid from 'uuid';
 import {
     updateAdditionalLayer,
     removeAdditionalLayer
@@ -17,6 +24,7 @@ import igracDrawingFilterReducer from '@js/reducers/igracDrawingFilter';
 import {
     IGRAC_DRAWING_FILTER_SET_GEOM,
     IGRAC_DRAWING_FILTER_REMOVE_GEOM,
+    IGRAC_DRAWING_FILTER_SET_DATA,
     IGRAC_DRAWING_FILTER_CLEAR,
     activateIgracDrawingFilter,
     setIgracDrawingFilterType,
@@ -336,14 +344,6 @@ const igracDrawingFilterPointClickEpic = (action$, store) =>
             );
         });
 
-const igracDrawingFilterBlockIdentifyEpic = (action$, store) =>
-    action$.ofType(TOGGLE_CONTROL)
-        .filter(({ control }) => control === 'igracDrawingFilter')
-        .switchMap(() => {
-            const panelEnabled = store.getState()?.controls?.igracDrawingFilter?.enabled;
-            return Observable.of(changeMapInfoState(!panelEnabled));
-        });
-
 // Reads full geometry list from store (reducer already applied the action)
 const igracDrawingFilterShowGeomEpic = (action$, store) =>
     action$.ofType(IGRAC_DRAWING_FILTER_SET_GEOM, IGRAC_DRAWING_FILTER_REMOVE_GEOM)
@@ -419,15 +419,63 @@ const igracDrawingFilterFetchEpic = (action$, store) =>
                 });
         });
 
+const igracDrawingFilterInjectIdentifyEpic = (action$, store) =>
+    action$.ofType(IGRAC_DRAWING_FILTER_SET_GEOM)
+        .switchMap(() => {
+            const state = store.getState();
+            const layer = layersSelector(state).find(isGroundwaterLayer);
+            if (!layer) return Observable.empty();
+
+            const reqId = uuid.v1();
+            const requestParams = { service: 'WFS', typeName: layer.name, info_format: 'application/json' };
+
+            // Open identify panel immediately with spinner
+            const openSpinner = Observable.of(
+                purgeMapInfoResults(),
+                newMapInfoRequest(reqId, requestParams)
+            );
+
+            // Wait until all geometries have loaded data, then inject
+            const waitAndInject = action$.ofType(IGRAC_DRAWING_FILTER_SET_DATA)
+                .filter(() => !igracDrawingFilterData(store.getState()).some(d => d === null))
+                .take(1)
+                .switchMap(() => {
+                    const s = store.getState();
+                    const allFeatures = igracDrawingFilterData(s).flatMap(d => (Array.isArray(d) ? d : []));
+                    if (allFeatures.length === 0) return Observable.of(purgeMapInfoResults());
+                    const layerMetadata = {
+                        title: layer.title || layer.name,
+                        features: allFeatures,
+                        featuresCrs: 'EPSG:4326',
+                        viewer: layer.featureInfo?.viewer || {},
+                        featureInfo: layer.featureInfo ? { ...layer.featureInfo } : {},
+                        fields: layer.fields
+                    };
+                    const data = { type: 'FeatureCollection', features: allFeatures };
+                    return Observable.of(
+                        loadFeatureInfo(reqId, data, requestParams, layerMetadata, layer),
+                        forceUpdateMapLayout()
+                    ).delay(0);
+                });
+
+            return openSpinner.concat(waitAndInject);
+        });
+
 const igracDrawingFilterCloseClearEpic = (action$, store) =>
     action$.ofType(TOGGLE_CONTROL)
         .filter(({ control }) => control === 'igracDrawingFilter')
         .switchMap(() => {
             const panelEnabled = store.getState()?.controls?.igracDrawingFilter?.enabled;
-            if (!panelEnabled) return Observable.of(clearIgracDrawingFilter());
+            if (!panelEnabled) {
+                return Observable.of(
+                    clearIgracDrawingFilter(),
+                    changeDrawingStatus('stop', '', 'igracDrawingFilter', [])
+                );
+            }
             return Observable.of(
                 setIgracDrawingFilterType('Point'),
-                activateIgracDrawingFilter()
+                activateIgracDrawingFilter(),
+                changeDrawingStatus('create', '', 'igracDrawingFilter', [])
             );
         });
 
@@ -461,10 +509,10 @@ export default createPlugin('IgracDrawingFilter', {
     reducers: { igracDrawingFilter: igracDrawingFilterReducer },
     epics: {
         igracDrawingFilterPointClickEpic,
-        igracDrawingFilterBlockIdentifyEpic,
         igracDrawingFilterShowGeomEpic,
         igracDrawingFilterClearGeomEpic,
         igracDrawingFilterCloseClearEpic,
-        igracDrawingFilterFetchEpic
+        igracDrawingFilterFetchEpic,
+        igracDrawingFilterInjectIdentifyEpic
     }
 });
