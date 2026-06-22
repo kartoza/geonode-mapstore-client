@@ -1,7 +1,7 @@
 FILE=VERSION
 VERSION=`cat $(FILE)`
 
-.PHONY: build geonode package release
+.PHONY: build geonode package release clean
 
 build:
 	npm run dist
@@ -23,3 +23,9 @@ start:
 
 compile:
 	cd geonode_mapstore_client/client && npm run compile
+
+clean:
+	rm -rf geonode_mapstore_client/client/node_modules
+	rm -f geonode_mapstore_client/client/package-lock.json
+	rm -rf geonode_mapstore_client/client/MapStore2/node_modules
+	rm -f geonode_mapstore_client/client/MapStore2/package-lock.json

@@ -1257,6 +1257,9 @@
             },
             {
                 "name": "IgracGroundwaterDownload"
+            },
+            {
+                "name": "IgracDrawingFilter"
             }
         ],
         "dataset_edit_data_viewer": [
@@ -2228,6 +2231,9 @@
             },
             {
                 "name": "IgracGroundwaterDownload"
+            },
+            {
+                "name": "IgracDrawingFilter"
             },
             {
                 "name": "Swipe"

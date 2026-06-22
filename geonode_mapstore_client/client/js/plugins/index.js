@@ -352,6 +352,10 @@ export const plugins = {
         'IgracGroundwaterDownload',
         () => import(/* webpackChunkName: 'plugins/igrac-groundwater-contributor-plugin' */ '@js/plugins/IgracGroundwaterDownload')
     ),
+    IgracDrawingFilterPlugin: toModulePlugin(
+        'IgracDrawingFilter',
+        () => import(/* webpackChunkName: 'plugins/igrac-drawing-filter-plugin' */ '@js/plugins/igracDrawingFilter')
+    ),
     // ----------------- IGRAC ----------------------
     DashboardPlugin: toModulePlugin(
         'Dashboard',
