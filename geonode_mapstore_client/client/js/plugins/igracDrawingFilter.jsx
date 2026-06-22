@@ -9,7 +9,8 @@ import { CLICK_ON_MAP } from '@mapstore/framework/actions/map';
 import {
     newMapInfoRequest,
     loadFeatureInfo,
-    purgeMapInfoResults
+    purgeMapInfoResults,
+    hideMapinfoMarker
 } from '@mapstore/framework/actions/mapInfo';
 import { changeDrawingStatus } from '@mapstore/framework/actions/draw';
 import { forceUpdateMapLayout } from '@mapstore/framework/actions/maplayout';
@@ -162,6 +163,7 @@ function IgracDrawingFilterPanelComponent({
     identifyOpen,
     onClose,
     onActivate,
+    onHideMapinfoMarker,
     onSetType,
     onRemove,
     onClear
@@ -475,7 +477,8 @@ const igracDrawingFilterCloseClearEpic = (action$, store) =>
             return Observable.of(
                 setIgracDrawingFilterType('Point'),
                 activateIgracDrawingFilter(),
-                changeDrawingStatus('create', '', 'igracDrawingFilter', [])
+                changeDrawingStatus('create', '', 'igracDrawingFilter', []),
+                hideMapinfoMarker()
             );
         });
 
