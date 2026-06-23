@@ -1259,7 +1259,7 @@
                 "name": "IgracGroundwaterDownload"
             },
             {
-                "name": "IgracDrawingFilter"
+                "name": "IgracSelectWell"
             }
         ],
         "dataset_edit_data_viewer": [
@@ -2233,7 +2233,7 @@
                 "name": "IgracGroundwaterDownload"
             },
             {
-                "name": "IgracDrawingFilter"
+                "name": "IgracSelectWell"
             },
             {
                 "name": "Swipe"

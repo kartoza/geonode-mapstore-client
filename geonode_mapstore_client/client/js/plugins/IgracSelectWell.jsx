@@ -21,27 +21,29 @@ import {
 } from '@mapstore/framework/actions/additionallayers';
 import Button from '@js/components/Button';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
-import igracDrawingFilterReducer from '@js/reducers/igracDrawingFilter';
+import igracSelectWellReducer from '@js/reducers/igracSelectWell';
 import {
-    IGRAC_DRAWING_FILTER_SET_GEOM,
-    IGRAC_DRAWING_FILTER_REMOVE_GEOM,
-    IGRAC_DRAWING_FILTER_SET_DATA,
-    IGRAC_DRAWING_FILTER_CLEAR,
-    activateIgracDrawingFilter,
-    setIgracDrawingFilterType,
-    setIgracDrawingFilterGeom,
-    removeIgracDrawingFilterGeom,
-    setIgracDrawingFilterData,
-    clearIgracDrawingFilter
-} from '@js/actions/igracDrawingFilter';
+    IGRAC_SELECT_WELL_SET_GEOM,
+    IGRAC_SELECT_WELL_REMOVE_GEOM,
+    IGRAC_SELECT_WELL_SET_DATA,
+    IGRAC_SELECT_WELL_CLEAR,
+    activateIgracSelectWell,
+    deactivateIgracSelectWell,
+    setIgracSelectWellType,
+    setIgracSelectWellGeom,
+    removeIgracSelectWellGeom,
+    setIgracSelectWellData,
+    clearIgracSelectWell
+} from '@js/actions/igracSelectWell';
 import {
-    isIgracDrawingFilterActive,
-    igracDrawingFilterGeometryType,
-    igracDrawingFilterGeometries,
-    igracDrawingFilterData
-} from '@js/selectors/igracDrawingFilter';
+    isIgracSelectWellActive,
+    igracSelectWellGeometryType,
+    igracSelectWellGeometries,
+    igracSelectWellData
+} from '@js/selectors/igracSelectWell';
 import { isMapInfoOpen } from '@mapstore/framework/selectors/mapInfo';
-import { getSelectedLayers, layersSelector } from '@mapstore/framework/selectors/layers';
+import { getSelectedLayers, layersSelector, selectedNodesSelector } from '@mapstore/framework/selectors/layers';
+import { SELECT_NODE } from '@mapstore/framework/actions/layers';
 import { mapSelector } from '@mapstore/framework/selectors/map';
 import { updatePointWithGeometricFilter } from '@mapstore/framework/utils/IdentifyUtils';
 import { reproject } from '@mapstore/framework/utils/CoordinatesUtils';
@@ -55,8 +57,8 @@ const GEOMETRY_TYPES = [
     { type: 'Polygon', glyph: 'polygon',  label: 'Polygon' }
 ];
 
-const FILTER_LAYER_ID = 'igrac-drawing-filter-layer';
-const FILTER_LAYER_OWNER = 'igracDrawingFilter';
+const FILTER_LAYER_ID = 'igrac-select-well-layer';
+const FILTER_LAYER_OWNER = 'igracSelectWell';
 
 const WFS_GEOM_ATTR = 'location';
 
@@ -143,17 +145,17 @@ function DrawFilterMapSupportComponent({ map, active, geometryType, onDrawEnd })
 
 const DrawFilterMapSupport = connect(
     createSelector(
-        [isIgracDrawingFilterActive, igracDrawingFilterGeometryType],
+        [isIgracSelectWellActive, igracSelectWellGeometryType],
         (active, geometryType) => ({ active, geometryType })
     ),
-    { onDrawEnd: setIgracDrawingFilterGeom }
+    { onDrawEnd: setIgracSelectWellGeom }
 )(DrawFilterMapSupportComponent);
 
 const IDENTIFY_PANEL_WIDTH = 589;
 
 const GEOM_TYPE_LABELS = { Point: 'Point', Polygon: 'Polygon' };
 
-function IgracDrawingFilterPanelComponent({
+function IgracSelectWellPanelComponent({
     enabled,
     active,
     geometryType,
@@ -163,7 +165,6 @@ function IgracDrawingFilterPanelComponent({
     identifyOpen,
     onClose,
     onActivate,
-    onHideMapinfoMarker,
     onSetType,
     onRemove,
     onClear
@@ -181,41 +182,11 @@ function IgracDrawingFilterPanelComponent({
 
     const rightOffset = identifyOpen ? IDENTIFY_PANEL_WIDTH + 10 : 46;
     const hasGeometries = filterGeometries.length > 0;
-
-    const totalWells = filterData.reduce((sum, d) => sum + (Array.isArray(d) ? d.length : 0), 0);
     const isAnyLoading = filterData.some(d => d === null);
-    const downloadDisabled = isAnyLoading || totalWells === 0 || totalWells > 100000;
-    const downloadTooltip = isAnyLoading
-        ? 'Still loading…'
-        : totalWells === 0
-            ? 'No wells to download'
-            : totalWells > 100000
-                ? 'Too many wells (max 100,000)'
-                : null;
-
-    function handleDownload() {
-        const allFeatures = filterData.flatMap(d => (Array.isArray(d) ? d : []));
-        const seen = new Set();
-        const unique = allFeatures.filter(f => {
-            const key = f.id ?? JSON.stringify(f.properties);
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-        });
-        const blob = new Blob(
-            [JSON.stringify({ type: 'FeatureCollection', features: unique }, null, 2)],
-            { type: 'application/json' }
-        );
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'groundwater_wells.geojson';
-        a.click();
-        URL.revokeObjectURL(a.href);
-    }
 
     return (
         <div
-            className="igrac-drawing-filter-container"
+            className="igrac-select-well-container"
             style={{ position: 'absolute', zIndex: 100, right: rightOffset, top: 48 }}
         >
             {active && <style>{`.ol-viewport{cursor:${geometryType === 'Point' ? 'pointer' : 'crosshair'}!important}`}</style>}
@@ -223,7 +194,7 @@ function IgracDrawingFilterPanelComponent({
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <strong>Select Well</strong>
                     <Button variant="default" size="xs" onClick={onClose}>
-                        <Glyphicon glyph="1-close" />
+                        <Glyphicon glyph="remove" />
                     </Button>
                 </div>
 
@@ -234,89 +205,86 @@ function IgracDrawingFilterPanelComponent({
                     </div>
                 )}
 
-                {hasGeometries && (
-                    <div style={{ marginBottom: 8 }}>
-                        <div ref={listRef} id="igrac-geometry-list" style={{ maxHeight: "30vh", overflowY: 'auto' }}>
-                            {filterGeometries.map((geom, i) => {
-                                const data = filterData[i];
-                                const loading = data === null;
-                                const count = Array.isArray(data) ? data.length : null;
-                                return (
-                                    <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, fontSize: 12, color: '#31708f' }}>
-                                        <span>
-                                            <Glyphicon
-                                                glyph={loading ? 'refresh' : 'ok-circle'}
-                                                style={{ marginRight: 4 }}
-                                            />
-                                            {GEOM_TYPE_LABELS[geom.type] || geom.type} {i + 1}
-                                            {loading && <em style={{ marginLeft: 4, color: '#999' }}>loading...</em>}
-                                            {count !== null && (
-                                                <strong style={{ marginLeft: 4 }}>({count} wells)</strong>
-                                            )}
-                                        </span>
-                                        <Button variant="default" size="xs" onClick={() => onRemove(i)}>
-                                            <Glyphicon glyph="remove" />
-                                        </Button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <Button variant="warning" size="sm" onClick={onClear} style={{ width: '100%', marginTop: 4 }}>
-                            <Glyphicon glyph="remove" /> Clear all
-                        </Button>
-                        <style>{'.igrac-dl-btn:hover:not([disabled]){opacity:0.9}'}</style>
-                        <TooltipButton
-                            tooltip={downloadDisabled ? downloadTooltip : undefined}
-                            tooltipPosition="bottom"
-                            variant="primary"
-                            size="sm"
-                            disabled={downloadDisabled}
-                            onClick={handleDownload}
-                            className="igrac-dl-btn"
-                            style={{ width: '100%', marginTop: 4, backgroundColor: 'var(--secondary)', color: '#fff' }}
-                        >
-                            <Glyphicon glyph="download-alt" /> Download all ({totalWells} wells)
-                        </TooltipButton>
-                    </div>
-                )}
+                {hasGroundwaterLayer && (
+                    <>
+                        {hasGeometries && (
+                            <div style={{ marginBottom: 8 }}>
+                                <div ref={listRef} id="igrac-select-well-geometry-list" style={{ maxHeight: "30vh", overflowY: 'auto' }}>
+                                    {filterGeometries.map((geom, i) => {
+                                        const data = filterData[i];
+                                        const loading = data === null;
+                                        const count = Array.isArray(data) ? data.length : null;
+                                        return (
+                                            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, fontSize: 12, color: '#31708f' }}>
+                                                <span>
+                                                    <Glyphicon
+                                                        glyph={loading ? 'refresh' : 'ok-circle'}
+                                                        style={{ marginRight: 4 }}
+                                                    />
+                                                    {GEOM_TYPE_LABELS[geom.type] || geom.type} {i + 1}
+                                                    {loading && <em style={{ marginLeft: 4, color: '#999' }}>loading...</em>}
+                                                    {count !== null && (
+                                                        <strong style={{ marginLeft: 4 }}>({count} wells)</strong>
+                                                    )}
+                                                </span>
+                                                <Button variant="default" size="xs" onClick={() => onRemove(i)}>
+                                                    <Glyphicon glyph="1-close" />
+                                                </Button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <Button variant="warning" size="sm" onClick={onClear} style={{ width: '100%', marginTop: 4 }}>
+                                    <Glyphicon glyph="remove" /> Clear all
+                                </Button>
+                            </div>
+                        )}
 
-                <div>
-                    <div style={{ marginBottom: 6, fontSize: 12, color: active ? '#8a6d3b' : '#666' }}>
-                        {active
-                            ? (geometryType === 'Point' ? 'Click on the map...' : `Drawing ${geometryType}...`)
-                            : (hasGeometries ? 'Add another:' : 'Select geometry type:')}
-                    </div>
-                    <div style={{ display: 'flex', gap: 4 }}>
-                        {GEOMETRY_TYPES.map(({ type, glyph, label }) => (
-                            <TooltipButton
-                                key={type}
-                                tooltip={label}
-                                tooltipPosition="bottom"
-                                variant="primary"
-                                size="sm"
-                                disabled={!hasGroundwaterLayer}
-                                className={active && geometryType === type ? 'active' : ''}
-                                onClick={() => { onSetType(type); onActivate(); }}
-                            >
-                                <Glyphicon glyph={glyph} />
-                            </TooltipButton>
-                        ))}
-                    </div>
-                </div>
+                        <div>
+                            <div style={{ fontSize: 11, color: '#999', marginBottom: 8 }}>
+                                <Glyphicon glyph="info-sign" style={{ marginRight: 4 }} />
+                                Results limited to 10,000 wells per selection
+                            </div>
+                            <div style={{ display: 'flex', gap: 4 }}>
+                                {GEOMETRY_TYPES.map(({ type, glyph, label }) => (
+                                    <TooltipButton
+                                        key={type}
+                                        tooltip={isAnyLoading ? 'Loading results, please wait...' : label}
+                                        tooltipPosition="bottom"
+                                        variant="primary"
+                                        size="sm"
+                                        disabled={isAnyLoading}
+                                        className={active && geometryType === type ? 'active' : ''}
+                                        onClick={() => { onSetType(type); onActivate(); }}
+                                    >
+                                        <Glyphicon glyph={glyph} />
+                                    </TooltipButton>
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
 }
 
-const IgracDrawingFilterPanel = connect(
+const IgracSelectWellPanel = connect(
     createSelector(
         [
-            state => state?.controls?.igracDrawingFilter?.enabled || false,
-            isIgracDrawingFilterActive,
-            igracDrawingFilterGeometryType,
-            igracDrawingFilterGeometries,
-            igracDrawingFilterData,
-            state => layersSelector(state).some(isGroundwaterLayer),
+            state => state?.controls?.igracSelectWell?.enabled || false,
+            isIgracSelectWellActive,
+            igracSelectWellGeometryType,
+            igracSelectWellGeometries,
+            igracSelectWellData,
+            state => {
+                const selectedIds = selectedNodesSelector(state);
+                const allLayers = layersSelector(state);
+                const targetLayers = selectedIds.length > 0
+                    ? allLayers.filter(l => selectedIds.includes(l.id))
+                    : allLayers;
+                return targetLayers.some(isGroundwaterLayer);
+            },
             isMapInfoOpen
         ],
         (enabled, active, geometryType, filterGeometries, filterData, hasGroundwaterLayer, identifyOpen) => ({
@@ -324,35 +292,39 @@ const IgracDrawingFilterPanel = connect(
         })
     ),
     {
-        onClose: toggleControl.bind(null, 'igracDrawingFilter', null),
-        onActivate: activateIgracDrawingFilter,
-        onSetType: setIgracDrawingFilterType,
-        onRemove: removeIgracDrawingFilterGeom,
-        onClear: clearIgracDrawingFilter
+        onClose: toggleControl.bind(null, 'igracSelectWell', null),
+        onActivate: activateIgracSelectWell,
+        onSetType: setIgracSelectWellType,
+        onRemove: removeIgracSelectWellGeom,
+        onClear: clearIgracSelectWell
     }
-)(IgracDrawingFilterPanelComponent);
+)(IgracSelectWellPanelComponent);
 
-const igracDrawingFilterPointClickEpic = (action$, store) =>
+const igracSelectWellPointClickEpic = (action$, store) =>
     action$.ofType(CLICK_ON_MAP)
         .filter(() => {
             const state = store.getState();
-            return isIgracDrawingFilterActive(state) &&
-                igracDrawingFilterGeometryType(state) === 'Point';
+            return isIgracSelectWellActive(state) &&
+                igracSelectWellGeometryType(state) === 'Point';
         })
         .switchMap(({ point }) => {
             const { lat, lng } = point.latlng;
             return Observable.of(
-                setIgracDrawingFilterGeom({ type: 'Point', coordinates: [lng, lat] })
+                setIgracSelectWellGeom({ type: 'Point', coordinates: [lng, lat] })
             );
         });
 
 // Reads full geometry list from store (reducer already applied the action)
-const igracDrawingFilterShowGeomEpic = (action$, store) =>
-    action$.ofType(IGRAC_DRAWING_FILTER_SET_GEOM, IGRAC_DRAWING_FILTER_REMOVE_GEOM)
-        .switchMap(() => {
-            const geometries = igracDrawingFilterGeometries(store.getState());
+const igracSelectWellShowGeomEpic = (action$, store) =>
+    action$.ofType(IGRAC_SELECT_WELL_SET_GEOM, IGRAC_SELECT_WELL_REMOVE_GEOM)
+        .switchMap(({ type }) => {
+            const geometries = igracSelectWellGeometries(store.getState());
+            const isRemove = type === IGRAC_SELECT_WELL_REMOVE_GEOM;
             if (geometries.length === 0) {
-                return Observable.of(removeAdditionalLayer({ owner: FILTER_LAYER_OWNER }));
+                return Observable.of(
+                    removeAdditionalLayer({ owner: FILTER_LAYER_OWNER }),
+                    ...(isRemove ? [deactivateIgracSelectWell()] : [])
+                );
             }
             return Observable.of(
                 updateAdditionalLayer(FILTER_LAYER_ID, FILTER_LAYER_OWNER, 'overlay', {
@@ -367,14 +339,18 @@ const igracDrawingFilterShowGeomEpic = (action$, store) =>
                         properties: { geometryType: geometry.type }
                     })),
                     style: FILTER_LAYER_STYLE
-                })
+                }),
+                ...(isRemove ? [deactivateIgracSelectWell()] : [])
             );
         });
 
-const igracDrawingFilterClearGeomEpic = (action$) =>
-    action$.ofType(IGRAC_DRAWING_FILTER_CLEAR)
+const igracSelectWellClearGeomEpic = (action$) =>
+    action$.ofType(IGRAC_SELECT_WELL_CLEAR)
         .switchMap(() =>
-            Observable.of(removeAdditionalLayer({ owner: FILTER_LAYER_OWNER }))
+            Observable.of(
+                removeAdditionalLayer({ owner: FILTER_LAYER_OWNER }),
+                deactivateIgracSelectWell()
+            )
         );
 
 function pointToBufferedGeometry(geometry, mapState) {
@@ -391,11 +367,11 @@ function pointToBufferedGeometry(geometry, mapState) {
 }
 
 // On each SET_GEOM, fetch wells from the selected/active WMS layer via WFS + CQL_FILTER
-const igracDrawingFilterFetchEpic = (action$, store) =>
-    action$.ofType(IGRAC_DRAWING_FILTER_SET_GEOM)
+const igracSelectWellFetchEpic = (action$, store) =>
+    action$.ofType(IGRAC_SELECT_WELL_SET_GEOM)
         .mergeMap(() => {
             const state = store.getState();
-            const geometries = igracDrawingFilterGeometries(state);
+            const geometries = igracSelectWellGeometries(state);
             const index = geometries.length - 1;
             const geometry = geometries[index];
 
@@ -416,13 +392,13 @@ const igracDrawingFilterFetchEpic = (action$, store) =>
                     return Observable.fromPromise(
                         fetch(url).then(r => r.json())
                     )
-                        .map(data => setIgracDrawingFilterData(index, data.features || []))
-                        .catch(() => Observable.of(setIgracDrawingFilterData(index, [])));
+                        .map(data => setIgracSelectWellData(index, data.features || []))
+                        .catch(() => Observable.of(setIgracSelectWellData(index, [])));
                 });
         });
 
-const igracDrawingFilterInjectIdentifyEpic = (action$, store) =>
-    action$.ofType(IGRAC_DRAWING_FILTER_SET_GEOM)
+const igracSelectWellInjectIdentifyEpic = (action$, store) =>
+    action$.ofType(IGRAC_SELECT_WELL_SET_GEOM)
         .switchMap(() => {
             const state = store.getState();
             const layer = layersSelector(state).find(isGroundwaterLayer);
@@ -438,20 +414,22 @@ const igracDrawingFilterInjectIdentifyEpic = (action$, store) =>
             );
 
             // Wait until all geometries have loaded data, then inject
-            const waitAndInject = action$.ofType(IGRAC_DRAWING_FILTER_SET_DATA)
-                .filter(() => !igracDrawingFilterData(store.getState()).some(d => d === null))
+            const waitAndInject = action$.ofType(IGRAC_SELECT_WELL_SET_DATA)
+                .filter(() => !igracSelectWellData(store.getState()).some(d => d === null))
                 .take(1)
                 .switchMap(() => {
                     const s = store.getState();
-                    const allFeatures = igracDrawingFilterData(s).flatMap(d => (Array.isArray(d) ? d : []));
+                    const allFeatures = igracSelectWellData(s).flatMap(d => (Array.isArray(d) ? d : []));
                     if (allFeatures.length === 0) return Observable.of(purgeMapInfoResults());
                     const layerMetadata = {
                         title: layer.title || layer.name,
+                        name: layer.name,
                         features: allFeatures,
                         featuresCrs: 'EPSG:4326',
                         viewer: layer.featureInfo?.viewer || {},
                         featureInfo: layer.featureInfo ? { ...layer.featureInfo } : {},
-                        fields: layer.fields
+                        fields: layer.fields,
+                        fromWellSelection: true
                     };
                     const data = { type: 'FeatureCollection', features: allFeatures };
                     return Observable.of(
@@ -463,36 +441,46 @@ const igracDrawingFilterInjectIdentifyEpic = (action$, store) =>
             return openSpinner.concat(waitAndInject);
         });
 
-const igracDrawingFilterCloseClearEpic = (action$, store) =>
+const igracSelectWellCloseClearEpic = (action$, store) =>
     action$.ofType(TOGGLE_CONTROL)
-        .filter(({ control }) => control === 'igracDrawingFilter')
+        .filter(({ control }) => control === 'igracSelectWell')
         .switchMap(() => {
-            const panelEnabled = store.getState()?.controls?.igracDrawingFilter?.enabled;
+            const panelEnabled = store.getState()?.controls?.igracSelectWell?.enabled;
             if (!panelEnabled) {
                 return Observable.of(
-                    clearIgracDrawingFilter(),
-                    changeDrawingStatus('stop', '', 'igracDrawingFilter', [])
+                    clearIgracSelectWell(),
+                    changeDrawingStatus('stop', '', 'igracSelectWell', [])
                 );
             }
             return Observable.of(
-                setIgracDrawingFilterType('Point'),
-                activateIgracDrawingFilter(),
-                changeDrawingStatus('create', '', 'igracDrawingFilter', []),
+                setIgracSelectWellType('Point'),
+                activateIgracSelectWell(),
+                changeDrawingStatus('create', '', 'igracSelectWell', []),
                 hideMapinfoMarker()
             );
         });
 
-export default createPlugin('IgracDrawingFilter', {
-    component: IgracDrawingFilterPanel,
+// When selected nodes in TOC change, clear all geometries if panel is enabled
+const igracSelectWellSelectionChangeEpic = (action$, store) =>
+    action$.ofType(SELECT_NODE)
+        .filter(() => {
+            const state = store.getState();
+            return state?.controls?.igracSelectWell?.enabled &&
+                igracSelectWellGeometries(state).length > 0;
+        })
+        .switchMap(() => Observable.of(clearIgracSelectWell()));
+
+export default createPlugin('IgracSelectWell', {
+    component: IgracSelectWellPanel,
     containers: {
         SidebarMenu: {
-            name: 'igracDrawingFilter',
+            name: 'igracSelectWell',
             position: 10,
             icon: <Glyphicon glyph="pencil" />,
             tooltip: 'Select Well',
-            action: toggleControl.bind(null, 'igracDrawingFilter', null),
+            action: toggleControl.bind(null, 'igracSelectWell', null),
             toggle: true,
-            toggleControl: 'igracDrawingFilter',
+            toggleControl: 'igracSelectWell',
             toggleProperty: 'enabled',
             doNotHide: true,
             priority: 2,
@@ -504,18 +492,19 @@ export default createPlugin('IgracDrawingFilter', {
             })
         },
         Map: {
-            name: 'IgracDrawingFilter',
+            name: 'IgracSelectWell',
             Tool: DrawFilterMapSupport,
             alwaysRender: true
         }
     },
-    reducers: { igracDrawingFilter: igracDrawingFilterReducer },
+    reducers: { igracSelectWell: igracSelectWellReducer },
     epics: {
-        igracDrawingFilterPointClickEpic,
-        igracDrawingFilterShowGeomEpic,
-        igracDrawingFilterClearGeomEpic,
-        igracDrawingFilterCloseClearEpic,
-        igracDrawingFilterFetchEpic,
-        igracDrawingFilterInjectIdentifyEpic
+        igracSelectWellPointClickEpic,
+        igracSelectWellShowGeomEpic,
+        igracSelectWellClearGeomEpic,
+        igracSelectWellCloseClearEpic,
+        igracSelectWellFetchEpic,
+        igracSelectWellInjectIdentifyEpic,
+        igracSelectWellSelectionChangeEpic
     }
 });
