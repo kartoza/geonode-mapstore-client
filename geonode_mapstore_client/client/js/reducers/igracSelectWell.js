@@ -5,6 +5,7 @@ import {
     IGRAC_SELECT_WELL_SET_GEOM,
     IGRAC_SELECT_WELL_REMOVE_GEOM,
     IGRAC_SELECT_WELL_SET_DATA,
+    IGRAC_SELECT_WELL_SET_PROGRESS,
     IGRAC_SELECT_WELL_CLEAR,
     IGRAC_TOGGLE_SYNC_WITH_GEOM
 } from '@js/actions/igracSelectWell';
@@ -36,6 +37,13 @@ export default function igracSelectWell(state = initialState, action) {
             ...state,
             geometries: state.geometries.filter((_, i) => i !== action.index),
             data: state.data.filter((_, i) => i !== action.index)
+        };
+    case IGRAC_SELECT_WELL_SET_PROGRESS:
+        return {
+            ...state,
+            data: state.data.map((d, i) => i === action.index
+                ? { loading: true, features: action.features, total: action.total }
+                : d)
         };
     case IGRAC_SELECT_WELL_SET_DATA:
         return {

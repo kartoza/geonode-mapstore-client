@@ -33,6 +33,7 @@ import {
     setIgracSelectWellGeom,
     removeIgracSelectWellGeom,
     setIgracSelectWellData,
+    setIgracSelectWellProgress,
     clearIgracSelectWell,
     toggleIgracSyncWithGeom
 } from '@js/actions/igracSelectWell';
@@ -66,30 +67,45 @@ const WFS_GEOM_ATTR = 'location';
 
 const isGroundwaterLayer = layer => layer?.type === 'wms' && layer?.visibility && layer?.name?.includes('groundwater:');
 
-function geomToWKT(geom) {
-    if (geom.type === 'Point') {
-        return `SRID=4326;POINT(${geom.coordinates[0]} ${geom.coordinates[1]})`;
+function geomToGML(geometry) {
+    if (geometry.type === 'Polygon') {
+        const coords = geometry.coordinates[0].map(c => `${c[0]} ${c[1]}`).join(' ');
+        return `<gml:Polygon srsName="EPSG:4326"><gml:exterior><gml:LinearRing><gml:posList>${coords}</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon>`;
     }
-    if (geom.type === 'Polygon') {
-        const ring = geom.coordinates[0].map(c => `${c[0]} ${c[1]}`).join(',');
-        return `SRID=4326;POLYGON((${ring}))`;
+    if (geometry.type === 'Point') {
+        return `<gml:Point srsName="EPSG:4326"><gml:pos>${geometry.coordinates[0]} ${geometry.coordinates[1]}</gml:pos></gml:Point>`;
     }
     return null;
 }
 
-function buildWFSUrl(geometry, layerUrl, layerName) {
-    const wkt = geomToWKT(geometry);
-    if (!wkt || !layerUrl || !layerName) return null;
-    const params = new URLSearchParams({
-        service: 'WFS',
-        version: '2.0.0',
-        request: 'GetFeature',
-        typeNames: layerName,
-        outputFormat: 'application/json',
-        count: '10000',
-        CQL_FILTER: `INTERSECTS(${WFS_GEOM_ATTR},${wkt})`
-    });
-    return `${layerUrl}?${params.toString()}`;
+const WFS_PAGE_SIZE = 1000;
+
+function buildWFSPost(geometry, layerUrl, layerName, startIndex = 0) {
+    const gml = geomToGML(geometry);
+    if (!gml || !layerUrl || !layerName) return null;
+    const body = '<wfs:GetFeature service="WFS" version="1.1.0"' +
+        ' xmlns:gml="http://www.opengis.net/gml"' +
+        ' xmlns:wfs="http://www.opengis.net/wfs"' +
+        ' xmlns:ogc="http://www.opengis.net/ogc"' +
+        ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+        ' xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd"' +
+        ` startIndex="${startIndex}" maxFeatures="${WFS_PAGE_SIZE}">` +
+        `<wfs:Query typeName="${layerName}" srsName="EPSG:4326">` +
+        '<wfs:SortBy><wfs:SortProperty><ogc:PropertyName>id</ogc:PropertyName>' +
+        '<wfs:SortOrder>A</wfs:SortOrder></wfs:SortProperty></wfs:SortBy>' +
+        `<ogc:Filter><ogc:Intersects><ogc:PropertyName>${WFS_GEOM_ATTR}</ogc:PropertyName>` +
+        `${gml}</ogc:Intersects></ogc:Filter>` +
+        '</wfs:Query></wfs:GetFeature>';
+    return { url: `${layerUrl}?service=WFS&outputFormat=application/json`, body };
+}
+
+function fetchWFSPage(geometry, layerUrl, layerName, startIndex) {
+    const post = buildWFSPost(geometry, layerUrl, layerName, startIndex);
+    return fetch(post.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/xml' },
+        body: post.body
+    }).then(r => r.json());
 }
 
 const FILTER_LAYER_STYLE = {
@@ -184,7 +200,7 @@ function IgracSelectWellPanelComponent({
 
     const rightOffset = identifyOpen ? IDENTIFY_PANEL_WIDTH + 10 : 46;
     const hasGeometries = geometries.length > 0;
-    const isAnyLoading = data.some(d => d === null);
+    const isAnyLoading = data.some(d => d === null || d?.loading);
 
     return (
         <div
@@ -214,8 +230,11 @@ function IgracSelectWellPanelComponent({
                                 <div ref={listRef} id="igrac-select-well-geometry-list" style={{ maxHeight: "30vh", overflowY: 'auto' }}>
                                     {geometries.map((geom, i) => {
                                         const itemData = data[i];
-                                        const loading = itemData === null;
-                                        const count = Array.isArray(itemData) ? itemData.length : null;
+                                        const loading = itemData === null || itemData?.loading;
+                                        const count = Array.isArray(itemData)
+                                            ? itemData.length
+                                            : itemData?.features?.length ?? null;
+                                        const total = itemData?.total ?? null;
                                         return (
                                             <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, fontSize: 12, color: '#31708f' }}>
                                                 <span>
@@ -224,8 +243,11 @@ function IgracSelectWellPanelComponent({
                                                         style={{ marginRight: 4 }}
                                                     />
                                                     {GEOM_TYPE_LABELS[geom.type] || geom.type} {i + 1}
-                                                    {loading && <em style={{ marginLeft: 4, color: '#999' }}>loading...</em>}
-                                                    {count !== null && (
+                                                    {loading && count === null && <em style={{ marginLeft: 4, color: '#999' }}>loading...</em>}
+                                                    {loading && count !== null && (
+                                                        <em style={{ marginLeft: 4, color: '#999' }}>{count}/{total} wells...</em>
+                                                    )}
+                                                    {!loading && count !== null && (
                                                         <strong style={{ marginLeft: 4 }}>({count} wells)</strong>
                                                     )}
                                                 </span>
@@ -243,10 +265,6 @@ function IgracSelectWellPanelComponent({
                         )}
 
                         <div>
-                            <div style={{ fontSize: 11, color: '#999', marginBottom: 8 }}>
-                                <Glyphicon glyph="info-sign" style={{ marginRight: 4 }} />
-                                Results limited to 10,000 wells per selection
-                            </div>
                             <div style={{ display: 'flex', gap: 4 }}>
                                 {GEOMETRY_TYPES.map(({ type, glyph, label }) => (
                                     <TooltipButton
@@ -389,12 +407,25 @@ const igracSelectWellFetchEpic = (action$, store) =>
 
             return Observable.from(layers)
                 .mergeMap(layer => {
-                    const url = buildWFSUrl(wfsGeometry, layer.url, layer.name);
-                    if (!url) return Observable.empty();
-                    return Observable.fromPromise(
-                        fetch(url).then(r => r.json())
-                    )
-                        .map(data => setIgracSelectWellData(index, data.features || []))
+                    if (!layer.url || !layer.name) return Observable.empty();
+
+                    function fetchPages(startIndex, accumulated) {
+                        return Observable.fromPromise(fetchWFSPage(wfsGeometry, layer.url, layer.name, startIndex))
+                            .mergeMap(data => {
+                                const features = data.features || [];
+                                const all = [...accumulated, ...features];
+                                const total = data.totalFeatures ?? data.numberMatched ?? 0;
+                                if (features.length === WFS_PAGE_SIZE && all.length < total) {
+                                    return Observable.concat(
+                                        Observable.of(setIgracSelectWellProgress(index, all, total)),
+                                        fetchPages(startIndex + WFS_PAGE_SIZE, all)
+                                    );
+                                }
+                                return Observable.of(setIgracSelectWellData(index, all));
+                            });
+                    }
+
+                    return fetchPages(0, [])
                         .catch(() => Observable.of(setIgracSelectWellData(index, [])));
                 });
         });
@@ -417,7 +448,7 @@ const igracSelectWellInjectIdentifyEpic = (action$, store) =>
 
             // Wait until all geometries have loaded data, then inject
             const waitAndInject = action$.ofType(IGRAC_SELECT_WELL_SET_DATA)
-                .filter(() => !igracSelectWellData(store.getState()).some(d => d === null))
+                .filter(() => !igracSelectWellData(store.getState()).some(d => d === null || d?.loading))
                 .take(1)
                 .switchMap(() => {
                     const s = store.getState();
