@@ -5,14 +5,16 @@ import {
     IGRAC_SELECT_WELL_SET_GEOM,
     IGRAC_SELECT_WELL_REMOVE_GEOM,
     IGRAC_SELECT_WELL_SET_DATA,
-    IGRAC_SELECT_WELL_CLEAR
+    IGRAC_SELECT_WELL_CLEAR,
+    IGRAC_TOGGLE_SYNC_WITH_GEOM
 } from '@js/actions/igracSelectWell';
 
 const initialState = {
     active: false,
     geometryType: 'Polygon',
-    filterGeometries: [],
-    filterData: [] // parallel to filterGeometries: null = loading, array = loaded
+    geometries: [],
+    data: [],
+    syncGeometries: false
 };
 
 export default function igracSelectWell(state = initialState, action) {
@@ -26,22 +28,24 @@ export default function igracSelectWell(state = initialState, action) {
     case IGRAC_SELECT_WELL_SET_GEOM:
         return {
             ...state,
-            filterGeometries: [...state.filterGeometries, action.geometry],
-            filterData: [...state.filterData, null]
+            geometries: [...state.geometries, action.geometry],
+            data: [...state.data, null]
         };
     case IGRAC_SELECT_WELL_REMOVE_GEOM:
         return {
             ...state,
-            filterGeometries: state.filterGeometries.filter((_, i) => i !== action.index),
-            filterData: state.filterData.filter((_, i) => i !== action.index)
+            geometries: state.geometries.filter((_, i) => i !== action.index),
+            data: state.data.filter((_, i) => i !== action.index)
         };
     case IGRAC_SELECT_WELL_SET_DATA:
         return {
             ...state,
-            filterData: state.filterData.map((d, i) => i === action.index ? action.features : d)
+            data: state.data.map((d, i) => i === action.index ? action.features : d)
         };
     case IGRAC_SELECT_WELL_CLEAR:
         return { ...initialState };
+    case IGRAC_TOGGLE_SYNC_WITH_GEOM:
+        return { ...state, syncGeometries: !state.syncGeometries };
     default:
         return state;
     }

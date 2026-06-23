@@ -352,6 +352,10 @@ IgracGeonodePagePopupPlugin: toModulePlugin(
         'IgracSelectWell',
         () => import(/* webpackChunkName: 'plugins/igrac-select-well-plugin' */ '@js/plugins/igrac/SelectWell')
     ),
+    IgracSyncWithGeometriesPlugin: toModulePlugin(
+        'IgracSyncWithGeometries',
+        () => import(/* webpackChunkName: 'plugins/igrac-sync-with-geometries-plugin' */ '@js/plugins/igrac/SyncWithGeometries')
+    ),
     // ----------------- IGRAC ----------------------
     DashboardPlugin: toModulePlugin(
         'Dashboard',

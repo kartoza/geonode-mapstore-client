@@ -33,8 +33,10 @@ import {
     setIgracSelectWellGeom,
     removeIgracSelectWellGeom,
     setIgracSelectWellData,
-    clearIgracSelectWell
+    clearIgracSelectWell,
+    toggleIgracSyncWithGeom
 } from '@js/actions/igracSelectWell';
+import { igracSyncWithGeometries } from '@js/selectors/igracSelectWell';
 import {
     isIgracSelectWellActive,
     igracSelectWellGeometryType,
@@ -159,8 +161,8 @@ function IgracSelectWellPanelComponent({
     enabled,
     active,
     geometryType,
-    filterGeometries,
-    filterData,
+    geometries,
+    data,
     hasGroundwaterLayer,
     identifyOpen,
     onClose,
@@ -174,15 +176,15 @@ function IgracSelectWellPanelComponent({
         if (listRef.current) {
             listRef.current.scrollTop = listRef.current.scrollHeight;
         }
-    }, [filterGeometries.length]);
+    }, [geometries.length]);
 
     if (!enabled) {
         return null;
     }
 
     const rightOffset = identifyOpen ? IDENTIFY_PANEL_WIDTH + 10 : 46;
-    const hasGeometries = filterGeometries.length > 0;
-    const isAnyLoading = filterData.some(d => d === null);
+    const hasGeometries = geometries.length > 0;
+    const isAnyLoading = data.some(d => d === null);
 
     return (
         <div
@@ -210,10 +212,10 @@ function IgracSelectWellPanelComponent({
                         {hasGeometries && (
                             <div style={{ marginBottom: 8 }}>
                                 <div ref={listRef} id="igrac-select-well-geometry-list" style={{ maxHeight: "30vh", overflowY: 'auto' }}>
-                                    {filterGeometries.map((geom, i) => {
-                                        const data = filterData[i];
-                                        const loading = data === null;
-                                        const count = Array.isArray(data) ? data.length : null;
+                                    {geometries.map((geom, i) => {
+                                        const itemData = data[i];
+                                        const loading = itemData === null;
+                                        const count = Array.isArray(itemData) ? itemData.length : null;
                                         return (
                                             <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4, fontSize: 12, color: '#31708f' }}>
                                                 <span>
@@ -287,8 +289,8 @@ const IgracSelectWellPanel = connect(
             },
             isMapInfoOpen
         ],
-        (enabled, active, geometryType, filterGeometries, filterData, hasGroundwaterLayer, identifyOpen) => ({
-            enabled, active, geometryType, filterGeometries, filterData, hasGroundwaterLayer, identifyOpen
+        (enabled, active, geometryType, geometries, data, hasGroundwaterLayer, identifyOpen) => ({
+            enabled, active, geometryType, geometries, data, hasGroundwaterLayer, identifyOpen
         })
     ),
     {
@@ -447,9 +449,11 @@ const igracSelectWellCloseClearEpic = (action$, store) =>
         .switchMap(() => {
             const panelEnabled = store.getState()?.controls?.igracSelectWell?.enabled;
             if (!panelEnabled) {
+                const state = store.getState();
                 return Observable.of(
                     clearIgracSelectWell(),
-                    changeDrawingStatus('stop', '', 'igracSelectWell', [])
+                    changeDrawingStatus('stop', '', 'igracSelectWell', []),
+                    ...(igracSyncWithGeometries(state) ? [toggleIgracSyncWithGeom()] : [])
                 );
             }
             return Observable.of(
