@@ -336,25 +336,21 @@ export const plugins = {
         }
     ),
     // ----------------- IGRAC ----------------------
-    IgracDownloadPlugin: toModulePlugin(
-        'IgracDownload',
-        () => import(/* webpackChunkName: 'plugins/igrac-download-plugin' */ '@js/plugins/IgracDownload')
-    ),
-    IgracGeonodePagePopupPlugin: toModulePlugin(
+IgracGeonodePagePopupPlugin: toModulePlugin(
         'IgracGeonodePagePopup',
-        () => import(/* webpackChunkName: 'plugins/igrac-geonode-page-popup-plugin' */ '@js/plugins/IgracGeonodePagePopup')
+        () => import(/* webpackChunkName: 'plugins/igrac-geonode-page-popup-plugin' */ '@js/plugins/igrac/GeonodePagePopup')
     ),
     IgracGroundwaterContributorPlugin: toModulePlugin(
         'IgracGroundwaterContributor',
-        () => import(/* webpackChunkName: 'plugins/igrac-groundwater-contributor-plugin' */ '@js/plugins/IgracGroundwaterContributor')
+        () => import(/* webpackChunkName: 'plugins/igrac-groundwater-contributor-plugin' */ '@js/plugins/igrac/GroundwaterContributor')
     ),
     IgracGroundwaterDownloadPlugin: toModulePlugin(
         'IgracGroundwaterDownload',
-        () => import(/* webpackChunkName: 'plugins/igrac-groundwater-contributor-plugin' */ '@js/plugins/IgracGroundwaterDownload')
+        () => import(/* webpackChunkName: 'plugins/igrac-groundwater-contributor-plugin' */ '@js/plugins/igrac/GroundwaterDownload')
     ),
     IgracSelectWellPlugin: toModulePlugin(
         'IgracSelectWell',
-        () => import(/* webpackChunkName: 'plugins/igrac-select-well-plugin' */ '@js/plugins/IgracSelectWell')
+        () => import(/* webpackChunkName: 'plugins/igrac-select-well-plugin' */ '@js/plugins/igrac/SelectWell')
     ),
     // ----------------- IGRAC ----------------------
     DashboardPlugin: toModulePlugin(
