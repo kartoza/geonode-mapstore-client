@@ -164,7 +164,21 @@ function GroundwaterViewer({ layer = {}, response }) {
                     variant="primary"
                     size="xs"
                     disabled={sorted.length === 0}
-                    onClick={() => downloadFeatures(sorted)}
+                    onClick={() => {
+                        const formData = new FormData();
+                        sorted.forEach(f => formData.append('wells_id', f.properties.id));
+                        formData.append('data_type', 'Well and Monitoring Data');
+                        fetch('/groundwater/record/download/by-ids/initiate', {
+                            method: 'POST',
+                            body: formData
+                        }).then(res => {
+                            if (res.ok) {
+                                window.open(res.url, '_blank');
+                            } else {
+                                res.text().then(msg => alert(`Download failed (${res.status}): ${msg}`));
+                            }
+                        }).catch(err => alert(`Download error: ${err.message}`));
+                    }}
                     className="igrac-dl-btn"
                     style={{ backgroundColor: 'var(--secondary)', color: '#fff', padding: '4px 8px' }}
                 >
