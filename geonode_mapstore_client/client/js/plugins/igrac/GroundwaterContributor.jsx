@@ -3,11 +3,10 @@ import axios from "axios";
 import { createPlugin } from "@mapstore/framework/utils/PluginsUtils";
 import { createSelector } from "reselect";
 import { connect } from "react-redux";
-import ResizableModal
-    from "../../MapStore2/web/client/components/misc/ResizableModal";
+import ResizableModal from "@mapstore/framework/components/misc/ResizableModal";
 import gnresource from "@js/reducers/gnresource";
 import Button from "@js/components/Button";
-import Message from "../../MapStore2/web/client/components/I18N/Message";
+import Message from "@mapstore/framework/components/I18N/Message";
 
 function IgracGroundwaterContributor({}) {
     return null;

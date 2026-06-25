@@ -1257,6 +1257,12 @@
             },
             {
                 "name": "IgracGroundwaterDownload"
+            },
+            {
+                "name": "IgracSelectWell"
+            },
+            {
+                "name": "IgracSyncWithGeometries"
             }
         ],
         "dataset_edit_data_viewer": [
@@ -2218,9 +2224,6 @@
                 "name": "GeonodeMetadata"
             },
             {
-                "name": "IgracDownload"
-            },
-            {
                 "name": "IgracGeonodePagePopup"
             },
             {
@@ -2228,6 +2231,12 @@
             },
             {
                 "name": "IgracGroundwaterDownload"
+            },
+            {
+                "name": "IgracSelectWell"
+            },
+            {
+                "name": "IgracSyncWithGeometries"
             },
             {
                 "name": "Swipe"

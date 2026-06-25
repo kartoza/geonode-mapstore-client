@@ -421,6 +421,8 @@
             "allResources": "All resources",
             "assets": "Assets",
             "includeFullscreen": "Include fullscreen"
-        }
+        },
+        "Select Well": "Select Well",
+        "Select Well — only available for groundwater layers": "Select Well — only available for groundwater layers"
     }
 }

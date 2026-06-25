@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import {createSelector} from "reselect";
 import ResizableModal from "@mapstore/framework/components/misc/ResizableModal";
 import gnresource from "@js/reducers/gnresource";
-import axios from "../../MapStore2/web/client/libs/ajax";
+import axios from "@mapstore/framework/libs/ajax";
 
 
 function IgracGeonodePagePopup({
