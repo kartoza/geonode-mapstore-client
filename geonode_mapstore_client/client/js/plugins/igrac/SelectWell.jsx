@@ -209,6 +209,7 @@ function IgracSelectWellPanelComponent({
             style={{ position: 'absolute', zIndex: 100, right: rightOffset, top: 48 }}
         >
             {active && <style>{`.ol-viewport{cursor:${geometryType === 'Point' ? 'pointer' : 'crosshair'}!important}`}</style>}
+            <style>{'.igrac-remove-btn:focus{box-shadow:none!important}'}</style>
             <div style={{ background: '#fff', padding: 8, boxShadow: '0 2px 6px rgba(0,0,0,0.3)', minWidth: 220 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <strong>Select Well</strong>
@@ -252,7 +253,7 @@ function IgracSelectWellPanelComponent({
                                                         <strong style={{ marginLeft: 4 }}>({count} wells)</strong>
                                                     )}
                                                 </span>
-                                                <Button variant="default" size="xs" onClick={() => onRemove(i)}>
+                                                <Button className={"igrac-remove-btn"} variant="default" size="xs" onClick={() => onRemove(i)}>
                                                     <Glyphicon glyph="1-close" />
                                                 </Button>
                                             </div>

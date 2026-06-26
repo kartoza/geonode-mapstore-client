@@ -196,7 +196,7 @@ function GroundwaterViewer({ layer = {}, response }) {
                     No results for &ldquo;{search}&rdquo;
                 </div>
             ) : (
-                <div style={{ padding: '4px' }}>
+                <div style={{ padding: '4px', paddingBottom: '16px' }}>
                     <HtmlRenderer html={html} />
                 </div>
             )}
