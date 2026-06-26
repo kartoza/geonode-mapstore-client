@@ -6,6 +6,9 @@ import { createSelector } from 'reselect';
 import { updateQuery } from '@mapstore/framework/actions/wfsquery';
 import { CLOSE_FEATURE_GRID } from '@mapstore/framework/actions/featuregrid';
 import SimpleTButton from '@mapstore/framework/components/data/featuregrid/toolbars/TButton';
+import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
+
+const TButton = tooltip(SimpleTButton);
 import {
     IGRAC_SELECT_WELL_SET_GEOM,
     IGRAC_SELECT_WELL_REMOVE_GEOM,
@@ -31,14 +34,14 @@ function buildSpatialField(geometries) {
 
 function SyncWithGeometriesButton({ active, disabled, onClick }) {
     return (
-        <SimpleTButton
+        <TButton
             id="igrac-sync-geom"
             visible
             active={active}
             disabled={disabled}
             glyph="geometry-collection"
             tooltip="Sync data with drawn geometries"
-            tooltipPosition="bottom"
+            tooltipPosition="top"
             onClick={onClick}
         />
     );
@@ -101,7 +104,8 @@ export default createPlugin('IgracSyncWithGeometries', {
             target: 'toolbar',
             Component: ConnectedButton,
             position: 1050,
-            doNotHide: true
+            doNotHide: true,
+            title: 'Sync with Geometries'
         }
     },
     epics: {

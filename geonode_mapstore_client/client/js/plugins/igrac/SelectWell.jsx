@@ -45,6 +45,7 @@ import {
     igracSelectWellData
 } from '@js/selectors/igracSelectWell';
 import { isMapInfoOpen } from '@mapstore/framework/selectors/mapInfo';
+import { isFeatureGridOpen } from '@mapstore/framework/selectors/featuregrid';
 import { getSelectedLayers, layersSelector, selectedNodesSelector } from '@mapstore/framework/selectors/layers';
 import { SELECT_NODE } from '@mapstore/framework/actions/layers';
 import { mapSelector } from '@mapstore/framework/selectors/map';
@@ -434,6 +435,7 @@ const igracSelectWellInjectIdentifyEpic = (action$, store) =>
     action$.ofType(IGRAC_SELECT_WELL_SET_GEOM)
         .switchMap(() => {
             const state = store.getState();
+            if (isFeatureGridOpen(state)) return Observable.empty();
             const layer = layersSelector(state).find(isGroundwaterLayer);
             if (!layer) return Observable.empty();
 
