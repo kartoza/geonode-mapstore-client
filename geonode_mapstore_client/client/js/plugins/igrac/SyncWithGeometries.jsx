@@ -7,6 +7,9 @@ import { updateQuery } from '@mapstore/framework/actions/wfsquery';
 import { CLOSE_FEATURE_GRID } from '@mapstore/framework/actions/featuregrid';
 import SimpleTButton from '@mapstore/framework/components/data/featuregrid/toolbars/TButton';
 import tooltip from '@mapstore/framework/components/misc/enhancers/tooltip';
+import { updatePointWithGeometricFilter } from '@mapstore/framework/utils/IdentifyUtils';
+import { reproject } from '@mapstore/framework/utils/CoordinatesUtils';
+import { mapSelector } from '@mapstore/framework/selectors/map';
 
 const TButton = tooltip(SimpleTButton);
 import {
@@ -24,12 +27,28 @@ import {
 
 const WFS_GEOM_ATTR = 'location';
 
-function buildSpatialField(geometries) {
-    return geometries.map(geom => ({
-        attribute: WFS_GEOM_ATTR,
-        operation: 'INTERSECTS',
-        geometry: { ...geom, projection: 'EPSG:4326' }
-    }));
+function pointToBufferedGeometry(geometry, mapState) {
+    const [lng, lat] = geometry.coordinates;
+    const projection = mapState?.projection || 'EPSG:3857';
+    const buffered = updatePointWithGeometricFilter({ latlng: { lat, lng } }, projection);
+    const circleRing = buffered?.geometricFilter?.value?.geometry?.coordinates?.[0];
+    if (!circleRing) return geometry;
+    const coords4326 = circleRing.map(([x, y]) => {
+        const p = reproject([x, y], projection, 'EPSG:4326');
+        return [p.x, p.y];
+    });
+    return { type: 'Polygon', coordinates: [coords4326] };
+}
+
+function buildSpatialField(geometries, mapState) {
+    return geometries.map(geom => {
+        const resolved = geom.type === 'Point' ? pointToBufferedGeometry(geom, mapState) : geom;
+        return {
+            attribute: WFS_GEOM_ATTR,
+            operation: 'INTERSECTS',
+            geometry: { ...resolved, projection: 'EPSG:4326' }
+        };
+    });
 }
 
 function SyncWithGeometriesButton({ active, disabled, onClick }) {
@@ -67,7 +86,7 @@ const igracSyncWithGeometriesEpic = (action$, store) =>
             if (syncOn && geometries.length > 0) {
                 return Observable.of(updateQuery({
                     updates: {
-                        spatialField: buildSpatialField(geometries),
+                        spatialField: buildSpatialField(geometries, mapSelector(state)),
                         spatialFieldOperator: 'OR'
                     }
                 }));
@@ -79,13 +98,14 @@ const igracSyncGeomRefreshEpic = (action$, store) =>
     action$.ofType(IGRAC_SELECT_WELL_SET_GEOM, IGRAC_SELECT_WELL_REMOVE_GEOM, IGRAC_SELECT_WELL_CLEAR)
         .filter(() => igracSyncWithGeometries(store.getState()))
         .switchMap(() => {
-            const geometries = igracSelectWellGeometries(store.getState());
+            const state = store.getState();
+            const geometries = igracSelectWellGeometries(state);
             if (geometries.length === 0) {
                 return Observable.of(updateQuery({ updates: { spatialField: null } }));
             }
             return Observable.of(updateQuery({
                 updates: {
-                    spatialField: buildSpatialField(geometries),
+                    spatialField: buildSpatialField(geometries, mapSelector(state)),
                     spatialFieldOperator: 'OR'
                 }
             }));

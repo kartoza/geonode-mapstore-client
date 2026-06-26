@@ -32,6 +32,7 @@ function GroundwaterViewer({ layer = {}, response }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [search, setSearch] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [downloading, setDownloading] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
 
@@ -163,8 +164,9 @@ function GroundwaterViewer({ layer = {}, response }) {
                     tooltipPosition="bottom"
                     variant="primary"
                     size="xs"
-                    disabled={sorted.length === 0}
+                    disabled={sorted.length === 0 || downloading}
                     onClick={() => {
+                        setDownloading(true);
                         const formData = new FormData();
                         sorted.forEach(f => formData.append('wells_id', f.properties.id));
                         formData.append('data_type', 'Well and Monitoring Data');
@@ -177,13 +179,15 @@ function GroundwaterViewer({ layer = {}, response }) {
                             } else {
                                 res.text().then(msg => alert(`Download failed (${res.status}): ${msg}`));
                             }
-                        }).catch(err => alert(`Download error: ${err.message}`));
+                        }).catch(err => alert(`Download error: ${err.message}`))
+                            .finally(() => setDownloading(false));
                     }}
                     className="igrac-dl-btn"
                     style={{ backgroundColor: 'var(--secondary)', color: '#fff', padding: '4px 8px' }}
                 >
-                    <Glyphicon glyph="download-alt" />
+                    <Glyphicon glyph={downloading ? 'refresh' : 'download-alt'} className={downloading ? 'igrac-spin' : ''} />
                 </TooltipButton>
+                {downloading && <style>{'.igrac-spin{height: 15px; width: 13px;animation:spin 1s linear infinite}@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}'}</style>}
             </div>
 
             {/* Content */}

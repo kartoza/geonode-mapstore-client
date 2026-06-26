@@ -431,6 +431,24 @@ const igracSelectWellFetchEpic = (action$, store) =>
                 });
         });
 
+function buildInjectActions(layer, allFeatures, reqId, requestParams) {
+    if (allFeatures.length === 0) return [purgeMapInfoResults()];
+    const layerMetadata = {
+        title: layer.title || layer.name,
+        name: layer.name,
+        features: allFeatures,
+        featuresCrs: 'EPSG:4326',
+        viewer: layer.featureInfo?.viewer || {},
+        featureInfo: layer.featureInfo ? { ...layer.featureInfo } : {},
+        fields: layer.fields,
+        fromWellSelection: true
+    };
+    return [
+        loadFeatureInfo(reqId, { type: 'FeatureCollection', features: allFeatures }, requestParams, layerMetadata, layer),
+        forceUpdateMapLayout()
+    ];
+}
+
 const igracSelectWellInjectIdentifyEpic = (action$, store) =>
     action$.ofType(IGRAC_SELECT_WELL_SET_GEOM)
         .switchMap(() => {
@@ -442,38 +460,44 @@ const igracSelectWellInjectIdentifyEpic = (action$, store) =>
             const reqId = uuid.v1();
             const requestParams = { service: 'WFS', typeName: layer.name, info_format: 'application/json' };
 
-            // Open identify panel immediately with spinner
             const openSpinner = Observable.of(
                 purgeMapInfoResults(),
                 newMapInfoRequest(reqId, requestParams)
             );
 
-            // Wait until all geometries have loaded data, then inject
             const waitAndInject = action$.ofType(IGRAC_SELECT_WELL_SET_DATA)
                 .filter(() => !igracSelectWellData(store.getState()).some(d => d === null || d?.loading))
                 .take(1)
                 .switchMap(() => {
-                    const s = store.getState();
-                    const allFeatures = igracSelectWellData(s).flatMap(d => (Array.isArray(d) ? d : []));
-                    if (allFeatures.length === 0) return Observable.of(purgeMapInfoResults());
-                    const layerMetadata = {
-                        title: layer.title || layer.name,
-                        name: layer.name,
-                        features: allFeatures,
-                        featuresCrs: 'EPSG:4326',
-                        viewer: layer.featureInfo?.viewer || {},
-                        featureInfo: layer.featureInfo ? { ...layer.featureInfo } : {},
-                        fields: layer.fields,
-                        fromWellSelection: true
-                    };
-                    const data = { type: 'FeatureCollection', features: allFeatures };
-                    return Observable.of(
-                        loadFeatureInfo(reqId, data, requestParams, layerMetadata, layer),
-                        forceUpdateMapLayout()
-                    ).delay(0);
+                    const allFeatures = igracSelectWellData(store.getState()).flatMap(d => (Array.isArray(d) ? d : []));
+                    return Observable.of(...buildInjectActions(layer, allFeatures, reqId, requestParams)).delay(0);
                 });
 
             return openSpinner.concat(waitAndInject);
+        });
+
+const igracSelectWellRemoveGeomIdentifyEpic = (action$, store) =>
+    action$.ofType(IGRAC_SELECT_WELL_REMOVE_GEOM)
+        .switchMap(() => {
+            const state = store.getState();
+            if (isFeatureGridOpen(state)) return Observable.empty();
+            const layer = layersSelector(state).find(isGroundwaterLayer);
+            if (!layer) return Observable.empty();
+
+            const data = igracSelectWellData(state);
+            if (data.some(d => d === null || d?.loading)) return Observable.empty();
+
+            const geometries = igracSelectWellGeometries(state);
+            if (geometries.length === 0) return Observable.of(purgeMapInfoResults());
+
+            const reqId = uuid.v1();
+            const requestParams = { service: 'WFS', typeName: layer.name, info_format: 'application/json' };
+            const allFeatures = data.flatMap(d => (Array.isArray(d) ? d : []));
+            return Observable.of(
+                purgeMapInfoResults(),
+                newMapInfoRequest(reqId, requestParams),
+                ...buildInjectActions(layer, allFeatures, reqId, requestParams)
+            ).delay(0);
         });
 
 const igracSelectWellCloseClearEpic = (action$, store) =>
@@ -542,6 +566,7 @@ export default createPlugin('IgracSelectWell', {
         igracSelectWellCloseClearEpic,
         igracSelectWellFetchEpic,
         igracSelectWellInjectIdentifyEpic,
+        igracSelectWellRemoveGeomIdentifyEpic,
         igracSelectWellSelectionChangeEpic
     }
 });
