@@ -128,7 +128,7 @@ function GroundwaterViewer({ layer = {}, response }) {
                         placeholder="Search by original ID..."
                         onChange={e => { setSearch(e.target.value); setCurrentIndex(0); setShowSuggestions(true); }}
                         onFocus={() => setShowSuggestions(true)}
-                        style={{ paddingLeft: 26, paddingRight: search ? 26 : 8, fontSize: 12, height: 28, borderRadius: 0 }}
+                        style={{ paddingLeft: 26, paddingRight: search ? 26 : 8, fontSize: 12, height: 34, borderRadius: 0 }}
                     />
                     {search && (
                         <Glyphicon
@@ -183,7 +183,7 @@ function GroundwaterViewer({ layer = {}, response }) {
                             .finally(() => setDownloading(false));
                     }}
                     className="igrac-dl-btn"
-                    style={{ backgroundColor: 'var(--secondary)', color: '#fff', padding: '4px 8px' }}
+                    style={{ backgroundColor: 'var(--secondary)', color: '#fff', padding: '8px 12px' }}
                 >
                     <Glyphicon glyph={downloading ? 'refresh' : 'download-alt'} className={downloading ? 'igrac-spin' : ''} />
                 </TooltipButton>
