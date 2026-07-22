@@ -38,16 +38,26 @@ function IgracGroundwaterDownloadButton(
         return null;
     }
 
-
+    const { pk, resource_type } = gnresourceData || {};
     return (
-        <a href="/groundwater/record/download" target="_blank">
-            <Button
-                variant={variant || "primary"}
-                size={size}
-            >
-                Data download
-            </Button>
-        </a>
+        <div>
+            <a href="/groundwater/record/download" target="_blank">
+                <Button
+                    variant={variant || "primary"}
+                    size={size}
+                >
+                    Data download
+                </Button>
+            </a>
+            <a href={"/groundwater/dashboard/view?data-type=ggmn&resource-id=" + pk + '&resource-type=' + resource_type} target="_blank">
+                <Button
+                    variant={variant || "primary"}
+                    size={size}
+                >
+                    Dashboard
+                </Button>
+            </a>
+        </div>
     );
 }
 
