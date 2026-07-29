@@ -4114,7 +4114,8 @@
             {
                 "name": "UploadResource",
                 "cfg": {
-                    "resourceType": "dataset"
+                    "resourceType": "dataset",
+                    "editMetadata": true
                 }
             }
         ],
@@ -4122,7 +4123,8 @@
             {
                 "name": "UploadResource",
                 "cfg": {
-                    "resourceType": "document"
+                    "resourceType": "document",
+                    "editMetadata": true
                 }
             }
         ],

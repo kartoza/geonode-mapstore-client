@@ -95,18 +95,21 @@ function ExecutionRequestTable({
                                             />
                                             : null}
                                         {!onReload && request.status === 'finished' && detailUrls?.[0]
-                                            ? <div className="gn-upload-processing-actions">
+                                            ? <div className="gn-upload-processing-actions" style={{ alignItems: "center" }}>
+                                                {editMetadata && <>
+                                                    <RenderActionButton
+                                                        request={request}
+                                                        msgId={editMetadataLabelId ?? 'gnviewer.fillMetadata'}
+                                                        href={detailUrls.length === 1 ? detailUrls[0].replace(/\/[^/]+\/(\d+)$/, "/metadata/$1")
+                                                            : getCataloguePath('/catalogue/#/')}
+                                                    />
+                                                </>
+                                                }
                                                 {viewResource && <RenderActionButton
                                                     request={request}
                                                     msgId={viewResourceLabelId ?? 'gnviewer.view'}
                                                     href={detailUrls.length === 1 ? detailUrls[0] : getCataloguePath('/catalogue/#/')}
                                                 /> }
-                                                {editMetadata && <RenderActionButton
-                                                    request={request}
-                                                    msgId={editMetadataLabelId ?? 'gnviewer.fillMetadata'}
-                                                    href={detailUrls.length === 1 ? detailUrls[0].replace(/\/[^/]+\/(\d+)$/, "/metadata/$1")
-                                                        : getCataloguePath('/catalogue/#/')}
-                                                />}
                                             </div>
                                             : null}
                                         {!onReload && request.status === 'finished' && !detailUrls?.[0]
