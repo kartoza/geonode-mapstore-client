@@ -17,6 +17,7 @@ export const SET_METADATA_UPDATE_ERROR = 'GEONODE:SET_METADATA_UPDATE_ERROR';
 export const SET_METADATA_PREVIEW = 'GEONODE:SET_METADATA_PREVIEW';
 export const SET_METADATA_RESOURCE = 'GEONODE:SET_METADATA_RESOURCE';
 export const SET_METADATA_EXTRA_ERRORS = 'GEONODE:SET_METADATA_EXTRA_ERRORS';
+export const SET_METADATA_FORM_HAS_ERRORS = 'GEONODE:SET_METADATA_FORM_HAS_ERRORS';
 
 export const setMetadata = (metadata) => ({
     type: SET_METADATA,
@@ -71,4 +72,9 @@ export const setMetadataResource = (resource) => ({
 export const setExtraErrors = (extraErrors) => ({
     type: SET_METADATA_EXTRA_ERRORS,
     extraErrors
+});
+
+export const setMetadataFormHasErrors = (formHasErrors) => ({
+    type: SET_METADATA_FORM_HAS_ERRORS,
+    formHasErrors
 });

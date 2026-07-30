@@ -22,6 +22,7 @@ function MetadataUpdateButton({
     pk,
     metadata,
     updating,
+    formHasErrors,
     setUpdating,
     setUpdateError,
     setInitialMetadata,
@@ -31,6 +32,9 @@ function MetadataUpdateButton({
 }, context) {
 
     function handleUpdate() {
+        if (formHasErrors) {
+            return;
+        }
         setUpdating(true);
         setUpdateError(null);
         updateMetadata(pk, metadata)
@@ -70,7 +74,7 @@ function MetadataUpdateButton({
         <Button
             size={size}
             variant={variant}
-            disabled={!pendingChanges || updating}
+            disabled={!pendingChanges || updating || formHasErrors}
             className={pendingChanges ? 'ms-notification-circle warning' : ''}
             onClick={() => handleUpdate()}
         >

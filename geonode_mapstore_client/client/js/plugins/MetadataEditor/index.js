@@ -22,7 +22,8 @@ import {
     setMetadataUpdating,
     setMetadataUpdateError,
     setMetadataResource,
-    setExtraErrors
+    setExtraErrors,
+    setMetadataFormHasErrors
 } from './actions/metadata';
 import { parseDevHostname } from '@js/utils/APIUtils';
 
@@ -45,8 +46,9 @@ const connectMetadata = connect(
         state => state?.metadata?.uiSchema,
         state => state?.metadata?.updating,
         state => state?.metadata?.updateError,
-        state => state?.metadata?.resource
-    ], (loading, error, extraErrors, metadata, initialMetadata, schema, uiSchema, updating, updateError, resource) => ({
+        state => state?.metadata?.resource,
+        state => state?.metadata?.formHasErrors
+    ], (loading, error, extraErrors, metadata, initialMetadata, schema, uiSchema, updating, updateError, resource, formHasErrors) => ({
         loading,
         error,
         extraErrors,
@@ -57,7 +59,8 @@ const connectMetadata = connect(
         updateError,
         pendingChanges: !isEqual(initialMetadata, metadata),
         resource,
-        readOnly: !resourceHasPermission(resource, 'change_resourcebase_metadata')
+        readOnly: !resourceHasPermission(resource, 'change_resourcebase_metadata'),
+        formHasErrors
     })),
     {
         setLoading: setMetadataLoading,
@@ -70,6 +73,7 @@ const connectMetadata = connect(
         setUpdating: setMetadataUpdating,
         setResource: setMetadataResource,
         setExtraErrors,
+        setFormHasErrors: setMetadataFormHasErrors,
         onSuccess: successNotification,
         onFailure: errorNotification
     }

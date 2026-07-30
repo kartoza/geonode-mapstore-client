@@ -42,6 +42,7 @@ function MetadataEditor({
     setResource,
     updating,
     setExtraErrors,
+    setFormHasErrors,
     readOnly
 }, { messages }) {
 
@@ -53,7 +54,10 @@ function MetadataEditor({
             init.current = true;
             // force initial validation
             if (isEmpty(extraErrors)) {
-                ref.validateForm();
+                const isValid = ref.validateForm();
+                setFormHasErrors(!isValid);
+            } else {
+                setFormHasErrors(true);
             }
         }
     };
@@ -84,6 +88,7 @@ function MetadataEditor({
             // reset all errors
             setUpdateError(null);
             setExtraErrors({});
+            setFormHasErrors(false);
         };
     }, []);
 
@@ -264,8 +269,12 @@ function MetadataEditor({
                             mergeExtraDefaults: false
                         }
                     }}
-                    onChange={({ formData }) => {
+                    onChange={({ formData, errors }) => {
                         handleChange(formData);
+                        setFormHasErrors(errors.length > 0);
+                    }}
+                    onError={() => {
+                        setFormHasErrors(true);
                     }}
                 >
                     <></>
