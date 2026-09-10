@@ -14,6 +14,7 @@ import Message from '@mapstore/framework/components/I18N/Message';
 import Spinner from '@mapstore/framework/components/layout/Spinner';
 import ErrorMessageWithTooltip from './ErrorMessageWithTooltip';
 import { getSize } from '../../../utils/UploadUtils';
+import { getUploadErrorMessage } from '../../../utils/ErrorUtils';
 
 function PendingUploadFile({
     data,
@@ -24,6 +25,7 @@ function PendingUploadFile({
     onRemove
 }) {
     const { id, missingExtensions: uploadMissingExtension = [], baseName, ext: extensions, files } = data;
+    const errorMessage = getUploadErrorMessage(error);
     const missingMainFile = uploadMissingExtension.length === 1 && uploadMissingExtension[0] === '*';
     const missingExtensions = missingMainFile ? [] : uploadMissingExtension;
     return (
@@ -32,7 +34,11 @@ function PendingUploadFile({
                 {(missingExtensions.length > 0 || missingMainFile) ? <div className="gn-upload-card-error"><Glyphicon glyph="exclamation-sign" /></div> : null}
                 <div className="gn-upload-card-title">{baseName}</div>
                 <div>
-                    {error ? <ErrorMessageWithTooltip tooltipId={<Message msgId="gnviewer.invalidUploadMessageErrorTooltip" />} /> : null}
+                    {error
+                        ? (errorMessage
+                            ? <ErrorMessageWithTooltip tooltip={errorMessage} />
+                            : <ErrorMessageWithTooltip tooltipId="gnviewer.invalidUploadMessageErrorTooltip" />)
+                        : null}
                     {onRemove
                         ? (!loading || !progress) ? <Button size="xs" onClick={() => onRemove(id)}>
                             <Glyphicon glyph="trash" />

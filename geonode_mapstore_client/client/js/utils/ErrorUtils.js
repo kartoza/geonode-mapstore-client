@@ -28,6 +28,29 @@ export const getUploadErrorMessageFromCode = (code, log) => {
 };
 
 /**
+ * Extracts a human readable message from an upload request error response,
+ * eg. `{ success: false, errors: ['Non-ASCII character found in filename'], code: '...' }`
+ * as returned by the `/uploads/upload` endpoint.
+ * @param {Object|string} error - the error caught from the upload request
+ * @returns {string|null} the extracted message, or null if none could be found
+ */
+export const getUploadErrorMessage = (error) => {
+    if (!error) {
+        return null;
+    }
+    if (typeof error === 'string') {
+        return error;
+    }
+    if (Array.isArray(error.errors) && error.errors.length > 0) {
+        return error.errors.join(' ');
+    }
+    if (typeof error.detail === 'string') {
+        return error.detail;
+    }
+    return null;
+};
+
+/**
  * Extracts error information from a process object
  * @param {Object} process - The process or payload object containing error information
  * @param {Object} process.output - The output object with log and error
