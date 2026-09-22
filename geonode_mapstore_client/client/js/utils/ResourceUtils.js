@@ -583,7 +583,25 @@ export const getResourceStatuses = (resource, userInfo) => {
         isProcessing,
         isDeleting,
         isCopying,
+        // GIZ-PATCH(featured-card-badge): highlight verified/featured cards with a green border
+        // GIZ-PATCH(unpublished-flow-metadata): highlight unpublished cards with a red border
+        cardClassNames: [
+            ...(resource.featured ? ['ms-resource-card-featured'] : []),
+            ...(resource.is_published === false ? ['ms-resource-card-unpublished'] : [])
+        ],
         items: [
+            ...(resource.featured ? [{
+                type: 'image',
+                tooltip: 'GeoDesk Verified',
+                src: '/static/mapstore/img/verified.svg'
+            }] : []),
+            ...(resource.is_published === false ? [{
+                type: 'icon',
+                tooltip: 'Missing metadata',
+                glyph: 'warning-sign',
+                variant: 'danger',
+                href: `/catalogue/#/metadata/${resource.pk}`
+            }] : []),
             ...(resource.advertised === false ? [{
                 type: 'icon',
                 tooltipId: 'resourcesCatalog.unadvertised',
