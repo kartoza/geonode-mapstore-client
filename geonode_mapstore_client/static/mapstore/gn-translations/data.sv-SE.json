@@ -428,6 +428,8 @@
             "approveResourceTooltip": "Approve this resource (used by the Advanced Workflow)",
             "publishResourceTooltip": "Publish this resource (used by the Advanced Workflow)",
             "featureResourceTooltip": "Add this resource to featured resources",
+            "geodeskVerified": "GeoDesk Verified",
+            "geodeskVerifiedTooltip": "Mark this resource as GeoDesk Verified",
             "advertiseResourceTooltip": "Make this resource searchable",
             "includeFullscreen": "Include fullscreen",
             "reload": "Reload",

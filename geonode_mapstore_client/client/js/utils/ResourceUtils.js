@@ -71,8 +71,8 @@ const RESOURCE_PUBLISHING_PROPERTIES_BASE = {
         disabled: (perms = []) => !perms.includes('publish_resourcebase')
     },
     'featured': {
-        labelId: 'gnviewer.featureResource',
-        tooltipId: 'gnviewer.featureResourceTooltip',
+        labelId: 'gnviewer.geodeskVerified',
+        tooltipId: 'gnviewer.geodeskVerifiedTooltip',
         disabled: (perms = []) => !perms.includes('feature_resourcebase')
     },
     'advertised': {

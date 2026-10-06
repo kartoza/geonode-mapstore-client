@@ -406,6 +406,8 @@
             "approveResourceTooltip": "Aprovar este recurso (usado pelo Advanced Workflow)",
             "publishResourceTooltip": "Publicar este recurso (usado pelo Advanced Workflow)",
             "featureResourceTooltip": "Adicionar este recurso para a lista de destaques",
+            "geodeskVerified": "GeoDesk Verified",
+            "geodeskVerifiedTooltip": "Marcar este recurso como GeoDesk Verified",
             "advertiseResourceTooltip": "Torne este recurso pesquisável",
             "includeFullscreen": "Incluir tela inteira",
             "reload": "Recarregar",
