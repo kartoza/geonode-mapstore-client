@@ -50,6 +50,24 @@ export const getUploadErrorMessage = (error) => {
     return null;
 };
 
+// maps known upload error messages returned by the backend to translated message ids
+const UPLOAD_ERROR_MESSAGE_IDS = [
+    { match: /no handlers? found/i, msgId: 'gnviewer.unsupportedFileExtension' }
+];
+
+/**
+ * Returns a translation message id for known upload errors
+ * @param {Object|string} error - the error caught from the upload request
+ * @returns {string|null} the message id, or null if the error is not a known one
+ */
+export const getUploadErrorMessageId = (error) => {
+    const message = getUploadErrorMessage(error);
+    if (!message) {
+        return null;
+    }
+    return UPLOAD_ERROR_MESSAGE_IDS.find(({ match }) => match.test(message))?.msgId ?? null;
+};
+
 /**
  * Extracts error information from a process object
  * @param {Object} process - The process or payload object containing error information

@@ -286,6 +286,7 @@
             "missingFiles": "Arquivos ausentes",
             "invalidUploadMessageError": "Erro",
             "invalidUploadMessageErrorTooltip": "O processo de carregamento falhou. Por favor, verifique a validade do arquivo e tente carregar novamente",
+            "unsupportedFileExtension": "Extensão de arquivo não suportada",
             "completeUpload": "Carregamento concluído",
             "selectFiles": "Selecionar arquivos...",
             "addUrl": "Adicionar URL...",

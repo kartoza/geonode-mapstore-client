@@ -300,6 +300,7 @@
             "missingFiles": "Archivos perdidos",
             "invalidUploadMessageError": "Error",
             "invalidUploadMessageErrorTooltip": "El proceso de carga falló. Verifique la validez del archivo e intente cargarlo nuevamente",
+            "unsupportedFileExtension": "Extensión de archivo no compatible",
             "completeUpload": "Completa la carga",
             "selectFiles": "Seleccionar archivos...",
             "addUrl": "Agregar URL...",

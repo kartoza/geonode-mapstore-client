@@ -301,6 +301,7 @@
             "missingFiles": "Fichiers manquants",
             "invalidUploadMessageError": "Erreur",
             "invalidUploadMessageErrorTooltip": "Le processus de téléchargement a échoué. Veuillez vérifier la validité du fichier et réessayez de le télécharger",
+            "unsupportedFileExtension": "Extension de fichier non prise en charge",
             "completeUpload": "Terminer l'envoi",
             "selectFiles": "Sélectionner les fichiers...",
             "addUrl": "Ajouter l'URL...",

@@ -8,7 +8,7 @@
  */
 
 import expect from 'expect';
-import { getUploadErrorMessageFromCode, getProcessErrorInfo } from '../ErrorUtils';
+import { getUploadErrorMessageFromCode, getUploadErrorMessageId, getProcessErrorInfo } from '../ErrorUtils';
 import { ProcessTypes } from '../ResourceServiceUtils';
 
 describe('Test error utilities', () => {
@@ -17,6 +17,17 @@ describe('Test error utilities', () => {
         expect(getUploadErrorMessageFromCode('total_upload_size_exceeded')).toEqual('fileExceeds');
         expect(getUploadErrorMessageFromCode('upload_exception')).toEqual('invalidUploadMessageErrorTooltip');
         expect(getUploadErrorMessageFromCode()).toEqual('invalidUploadMessageErrorTooltip');
+    });
+
+    it('should test getUploadErrorMessageId', () => {
+        expect(getUploadErrorMessageId({
+            success: false,
+            errors: ['No handlers found for this dataset type/action'],
+            code: 'importer_exception'
+        })).toEqual('gnviewer.unsupportedFileExtension');
+        expect(getUploadErrorMessageId('No handler found for this dataset type/action')).toEqual('gnviewer.unsupportedFileExtension');
+        expect(getUploadErrorMessageId({ errors: ['Non-ASCII character found in filename'] })).toEqual(null);
+        expect(getUploadErrorMessageId(null)).toEqual(null);
     });
 
     describe('getProcessErrorInfo', () => {

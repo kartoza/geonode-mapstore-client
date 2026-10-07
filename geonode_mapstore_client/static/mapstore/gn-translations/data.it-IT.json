@@ -303,6 +303,7 @@
             "missingFiles": "File mancanti",
             "invalidUploadMessageError": "Errore",
             "invalidUploadMessageErrorTooltip": "Il processo di caricamento non è riuscito. Controlla la validità del file e prova a caricarlo di nuovo",
+            "unsupportedFileExtension": "Estensione del file non supportata",
             "completeUpload": "Completa il caricamento",
             "selectFiles": "Seleziona file...",
             "addUrl": "Aggiungi URL...",
