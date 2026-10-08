@@ -28,6 +28,8 @@ describe('Test error utilities', () => {
         expect(getUploadErrorMessageId('No handler found for this dataset type/action')).toEqual('gnviewer.unsupportedFileExtension');
         expect(getUploadErrorMessageId({ errors: ['Non-ASCII character found in filename'] })).toEqual(null);
         expect(getUploadErrorMessageId(null)).toEqual(null);
+        // GIZ-update: upload gateway timeout
+        expect(getUploadErrorMessageId({ status: 504 })).toEqual('gnviewer.uploadTimeoutError');
     });
 
     describe('getProcessErrorInfo', () => {

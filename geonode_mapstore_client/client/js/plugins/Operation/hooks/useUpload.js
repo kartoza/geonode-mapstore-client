@@ -90,7 +90,11 @@ const useUpload = ({
                             if (axios.isCancel(error)) {
                                 return { status: 'error', error: 'CANCELED', id: upload.id };
                             }
-                            const { data } = error;
+                            const { data, status } = error;
+                            // GIZ-update: gateway timeout returns an html page, keep only the status to show a readable message
+                            if (status === 504) {
+                                return { status: 'error', error: { status }, id: upload.id };
+                            }
                             return { status: 'error', error: data, id: upload.id };
                         });
                 }))

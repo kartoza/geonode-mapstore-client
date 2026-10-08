@@ -303,6 +303,7 @@
             "invalidUploadMessageError": "Fehler",
             "invalidUploadMessageErrorTooltip": "Der Upload-Vorgang ist fehlgeschlagen. Bitte überprüfen Sie die Gültigkeit der Datei und versuchen Sie erneut, sie hochzuladen",
             "unsupportedFileExtension": "Nicht unterstützte Dateierweiterung",
+            "uploadTimeoutError": "Your upload is taking too long to upload. Your data is either too large or your internet connection too slow. The upload process has been interrupted.",
             "completeUpload": "Schließen Sie den Upload ab",
             "selectFiles": "Dateien auswählen...",
             "addUrl": "URL hinzufügen...",

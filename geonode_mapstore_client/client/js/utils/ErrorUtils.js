@@ -61,6 +61,10 @@ const UPLOAD_ERROR_MESSAGE_IDS = [
  * @returns {string|null} the message id, or null if the error is not a known one
  */
 export const getUploadErrorMessageId = (error) => {
+    // GIZ-update: show a readable message on upload gateway timeout
+    if (error?.status === 504) {
+        return 'gnviewer.uploadTimeoutError';
+    }
     const message = getUploadErrorMessage(error);
     if (!message) {
         return null;

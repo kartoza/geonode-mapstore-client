@@ -304,6 +304,7 @@
             "invalidUploadMessageError": "Errore",
             "invalidUploadMessageErrorTooltip": "Il processo di caricamento non è riuscito. Controlla la validità del file e prova a caricarlo di nuovo",
             "unsupportedFileExtension": "Estensione del file non supportata",
+            "uploadTimeoutError": "Your upload is taking too long to upload. Your data is either too large or your internet connection too slow. The upload process has been interrupted.",
             "completeUpload": "Completa il caricamento",
             "selectFiles": "Seleziona file...",
             "addUrl": "Aggiungi URL...",

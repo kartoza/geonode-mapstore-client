@@ -285,6 +285,7 @@
             "invalidUploadMessageError": "Error",
             "invalidUploadMessageErrorTooltip": "The upload process failed. Please check the validity of the file and try to upload it again",
             "unsupportedFileExtension": "Unsupported file extension",
+            "uploadTimeoutError": "Your upload is taking too long to upload. Your data is either too large or your internet connection too slow. The upload process has been interrupted.",
             "completeUpload": "Complete upload",
             "selectFiles": "Select files...",
             "addUrl": "Add URL...",

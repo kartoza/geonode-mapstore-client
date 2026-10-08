@@ -302,6 +302,7 @@
             "invalidUploadMessageError": "Erreur",
             "invalidUploadMessageErrorTooltip": "Le processus de téléchargement a échoué. Veuillez vérifier la validité du fichier et réessayez de le télécharger",
             "unsupportedFileExtension": "Extension de fichier non prise en charge",
+            "uploadTimeoutError": "Your upload is taking too long to upload. Your data is either too large or your internet connection too slow. The upload process has been interrupted.",
             "completeUpload": "Terminer l'envoi",
             "selectFiles": "Sélectionner les fichiers...",
             "addUrl": "Ajouter l'URL...",
