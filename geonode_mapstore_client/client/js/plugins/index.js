@@ -487,6 +487,10 @@ export const plugins = {
         'PrintResourceInfo',
         () => import(/* webpackChunkName: 'plugins/print-resource-info' */ '@js/plugins/Print/ResourceInfo')
     ),
+    PrintLayoutOptionsPlugin: toModulePlugin(
+        'PrintLayoutOptions',
+        () => import(/* webpackChunkName: 'plugins/print-layout-options' */ '@js/plugins/Print/Layout')
+    ),
     UploadResourcePlugin: toModulePlugin(
         'UploadResource',
         () => import(/* webpackChunkName: 'plugins/upload-operation' */ '@js/plugins/UploadResource')
