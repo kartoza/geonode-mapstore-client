@@ -38,6 +38,21 @@ function getPluginsConfiguration(name, pluginsConfig) {
     return pluginsConfig[name] || DEFAULT_PLUGINS_CONFIG;
 }
 
+const REMOVED_PRINT_PLUGINS = ['PrintAuthor', 'PrintCopyright'];
+const ADDED_PRINT_PLUGINS = ['PrintResourceInfo', 'PrintLayoutOptions'];
+const getPluginName = (plugin) => plugin?.name || plugin;
+
+function applyPrintPatch(plugins) {
+    const filtered = plugins.filter((plugin) => !REMOVED_PRINT_PLUGINS.includes(getPluginName(plugin)));
+    if (!filtered.some((plugin) => getPluginName(plugin) === 'Print')) {
+        return filtered;
+    }
+    const missing = ADDED_PRINT_PLUGINS
+        .filter((name) => !filtered.some((plugin) => getPluginName(plugin) === name))
+        .map((name) => ({ name }));
+    return [...filtered, ...missing];
+}
+
 function MapViewerRoute({
     name,
     pluginsConfig: propPluginsConfig,
@@ -57,7 +72,7 @@ function MapViewerRoute({
             return [
                 ...getPluginsConfiguration(name, propPluginsConfig)
                     .filter((plugin) => !!plugin.mandatory),
-                ...getPluginsConfiguration('desktop', viewerPluginsConfig)
+                ...applyPrintPatch(getPluginsConfiguration('desktop', viewerPluginsConfig))
             ];
         }
         if (hasViewer === true && (resource?.pk === pk || pk === 'new')) {
@@ -65,7 +80,7 @@ function MapViewerRoute({
                 ...getPluginsConfiguration(name, propPluginsConfig)
                     .filter((plugin) => !!plugin.mandatory),
                 ...((viewerPluginsConfig)
-                    ? getPluginsConfiguration('desktop', viewerPluginsConfig)
+                    ? applyPrintPatch(getPluginsConfiguration('desktop', viewerPluginsConfig))
                     : [])
             ], 'name');
         }
