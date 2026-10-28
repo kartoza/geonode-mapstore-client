@@ -16,6 +16,37 @@ import { currentLayouts } from "@mapstore/framework/selectors/print";
 import PrintOption from "@mapstore/framework/components/print/PrintOption";
 import { Layout } from "@mapstore/framework/plugins/print/index";
 import { LandscapeOption } from "@mapstore/framework/plugins/print/Layout";
+import { addTransformer } from "@mapstore/framework/utils/PrintUtils";
+
+export const removeDuplicatedParams = (iconUrl) => {
+    const [base, query] = iconUrl.split("?");
+    if (!query) {
+        return iconUrl;
+    }
+    const seen = new Set();
+    const params = query.split("&").filter((param) => {
+        const key = decodeURIComponent(param.split("=")[0]).toLowerCase();
+        if (!key || seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
+    return `${base}?${params.join("&")}`;
+};
+
+const legendUrlTransformer = (state, spec) => Promise.resolve({
+    ...spec,
+    legends: (spec.legends || []).map((legend) => ({
+        ...legend,
+        classes: (legend.classes || []).map((legendClass) => ({
+            ...legendClass,
+            icons: (legendClass.icons || []).map(removeDuplicatedParams)
+        }))
+    }))
+});
+
+addTransformer("gizLegendUrl", legendUrlTransformer);
 
 // "Legend on distinct page" without "Include legend": the legend is always printed
 // (below the map), so this option alone switches to the *_2_pages_legend layouts
