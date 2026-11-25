@@ -36,6 +36,8 @@ import { setViewer } from '@mapstore/framework/utils/MapInfoUtils';
 import { setObservableConfig } from 'recompose';
 import rxjsConfig from 'recompose/rxjsObservableConfig';
 import { getGeoNodeConfig, getGeoNodeLocalConfig } from "@js/utils/APIUtils";
+import proj4 from 'proj4';
+import { patchProj4 } from '@js/utils/proj4/patchProj4';
 setObservableConfig(rxjsConfig);
 
 let actionListeners = {};
@@ -65,6 +67,11 @@ export function getVersion() {
 }
 
 export function initializeApp() {
+
+    // @geosolutions/proj4 does not include Equal Earth (e.g. EPSG:8857)
+    // and crashes when a projection returns null (e.g. poles to EPSG:3857),
+    // patch it before any map is created
+    patchProj4(proj4);
 
     // Set X-CSRFToken in axios;
     axios.defaults.xsrfHeaderName = "X-CSRFToken";
