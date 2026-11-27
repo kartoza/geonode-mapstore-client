@@ -40,11 +40,9 @@ function AuthorInfo({ resource, readOnly, formatHref, ...props }) {
         {
           resource.group?.title ? <>
             <Message msgId="gnviewer.resourceOrigin.from"/>{' '}
-            <ALink readOnly={readOnly} href={formatHref({
-              query: {
-                'filter{group.name.in}': resource.group?.name
-              }
-            })}>{resource.group?.title}</ALink>
+            <ALink readOnly={readOnly} href={"/groups/group/" + resource.group?.name + "/"}>
+              {resource.group?.title}
+            </ALink>
           </> : null
         }
     </p>);
